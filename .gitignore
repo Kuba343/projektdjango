@@ -1,0 +1,24 @@
+# Wirtualne środowisko
+venv/
+.venv/
+
+# Pliki Pythona
+__pycache__/
+*.pyc
+
+# Baza danych (opcjonalnie)
+db.sqlite3
+
+# Pliki logów
+*.log
+
+# Pliki systemowe
+.DS_Store
+Thumbs.db
+
+# PyCharm
+.idea/
+
+# Migracje (opcjonalnie, jeśli nie chcecie ich śledzić)
+# */migrations/
+# !*/migrations/__init__.py
