@@ -1,10 +1,20 @@
+from datetime import date
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 from django.db import models
 
 # Wymuszenie unikalności maila wbudowanego modelu User
 User._meta.get_field('email')._unique = True
 User._meta.get_field('email').blank = False
 User._meta.get_field('email').null = False
+
+#funkcja walidujaca wiek
+def validate_age(value):
+    today = date.today()
+    age = today.year - value.year - ((today.month, today.day) < (value.month, value.day))
+    if age < 18:
+        raise ValidationError("Musisz mieć ukończone 18 lat, aby założyć konto.")
+
 
 # TABELE SŁOWNIKOWE:
 #Lista marek
@@ -97,8 +107,8 @@ class Branch(models.Model):
 #Konkretne auto
 class Car(models.Model):
     model = models.ForeignKey(CarModel, on_delete=models.CASCADE)
-    category = models.ForeignKey(CarCategory, on_delete=models.SET_NULL,null=True)
-    fuel_type = models.ForeignKey(FuelType, on_delete=models.SET_NULL,null=True)
+    category = models.ForeignKey(CarCategory, on_delete=models.SET_NULL)
+    fuel_type = models.ForeignKey(FuelType, on_delete=models.SET_NULL)
     current_branch = models.ForeignKey(Branch, on_delete=models.CASCADE)
     horsepower = models.IntegerField()
     price_per_day=models.DecimalField(max_digits=10, decimal_places=2)
@@ -118,7 +128,7 @@ class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE,related_name='profile')
     license_number = models.CharField(max_length=40)
     phone_number = models.CharField(max_length=20)
-    birth_date = models.DateField(null=True, blank=True)
+    birth_date = models.DateField(validators=[validate_age], verbose_name="Data urodzenia")
     def __str__(self):
         return f"{self.user} {self.license_number} {self.phone_number}"
 #Tabela ktora laczy klienta z samochodem i datami wypozyczen
@@ -128,7 +138,7 @@ class Rental(models.Model):
     status=models.ForeignKey(RentalStatus, on_delete=models.PROTECT)
     pickup_date=models.DateField()
     return_date=models.DateField()
-    total_price=models.DecimalField(max_digits=10, decimal_places=2,null=True)
+    total_price=models.DecimalField(max_digits=10, decimal_places=2,default=0.00)
     def __str__(self):
         return f"{self.user} {self.status} {self.pickup_date} {self.return_date}"
 #Rejestr wplat
