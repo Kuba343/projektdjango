@@ -116,3 +116,12 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
+
+# Konfiguracja systemów logowania.
+# Pozwala na sprawdzanie użytkownika zarówno po nicku (admin), jak i po mailu (klient).
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',  # Zostawiamy domyślny, żeby admin nadal mógł się logować po username
+    'nazwa_twojej_aplikacji.backends.EmailBackend', # Twoja nowa logika logowania przez email
+]
+
