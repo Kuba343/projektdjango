@@ -7,16 +7,17 @@ User._meta.get_field('email').blank = False
 User._meta.get_field('email').null = False
 
 # TABELE SŁOWNIKOWE:
+#Lista marek
 class Brand(models.Model):
     name=models.CharField(max_length=50)
     def __str__(self):
         return self.name
-
+#Segmenty aut
 class CarCategory(models.Model):
     name=models.CharField(max_length=50)
     def __str__(self):
         return self.name
-
+#Typ paliwa
 class FuelType(models.Model):
     FUEL_CHOICES=[
         ('Benzyna', 'Benzyna'),
@@ -28,7 +29,7 @@ class FuelType(models.Model):
     name=models.CharField(max_length=20,choices=FUEL_CHOICES)
     def __str__(self):
         return self.name
-
+#Etapy rezerwacji
 class RentalStatus(models.Model):
     STATUS_CHOICES=[
         ('Oczekująca','Oczekująca'),#Czeka na platnosc
@@ -40,7 +41,7 @@ class RentalStatus(models.Model):
     name=models.CharField(max_length=20,choices=STATUS_CHOICES)
     def __str__(self):
         return self.status
-
+#Dostepne metody platnosci
 class PaymentMethod(models.Model):
     PAYMENT_CHOICES=[
         ('Blik','Blik'),
@@ -51,48 +52,49 @@ class PaymentMethod(models.Model):
     name=models.CharField(max_length=20,choices=PAYMENT_CHOICES)
     def __str__(self):
         return self.name
-
+#Miasta w ktorych mamy oddzialy
 class City(models.Model):
     name=models.CharField(max_length=50)
     zip_code = models.CharField(max_length=10)  # np. 00-001
     def __str__(self):
         return f"{self.zip_code} {self.name}"
-
+#Stanowisko pracownika
 class Role(models.Model):
     name=models.CharField(max_length=50)
     def __str__(self):
         return self.name
-
+#Elementy sprawdzane podczas serwisu
 class InspectionItem(models.Model):
     name=models.CharField(max_length=50)# np. Stan opon, Hamulce
     def __str__(self):
         return self.name
-
+#Rodzaje dodatkow typu akcesoria, ubezpieczenie
 class AddonType(models.Model):
-    name=models.CharField(max_length=50)#np. Akcesoria, Ubezpieczenie
+    name=models.CharField(max_length=50)
     def __str__(self):
         return self.name
 # TABELE GŁÓWNE:
 #FLOTA
+#Łączy marke z konkretna nazwa modelu
 class CarModel(models.Model):
     brand = models.ForeignKey(Brand, on_delete=models.CASCADE)
     name=models.CharField(max_length=50)
     def __str__(self):
         return self.name
-
+#Lista ulic w konkretnych miastach
 class Street(models.Model):
     city = models.ForeignKey(City, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
     def __str__(self):
         return self.name
-
+#Oddzialy naszej firmy
 class Branch(models.Model):
     street = models.ForeignKey(Street, on_delete=models.CASCADE)
     building_number = models.CharField(max_length=10)
     phone_number = models.CharField(max_length=20)
     def __str__(self):
         return f"{self.street} {self.building_number} {self.phone_number}"
-
+#Konkretne auto
 class Car(models.Model):
     model = models.ForeignKey(CarModel, on_delete=models.CASCADE)
     category = models.ForeignKey(CarCategory, on_delete=models.SET_NULL,null=True)
@@ -104,13 +106,14 @@ class Car(models.Model):
     def __str__(self):
         return f"{self.model} {self.category}"
 
-
+#Historia przemieszczania auta
 class Transfer(models.Model):
     car = models.ForeignKey(Car, on_delete=models.CASCADE)
     from_branch = models.ForeignKey(Branch,verbose_name="Z oddziału", related_name='transfers_from', on_delete=models.CASCADE)
     to_branch = models.ForeignKey(Branch,verbose_name="Do oddziału", related_name='transfers_to', on_delete=models.CASCADE)
     date = models.DateTimeField(auto_now_add=True)
 #REZERWACJE
+#Rozszerzenie podstawowego uzytkownika django
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE,related_name='profile')
     license_number = models.CharField(max_length=40)
@@ -118,7 +121,7 @@ class UserProfile(models.Model):
     birth_date = models.DateField(null=True, blank=True)
     def __str__(self):
         return f"{self.user} {self.license_number} {self.phone_number}"
-
+#Tabela ktora laczy klienta z samochodem i datami wypozyczen
 class Rental(models.Model):
     user = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
     car=models.ForeignKey(Car, on_delete=models.CASCADE)
@@ -128,7 +131,7 @@ class Rental(models.Model):
     total_price=models.DecimalField(max_digits=10, decimal_places=2,null=True)
     def __str__(self):
         return f"{self.user} {self.status} {self.pickup_date} {self.return_date}"
-
+#Rejestr wplat
 class Payment(models.Model):
     user = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
     rental=models.ForeignKey(Rental, on_delete=models.CASCADE,related_name='payments', null=True)
@@ -137,7 +140,7 @@ class Payment(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
     def __str__(self):
         return f"{self.method} {self.amount} {self.timestamp}"
-
+#Faktura do konkretnego wynajmu
 class Invoice(models.Model):
     rental = models.OneToOneField(Rental, on_delete=models.CASCADE) # Poprawka na 1:1
     invoice_number = models.CharField(max_length=50, unique=True)
@@ -147,6 +150,7 @@ class Invoice(models.Model):
         return f"Faktura nr: {self.invoice_number} (Dla: {self.rental.user})"
 
 #OBSLUGA
+#Dane pracownikow
 class EmployeeProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='employee_profile')
     role = models.ForeignKey(Role, on_delete=models.PROTECT)
@@ -156,21 +160,21 @@ class EmployeeProfile(models.Model):
 
     def __str__(self):
         return f"{self.user.get_full_name()} - {self.role.name}"
-
+#Konkretne produkty dodatkowe
 class Addon(models.Model):
     type = models.ForeignKey(AddonType, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
     daily_price = models.DecimalField(max_digits=6, decimal_places=2)
     def __str__(self):
         return f"{self.type} {self.name} {self.daily_price}"
-
+#Tabela laczaca jakie dodatki i ilosci klient dobral
 class RentalAddon(models.Model):
     rental = models.ForeignKey(Rental, on_delete=models.CASCADE)
     addon = models.ForeignKey(Addon, on_delete=models.CASCADE)
     quantity = models.IntegerField(default=1)
     def __str__(self):
         return f"{self.rental} {self.addon} {self.quantity}"
-
+#Rejestr szkod
 class DamageReport(models.Model):
     car = models.ForeignKey(Car, on_delete=models.CASCADE)
     description = models.TextField()
@@ -178,7 +182,7 @@ class DamageReport(models.Model):
     reported_at = models.DateTimeField(auto_now_add=True)
     def __str__(self):
         return f"{self.car} {self.description} {self.estimated_cost} {self.reported_at}"
-
+#Ksiazka serwisowa auta
 class Maintenance(models.Model):
     car = models.ForeignKey(Car, on_delete=models.CASCADE)
     item = models.ForeignKey(InspectionItem, on_delete=models.CASCADE)
