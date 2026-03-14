@@ -1,7 +1,10 @@
 from django.contrib.auth.models import User
 from django.db import models
 
-# Create your models here.
+# Wymuszenie unikalności maila wbudowanego modelu User
+User._meta.get_field('email')._unique = True
+User._meta.get_field('email').blank = False
+User._meta.get_field('email').null = False
 
 # TABELE SŁOWNIKOWE:
 class Brand(models.Model):
@@ -34,7 +37,7 @@ class RentalStatus(models.Model):
         ('Zwrócona', 'Zwrócona'),#Samochód wrocil
         ('Anulowana','Anulowana'),#Anulowane
     ]
-    status=models.CharField(max_length=20,choices=STATUS_CHOICES)
+    name=models.CharField(max_length=20,choices=STATUS_CHOICES)
     def __str__(self):
         return self.status
 
@@ -104,14 +107,15 @@ class Car(models.Model):
 
 class Transfer(models.Model):
     car = models.ForeignKey(Car, on_delete=models.CASCADE)
-    from_branch = models.ForeignKey(Branch, related_name='transfers_from', on_delete=models.CASCADE)
-    to_branch = models.ForeignKey(Branch, related_name='transfers_to', on_delete=models.CASCADE)
+    from_branch = models.ForeignKey(Branch,verbose_name="Z oddziału", related_name='transfers_from', on_delete=models.CASCADE)
+    to_branch = models.ForeignKey(Branch,verbose_name="Do oddziału", related_name='transfers_to', on_delete=models.CASCADE)
     date = models.DateTimeField(auto_now_add=True)
 #REZERWACJE
 class UserProfile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE,related_name='profile')
     license_number = models.CharField(max_length=40)
     phone_number = models.CharField(max_length=20)
+    birth_date = models.DateField(null=True, blank=True)
     def __str__(self):
         return f"{self.user} {self.license_number} {self.phone_number}"
 
@@ -127,6 +131,7 @@ class Rental(models.Model):
 
 class Payment(models.Model):
     user = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
+    rental=models.ForeignKey(Rental, on_delete=models.CASCADE,related_name='payments', null=True)
     method = models.ForeignKey(PaymentMethod, on_delete=models.PROTECT)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     timestamp = models.DateTimeField(auto_now_add=True)
@@ -179,5 +184,6 @@ class Maintenance(models.Model):
     item = models.ForeignKey(InspectionItem, on_delete=models.CASCADE)
     last_service_date = models.DateField()
     mileage_at_service = models.IntegerField()
+
     def __str__(self):
-        return f"{self.car} {self.item} {self.last_service_date} {self.mileage_at_service}"
+        return f"{self.car} {self.item} - {self.last_service_date}"
