@@ -70,7 +70,7 @@ class City(models.Model):
         return f"{self.zip_code} {self.name}"
 #Stanowisko pracownika
 class Role(models.Model):
-    name=models.CharField(max_length=50)
+    name=models.CharField(max_length=50) # np. mechanik, administrator itp.
     def __str__(self):
         return self.name
 #Elementy sprawdzane podczas serwisu
