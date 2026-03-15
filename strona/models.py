@@ -107,8 +107,8 @@ class Branch(models.Model):
 #Konkretne auto
 class Car(models.Model):
     model = models.ForeignKey(CarModel, on_delete=models.CASCADE)
-    category = models.ForeignKey(CarCategory, on_delete=models.SET_NULL)
-    fuel_type = models.ForeignKey(FuelType, on_delete=models.SET_NULL)
+    category = models.ForeignKey(CarCategory, on_delete=models.SET_NULL, null=True, blank=True)
+    fuel_type = models.ForeignKey(FuelType, on_delete=models.SET_NULL, null=True, blank=True)
     current_branch = models.ForeignKey(Branch, on_delete=models.CASCADE)
     horsepower = models.IntegerField()
     price_per_day=models.DecimalField(max_digits=10, decimal_places=2)
