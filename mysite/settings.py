@@ -122,6 +122,6 @@ STATIC_URL = 'static/'
 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',  # Zostawiamy domyślny, żeby admin nadal mógł się logować po username
-    'nazwa_twojej_aplikacji.backends.EmailBackend', # Twoja nowa logika logowania przez email
+    'strona.backends.EmailBackend', # Twoja nowa logika logowania przez email
 ]
 
