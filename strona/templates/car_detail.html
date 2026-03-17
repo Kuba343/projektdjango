@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+
+<h1>{{ car.model.brand }} {{ car.model.name }}</h1>
+
+<img src="{{ car.image.url }}" width="400">
+
+<p>Kategoria: {{ car.category }}</p>
+<p>Paliwo: {{ car.fuel_type }}</p>
+<p>Moc: {{ car.horsepower }} KM</p>
+<p>Cena za dzień: {{ car.price_per_day }} zł</p>
+<p>Oddział: {{ car.current_branch }}</p>
+
+{% if car.is_available %}
+    <p style="color: green;">Dostępny</p>
+{% else %}
+    <p style="color: red;">Niedostępny</p>
+{% endif %}
+
+<h2>Dodatki</h2>
+
+{% for addon in addons %}
+    <p>{{ addon.name }} – {{ addon.daily_price }} zł</p>
+{% empty %}
+    <p>Brak dodatków</p>
+{% endfor %}

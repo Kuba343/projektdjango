@@ -109,6 +109,7 @@ class Car(models.Model):
     horsepower = models.IntegerField()
     price_per_day=models.DecimalField(max_digits=10, decimal_places=2)
     is_available = models.BooleanField(default=True)
+    image = models.ImageField(upload_to='cars/', null=True, blank=True)
     def __str__(self):
         return f"{self.model} {self.category}"
 

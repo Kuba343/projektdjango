@@ -124,4 +124,6 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',  # Zostawiamy domyślny, żeby admin nadal mógł się logować po username
     'strona.backends.EmailBackend', # Twoja nowa logika logowania przez email
 ]
-
+#zdjęcia przechowywane w bazie
+MEDIA_URL = '/media/'
+MEIDA_ROOT = BASE_DIR / 'media'
