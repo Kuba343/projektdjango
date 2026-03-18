@@ -1,6 +1,8 @@
 from django.shortcuts import render
 
 from django.shortcuts import render, get_object_or_404
+
+from .forms import RegistrationForm
 from .models import Car, Addon
 
 def home(request):
@@ -16,5 +18,12 @@ def car_detail(request, car_id):
     addons = Addon.objects.all()
     return render(request, "car_detail.html", {"car": car, "addons": addons})
 
-
-
+def register(request):
+    if request.method == "POST":
+        form = RegistrationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            request.redirect('home')
+    else:
+        form = RegistrationForm()
+    return render(request, "rejestracja.html", {"form": form})

@@ -1,0 +1,65 @@
+/* Styl dla całej strony - robi z niej elastyczne pudełko */
+body {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center; /* Środkuje w poziomie */
+    align-items: center;     /* Środkuje w pionie */
+    min-height: 100vh;       /* Sprawia, że strona ma wysokość całego ekranu */
+    background-color: #f4f4f4; /* Opcjonalnie: lekki kolor tła */
+    font-family: Arial, sans-serif;
+}
+
+/* Styl dla samego pudełka z formularzem */
+.auth-container {
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Delikatny cień */
+    width: 100%;
+    max-width: 400px; /* Żeby nie był za szeroki na dużych ekranach */
+}
+
+/* Przycisk na całą szerokość pudełka */
+.btn-submit {
+    width: 100%;
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+/* Etykieta zawsze w nowej linii i pogrubiona */
+.form-label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+/* Styl dla samego okienka wpisywania (input) */
+.form-group input {
+    width: 100%;
+    max-width: 300px;
+    padding: 8px;
+    display: block; /* To też pomaga ustawić elementy pod sobą */
+}
+
+/* TWÓJ PROBLEM: Help text w nowej linii, mniejszy i szary */
+.help-text {
+    display: block;  /* <--- TO ROZWIĄZUJE TWÓJ PROBLEM */
+    font-size: 0.85em;
+    color: #666;
+    margin-top: 4px;
+}
+
+.error-msg {
+    color: red;
+    font-size: 0.8em;
+}

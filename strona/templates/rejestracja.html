@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="{% static 'rej_log.css' %}">
+    <meta charset="UTF-8">
+    <title>Rejestracja</title>
+</head>
+<body>
+    <div class="auth-container">
+    <h1>Rejestracja</h1>
+        <form method="post">
+            {% csrf_token %}
+            {% for field in form %}
+            <div class="form-group">
+                <label class="form-label"> {{ field.label}}</label>
+                {{ field }}
+                {% if field.help_text %}
+                        <span class="help-text">{{ field.help_text }}</span>
+                    {% endif %}
+                    {% if field.errors %}
+                        <div class="error-msg">{{ field.errors }}</div>
+                {% endif %}
+            </div>
+            {% endfor %}
+            <button type="submit" class="btn-submit">Zarejestruj się</button>
+        </form>
+    </div>
+</body>
+</html>
