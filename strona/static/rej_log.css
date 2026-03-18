@@ -9,7 +9,9 @@ body {
     background-color: #f4f4f4; /* Opcjonalnie: lekki kolor tła */
     font-family: Arial, sans-serif;
 }
-
+h1 {
+    text-align: center;
+}
 /* Styl dla samego pudełka z formularzem */
 .auth-container {
     background: white;
@@ -51,15 +53,32 @@ body {
     display: block; /* To też pomaga ustawić elementy pod sobą */
 }
 
-/* TWÓJ PROBLEM: Help text w nowej linii, mniejszy i szary */
+/* Help text w nowej linii, mniejszy i szary */
 .help-text {
-    display: block;  /* <--- TO ROZWIĄZUJE TWÓJ PROBLEM */
-    font-size: 0.85em;
+    display: block;
+    width: 100%;       /* Zajmuje całą szerokość kolumny */
+    max-width: 300px;  /* DOPASUJ TO do szerokości Twojego inputa */
+    text-align: left;  /* <--- TO PRZESUWA TEKST DO LEWEJ */
+    font-size: 0.8em;
     color: #666;
     margin-top: 4px;
 }
 
 .error-msg {
+    display: block;
+    width: 100%;
+    max-width: 300px;  /* DOPASUJ TO do szerokości Twojego inputa */
+    text-align: left;  /* <--- TO PRZESUWA BŁĄD DO LEWEJ */
     color: red;
     font-size: 0.8em;
+    list-style: none;
+    padding: 0;
+    margin: 2px 0;
+}
+/* Środkowanie kontenerów w Siatce */
+.form-field, .form-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* To wyśrodkuje Label i Input względem siebie */
+    justify-content: center;
 }

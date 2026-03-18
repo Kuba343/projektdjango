@@ -1,5 +1,5 @@
 from django.shortcuts import render
-
+from django.shortcuts import render, redirect
 from django.shortcuts import render, get_object_or_404
 
 from .forms import RegistrationForm
@@ -23,7 +23,7 @@ def register(request):
         form = RegistrationForm(request.POST)
         if form.is_valid():
             user = form.save()
-            request.redirect('home')
+            return redirect('home')
     else:
         form = RegistrationForm()
     return render(request, "rejestracja.html", {"form": form})

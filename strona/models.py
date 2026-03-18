@@ -1,4 +1,5 @@
 from datetime import date
+from django.utils import timezone
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -6,7 +7,7 @@ from django.db import models
 
 #funkcja walidujaca wiek
 def validate_age(value):
-    today = date.today()
+    today = timezone.now().date()
     age = today.year - value.year - ((today.month, today.day) < (value.month, value.day))
     if age < 18:
         raise ValidationError("Musisz mieć ukończone 18 lat, aby założyć konto.")
