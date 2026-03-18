@@ -7,7 +7,9 @@ from .models import Car
 urlpatterns = [
     path('', views.home, name="home"),
     path('cars/', views.car_list, name='car_list'),
-    path('rejestracja/',views.register,name='rejestacja'),
+    path('rejestracja/',views.register,name='rejestracja'),
+    path('login/', views.login, name='login'),
+
     #Przekierowanie do szczegółów auta po kliknięciu kafelka
     path("cars/<int:car_id>/", views.car_detail, name="car_detail"),
 ]

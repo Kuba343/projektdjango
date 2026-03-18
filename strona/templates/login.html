@@ -5,35 +5,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{% static 'rej_log.css' %}">
-    <title>Rejestracja</title>
+    <title>Logowanie</title>
 </head>
 <body>
-    <div class="auth-container">
-        <h1>Stwórz konto</h1>
+    <div class="auth-container login-mode">
+        <h1>Zaloguj się</h1>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="error-msg global-error">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+
         <form method="post" novalidate>
             {% csrf_token %}
-            <div class="form-grid">
+            <div class="form-grid single-column">
                 {% for field in form %}
                     <div class="form-group {{ field.name }}">
                         <label class="form-label">{{ field.label }}</label>
-
                         {{ field }}
-
-                        {% if field.help_text %}
-                            <span class="help-text">{{ field.help_text }}</span>
-                        {% endif %}
-
                         {% if field.errors %}
-                            <div class="error-msg">
-                                {{ field.errors }}
-                            </div>
+                            <div class="error-msg">{{ field.errors }}</div>
                         {% endif %}
                     </div>
                 {% endfor %}
 
                 <div class="auth-footer">
-                    <button type="submit" class="btn-submit">Zarejestruj się</button>
-                    <p>Masz już konto? <a href="{% url 'login' %}">Zaloguj się</a></p>
+                    <button type="submit" class="btn-submit">Zaloguj się</button>
+                    <p>Nie masz konta? <a href="{% url 'rejestracja' %}">Zarejestruj się teraz</a></p>
                 </div>
             </div>
         </form>

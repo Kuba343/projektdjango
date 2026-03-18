@@ -1,9 +1,12 @@
+from django.contrib.auth import authenticate
+from django.contrib.auth.models import User
 from django.shortcuts import render
 from django.shortcuts import render, redirect
 from django.shortcuts import render, get_object_or_404
-
-from .forms import RegistrationForm
+from django.contrib import messages
+from .forms import RegistrationForm, LoginForm
 from .models import Car, Addon
+from django.contrib.auth import authenticate, login as auth_login
 
 def home(request):
     return render(request, "home.html")
@@ -27,3 +30,28 @@ def register(request):
     else:
         form = RegistrationForm()
     return render(request, "rejestracja.html", {"form": form})
+
+
+def login(request):
+    if request.method == 'POST':
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data['email']
+            password = form.cleaned_data['password']
+
+            try:
+                # Szukamy usera po mailu
+                user_obj = User.objects.get(email=email)
+                user = authenticate(request, username=user_obj.username, password=password)
+
+                if user is not None:
+                    auth_login(request, user)
+                    return redirect('home')
+                else:
+                    messages.error(request, "Błędne hasło.")
+            except User.DoesNotExist:
+                messages.error(request, "Użytkownik o takim adresie e-mail nie istnieje.")
+    else:
+        form = LoginForm()
+
+    return render(request, 'login.html', {'form': form})

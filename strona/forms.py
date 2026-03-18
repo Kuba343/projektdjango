@@ -3,74 +3,86 @@ from django.contrib.auth.forms import UserCreationForm
 from django import forms
 from django.contrib.auth.models import User
 from .models import UserProfile, validate_age
+from django.core.exceptions import ValidationError
+from django.db import transaction
 
 
 #formularz do rejestracji klienta
-class RegistrationForm(UserCreationForm):
+class RegistrationForm(forms.ModelForm):
+    username = forms.CharField(
+        max_length=150,
+        label="Nazwa użytkownika",
+        widget=forms.TextInput(attrs={'placeholder': 'Wpisz nazwę...'})
+    )
     first_name = forms.CharField(max_length=30, required=True, label="Imię")
     last_name = forms.CharField(max_length=30, required=True, label="Nazwisko")
-    email=forms.EmailField(required=True,label="Email")
-    phone_number = forms.CharField(max_length=20,required=True,label="Numer telefonu")
+    email = forms.EmailField(required=True, label="Email")
+    phone_number = forms.CharField(max_length=20, required=True, label="Numer telefonu")
     birth_date = forms.DateField(
         required=True,
         label="Data urodzenia",
-        validators=[validate_age],
+        # validators=[validate_age], # Odkomentuj jeśli masz ten walidator
         widget=forms.DateInput(attrs={'type': 'date'})
     )
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields['username'].help_text = ""
-        self.fields['password1'].help_text = "Hasło musi mieć min. 8 znaków i nie może być zbyt proste."
-        self.fields['password2'].help_text = ""
-
     password1 = forms.CharField(
         label="Hasło",
-        widget=forms.PasswordInput(attrs={"class": "form-control"})
+        widget=forms.PasswordInput(attrs={'class': 'form-control'}),
+        help_text="Hasło musi mieć min. 8 znaków."
     )
     password2 = forms.CharField(
         label="Powtórz hasło",
-        widget=forms.PasswordInput(attrs={"class": "form-control"})
+        widget=forms.PasswordInput(attrs={'class': 'form-control'})
     )
 
-    class Meta(UserCreationForm.Meta):
+    class Meta:
         model = User
-        fields = (
-            "username",  # Rząd 1 (na całą szerokość)
-            "first_name", "last_name",  # Para 1 (Rząd 2)
-            "email", "phone_number",  # Para 2 (Rząd 3)
-            "password1", "password2",  # Para 3 (Rząd 4)
-            "birth_date",  # Rząd 5 (na całą szerokość)
-        )
-        labels = {
-            "username": "Nazwa użytkownika",
-        }
+        fields = ("username", "first_name", "last_name", "email")
+
+    # --- WALIDACJA ---
+
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        if User.objects.filter(email=email).exists():
+            raise ValidationError("Użytkownik z tym adresem e-mail już istnieje.")
+        return email
 
     def clean_phone_number(self):
-        phone_number = self.cleaned_data.get('phone_number')
+        phone = self.cleaned_data.get('phone_number')
+        if UserProfile.objects.filter(phone_number=phone).exists():
+            raise ValidationError("Ten numer telefonu jest już przypisany do innego konta.")
+        return phone
 
-        if UserProfile.objects.filter(phone_number=phone_number).exists():
-            raise forms.ValidationError("Użytkownik z tym numerem telefonu już istnieje.")
+    def clean_password2(self):
+        p1 = self.cleaned_data.get("password1")
+        p2 = self.cleaned_data.get("password2")
+        if p1 and p2 and p1 != p2:
+            raise ValidationError("Hasła nie są identyczne.")
+        return p2
 
-        # Zawsze musisz zwrócić wartość, jeśli jest poprawna!
-        return phone_number
+    # --- ZAPIS ---
 
-    def save(self, commit = True):
-        user=super().save(commit=False)
-        user.email=self.cleaned_data["email"]
-        user.first_name = self.cleaned_data["first_name"]
-        user.last_name = self.cleaned_data["last_name"]
+    def save(self, commit=True):
+        dane = self.cleaned_data
 
-        if user.last_login is None:
-            user.last_login = timezone.now()
+        # Używamy transaction.atomic, żeby mieć pewność, że jeśli profil padnie,
+        # to użytkownik też nie zostanie stworzony (wszystko albo nic)
+        with transaction.atomic():
+            # 1. Tworzymy Usera
+            user = User.objects.create_user(
+                username=dane.get('username'),
+                email=dane.get('email'),
+                password=dane.get('password1'),
+                first_name=dane.get('first_name'),
+                last_name=dane.get('last_name')
+            )
 
-        if commit:
-            user.save()
+            # 2. Tworzymy powiązany UserProfile
             UserProfile.objects.create(
                 user=user,
-                phone_number=self.cleaned_data["phone_number"],
-                birth_date=self.cleaned_data["birth_date"],
-                license_number=None
+                phone_number=dane.get('phone_number'),
+                birth_date=dane.get('birth_date')
             )
+
         return user
 
 #formularz logowanie po emailu i hasle tylko
