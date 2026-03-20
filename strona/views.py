@@ -55,3 +55,11 @@ def login(request):
         form = LoginForm()
 
     return render(request, 'login.html', {'form': form})
+
+def contact_view(request):
+    # Na razie tylko wyświetlamy pustą stronę, żeby błąd zniknął
+    return render(request, 'contact.html')
+
+def about_view(request):
+    # Na razie tylko wyświetlamy pustą stronę, żeby błąd zniknął
+    return render(request, 'about.html')

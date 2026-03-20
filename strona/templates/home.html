@@ -1,26 +1,7 @@
-<!DOCTYPE html>
+{% extends 'base.html' %}
 {% load static %}
-<html>
-<head>
-    <meta charset="UTF-8">
-    <link rel="stylesheet" href="{% static '/StronaG.css' %}">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
 
-<body>
-    <div class="navbar">
-
-        <a href="{% url 'home' %}" class="logo">
-            <div class="logo-main">Żyd🚗Rent</div>
-        </a>
-
-
-        <div>
-            <a href="{% url 'home' %}">Strona Główna</a>
-            <a href="{% url 'car_list' %}">Flota</a>
-        </div>
-    </div>
-
+{% block content %}
     <div class="hero">
         <div>
             <h1>Wynajmij samochód Żymianinie</h1>
@@ -51,6 +32,4 @@
             <p>taktyka aby zarobić i się nie narobić</p>
         </div>
     </div>
-</body>
-
-</html>
+{% endblock %}
