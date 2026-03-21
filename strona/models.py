@@ -199,3 +199,12 @@ class Maintenance(models.Model):
 
     def __str__(self):
         return f"{self.car} {self.item} - {self.last_service_date}"
+
+class ContactMessage(models.Model):
+    name = models.CharField(max_length=100)
+    email = models.EmailField()
+    body = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True) # Data odebrania wiadomości
+
+    def __str__(self):
+        return f"Wiadomość od {self.name} ({self.email})"
