@@ -80,40 +80,53 @@ def contact_view(request):
     if request.method == 'POST':
         form = ContactForm(request.POST)
         if form.is_valid():
-            # Zapis do bazy danych
             contact = form.save()
 
-            # Przygotowanie treści e-maila
             temat = f"Nowa wiadomość od: {contact.name}"
+
             tresc = f"""
-            Masz nową wiadomość z formularza kontaktowego:
+Masz nową wiadomość z formularza kontaktowego:
 
-            Od: {contact.name}
-            E-mail klienta: {contact.email}
+Od: {contact.name}
+E-mail klienta: {contact.email}
 
-            Treść wiadomości:
-            {contact.body}
+Treść wiadomości:
+{contact.body}
 
-            ---
-            Wiadomość zapisana w bazie o ID: {contact.id}
-            """
+---
+Wiadomość zapisana w bazie o ID: {contact.id}
+"""
 
-            # Wysyłka
             try:
+                # 📩 MAIL DO CIEBIE (Gmail)
                 send_mail(
                     temat,
                     tresc,
-                    settings.EMAIL_HOST_USER,  # Od kogo (Twój e-mail o2)
-                    ['kubaszklarz2003@o2.pl'],  # Do kogo (Też Twój e-mail)
+                    settings.EMAIL_HOST_USER,
+                    ['twojmail@gmail.com'],  # 🔥 TU ZMIANA
                     fail_silently=False,
                 )
+
+                # 📬 AUTO-ODPOWIEDŹ DO UŻYTKOWNIKA (opcjonalnie, ale polecam)
+                send_mail(
+                    "Dziękujemy za kontakt",
+                    "Otrzymaliśmy Twoją wiadomość. Odpowiemy wkrótce.",
+                    settings.EMAIL_HOST_USER,
+                    [contact.email],
+                    fail_silently=False,
+                )
+
                 messages.success(request, 'Dziękujemy! Wiadomość została wysłana.')
+
             except Exception as e:
-                # Jeśli mail nie pójdzie, i tak mamy go w bazie, ale wypiszemy błąd w konsoli
                 print(f"Błąd wysyłki: {e}")
-                messages.warning(request, 'Wiadomość zapisana, ale wystąpił problem z powiadomieniem e-mail.')
+                messages.warning(
+                    request,
+                    'Wiadomość zapisana, ale wystąpił problem z e-mailem.'
+                )
 
             return redirect('contact')
+
     else:
         form = ContactForm()
 
