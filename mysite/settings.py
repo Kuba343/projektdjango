@@ -103,12 +103,11 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
-
+LANGUAGE_CODE = 'pl'
 TIME_ZONE = 'UTC'
 
 USE_I18N = True
-
+USE_L10N = True
 USE_TZ = True
 
 
@@ -116,12 +115,17 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
-
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
 # Konfiguracja systemów logowania.
 # Pozwala na sprawdzanie użytkownika zarówno po nicku (admin), jak i po mailu (klient).
 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',  # Zostawiamy domyślny, żeby admin nadal mógł się logować po username
-    'nazwa_twojej_aplikacji.backends.EmailBackend', # Twoja nowa logika logowania przez email
+    'strona.backends.EmailBackend', # Twoja nowa logika logowania przez email
 ]
+#zdjęcia przechowywane w bazie
+MEDIA_URL = '/media/'
+MEIDA_ROOT = BASE_DIR / 'media'
 

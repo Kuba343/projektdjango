@@ -1,0 +1,133 @@
+/* --- SEKCOJA 1: Wygląd całej strony (Tło i centrowanie) --- */
+body {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f4f4f4;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* --- SEKCJA 2: Białe pudełko (Kontener formularza) --- */
+.auth-container {
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+}
+
+/* Specyficzne zwężenie pudełka dla strony logowania */
+.auth-container.login-mode {
+    max-width: 400px;
+}
+
+/* --- SEKCJA 3: Układ siatki (Grid) --- */
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr; /* Tylko jedna kolumna - wszystko pod sobą */
+    margin-top: 20px;
+    gap: 15px;
+    justify-items: center;
+}
+
+/* Układ dla logowania (wymuszenie jednej kolumny) */
+.single-column {
+    grid-template-columns: 1fr;
+}
+
+/* --- SEKCJA 4: Styl pojedynczego pola (Etykieta i Input) --- */
+.form-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centruje etykietę i input względem siebie */
+    width: 100%;
+}
+
+.form-label {
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #333;
+}
+
+.form-group input {
+    width: 100%;
+    max-width: 300px; /* Stała szerokość okienka */
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: border-color 0.3s;
+}
+
+.form-group input:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+/* --- SEKCJA 5: Pozycjonowanie konkretnych pól --- */
+/* Rozciąganie pól na całą szerokość (Nazwa użytkownika, Data, Przycisk) */
+.username, .birth_date, .auth-footer {
+    grid-column: span 1;
+    width: 100%;
+    max-width: 300px; /* Dopasowanie do szerokości pozostałych inputów */
+}
+
+/* Wyjątek dla logowania - tam wszystko jest w jednej kolumnie */
+.single-column .username,
+.single-column .birth_date,
+.single-column .auth-footer {
+    grid-column: span 1;
+}
+
+/* --- SEKCJA 6: Teksty pomocy i błędy (wyrównane do lewej strony inputa) --- */
+.help-text, .error-msg {
+    display: block;
+    width: 100%;
+    max-width: 300px; /* Taka sama szerokość jak input */
+    text-align: left; /* Wyrównanie do lewej krawędzi okienka */
+    font-size: 12px;
+    margin-top: 5px;
+}
+
+.help-text { color: #777; }
+.error-msg { color: #dc3545; font-weight: bold; }
+
+/* --- SEKCJA 7: Przycisk i linki na dole --- */
+.btn-submit {
+    width: 100%;
+    max-width: 300px;
+    padding: 12px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s;
+    margin: 20px auto 10px auto;
+}
+
+.btn-submit:hover {
+    background-color: #0056b3;
+}
+
+.auth-footer p {
+    font-size: 14px;
+    color: #555;
+}
+
+.auth-footer a {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.auth-footer a:hover {
+    text-decoration: underline;
+}

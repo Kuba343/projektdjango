@@ -1,9 +1,56 @@
 <!DOCTYPE html>
+{% load static %}
 <html>
 <head>
-    <title>Moja strona</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{% static '/StronaG.css' %}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
+
 <body>
-    <h1>Witaj na mojej stronie!</h1>
+    <div class="navbar">
+
+        <a href="{% url 'home' %}" class="logo">
+            <div class="logo-main">Żyd🚗Rent</div>
+        </a>
+
+
+        <div>
+            <a href="{% url 'home' %}">Strona Główna</a>
+            <a href="{% url 'car_list' %}">Flota</a>
+        </div>
+    </div>
+
+    <div class="hero">
+        <div>
+            <h1>Wynajmij samochód Żymianinie</h1>
+            <p>Mały wybór za to wysokie ceny</p>
+        </div>
+    </div>
+
+    <div class="search-box">
+        <form action="{% url 'car_list' %}">
+            <input type="text" placeholder="Miasto odbioru">
+            <input type="date">
+            <input type="date">
+            <button type="submit">Szukaj</button>
+        </form>
+    </div>
+
+    <div class="features">
+        <div class="feature">
+            <h3>Mały wybór</h3>
+            <p>Od rozbitków po stare auta</p>
+        </div>
+        <div class="feature">
+            <h3>Wysokie ceny</h3>
+            <p>regularnie nowe złomy</p>
+        </div>
+        <div class="feature">
+            <h3>dodatkowe opłaty</h3>
+            <p>taktyka aby zarobić i się nie narobić</p>
+        </div>
+    </div>
 </body>
+
 </html>

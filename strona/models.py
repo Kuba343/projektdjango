@@ -1,16 +1,13 @@
 from datetime import date
+from django.utils import timezone
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db import models
 
-# Wymuszenie unikalności maila wbudowanego modelu User
-User._meta.get_field('email')._unique = True
-User._meta.get_field('email').blank = False
-User._meta.get_field('email').null = False
 
 #funkcja walidujaca wiek
 def validate_age(value):
-    today = date.today()
+    today = timezone.now().date()
     age = today.year - value.year - ((today.month, today.day) < (value.month, value.day))
     if age < 18:
         raise ValidationError("Musisz mieć ukończone 18 lat, aby założyć konto.")
@@ -50,7 +47,7 @@ class RentalStatus(models.Model):
     ]
     name=models.CharField(max_length=20,choices=STATUS_CHOICES)
     def __str__(self):
-        return self.status
+        return self.name
 #Dostepne metody platnosci
 class PaymentMethod(models.Model):
     PAYMENT_CHOICES=[
@@ -107,12 +104,13 @@ class Branch(models.Model):
 #Konkretne auto
 class Car(models.Model):
     model = models.ForeignKey(CarModel, on_delete=models.CASCADE)
-    category = models.ForeignKey(CarCategory, on_delete=models.SET_NULL)
-    fuel_type = models.ForeignKey(FuelType, on_delete=models.SET_NULL)
+    category = models.ForeignKey(CarCategory, on_delete=models.PROTECT)
+    fuel_type = models.ForeignKey(FuelType, on_delete=models.PROTECT)
     current_branch = models.ForeignKey(Branch, on_delete=models.CASCADE)
     horsepower = models.IntegerField()
     price_per_day=models.DecimalField(max_digits=10, decimal_places=2)
     is_available = models.BooleanField(default=True)
+    image = models.ImageField(upload_to='cars/', null=True, blank=True)
     def __str__(self):
         return f"{self.model} {self.category}"
 
@@ -126,7 +124,7 @@ class Transfer(models.Model):
 #Rozszerzenie podstawowego uzytkownika django
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE,related_name='profile')
-    license_number = models.CharField(max_length=40)
+    license_number = models.CharField(max_length=20, blank=True, null=True)
     phone_number = models.CharField(max_length=20)
     birth_date = models.DateField(validators=[validate_age], verbose_name="Data urodzenia")
     def __str__(self):
