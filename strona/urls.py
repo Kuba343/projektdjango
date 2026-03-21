@@ -3,7 +3,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from . import views
 from .models import Car
-from .views import calculator_view, mail_view
+from .views import calculator_view
 
 urlpatterns = [
     path('', views.home, name="home"),
@@ -12,7 +12,6 @@ urlpatterns = [
     path('login/', views.login, name='login'),
     path('kontakt/', views.contact_view, name='contact'),
     path('o-nas/', views.about_view, name='about'),
-    path('mail/', mail_view, name='mail'),
     path('kalkulator/', calculator_view, name='calculator'),
     path('logout/', views.logout_view, name='logout'), # Tu używamy TWOJEJ funkcji wylogowania
 
