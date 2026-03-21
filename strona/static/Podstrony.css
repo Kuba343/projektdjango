@@ -269,3 +269,18 @@ a { color: inherit; text-decoration: none; }
 .btn-send:hover {
     background: #cc0000;
 }
+.contact-form input,
+.contact-form textarea {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-family: inherit;
+    box-sizing: border-box; /* Ważne, żeby pola nie wystawały poza kontener */
+}
+
+.contact-form textarea {
+    min-height: 150px;
+    resize: vertical;
+}

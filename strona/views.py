@@ -7,7 +7,7 @@ from django.shortcuts import render, redirect
 from django.shortcuts import render, get_object_or_404
 from django.contrib import messages
 from .forms import RegistrationForm, LoginForm, ContactForm
-from .models import Car, Addon
+from .models import Car, Addon, Branch
 from django.contrib.auth import authenticate, login as auth_login
 from django.contrib.auth import logout as django_logout
 
@@ -77,6 +77,9 @@ def calculator_view(request):
 
 
 def contact_view(request):
+    oddzialy = Branch.objects.all()
+
+
     if request.method == 'POST':
         form = ContactForm(request.POST)
         if form.is_valid():
@@ -98,16 +101,15 @@ Wiadomość zapisana w bazie o ID: {contact.id}
 """
 
             try:
-                # 📩 MAIL DO CIEBIE (Gmail)
                 send_mail(
                     temat,
                     tresc,
                     settings.EMAIL_HOST_USER,
-                    ['twojmail@gmail.com'],  # 🔥 TU ZMIANA
+                    ['wypozyczalniastrona@gmail.com'],
                     fail_silently=False,
                 )
 
-                # 📬 AUTO-ODPOWIEDŹ DO UŻYTKOWNIKA (opcjonalnie, ale polecam)
+
                 send_mail(
                     "Dziękujemy za kontakt",
                     "Otrzymaliśmy Twoją wiadomość. Odpowiemy wkrótce.",
