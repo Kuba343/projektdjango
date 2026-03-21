@@ -131,9 +131,13 @@ MEIDA_ROOT = BASE_DIR / 'media'
 
 #potrzebe do wysylania maila do nas
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'poczta.o2.pl'
-EMAIL_PORT = 465
-EMAIL_USE_SSL = True
-EMAIL_USE_TLS = False
-EMAIL_HOST_USER = 'kubaszklarz2003@o2.pl'
-EMAIL_HOST_PASSWORD = '4NENG6GP4V4PWHVH'
+
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
+
+EMAIL_HOST_USER = 'wypozyczalniastrona@gmail.com'
+EMAIL_HOST_PASSWORD = 'lppw chje tucc zcps'
+
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
