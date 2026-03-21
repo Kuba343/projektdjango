@@ -2,7 +2,7 @@ from django.utils import timezone
 from django.contrib.auth.forms import UserCreationForm
 from django import forms
 from django.contrib.auth.models import User
-from .models import UserProfile, validate_age
+from .models import UserProfile, validate_age, ContactMessage
 from django.core.exceptions import ValidationError
 from django.db import transaction
 
@@ -95,3 +95,14 @@ class LoginForm(forms.Form):
         label="Hasło",
         widget=forms.PasswordInput(attrs={'placeholder': '********', 'class': 'form-control'})
     )
+
+#formularz do wysylania maila
+class ContactForm(forms.ModelForm):
+    class Meta:
+        model = ContactMessage
+        fields = ['name', 'email', 'body']
+        widgets = {
+            'name': forms.TextInput(attrs={'placeholder': 'Twoje imię i nazwisko', 'class': 'form-control'}),
+            'email': forms.EmailInput(attrs={'placeholder': 'Twój adres e-mail', 'class': 'form-control'}),
+            'body': forms.Textarea(attrs={'placeholder': 'W czym możemy pomóc?', 'rows': 5, 'class': 'form-control'}),
+        }

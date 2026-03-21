@@ -16,7 +16,6 @@
             <h3>Białystok</h3>
             <p>ul. Lipowa 12, 15-001 Białystok</p>
             <p><strong>Tel:</strong> +48 123 456 781</p>
-            <p><strong>Email:</strong> bialystok@zydrent.pl</p>
         </div>
 
         <div class="branch-card">
@@ -24,7 +23,6 @@
             <h3>Warszawa</h3>
             <p>al. Jerozolimskie 45, 00-001 Warszawa</p>
             <p><strong>Tel:</strong> +48 123 456 782</p>
-            <p><strong>Email:</strong> warszawa@zydrent.pl</p>
         </div>
 
         <div class="branch-card">
@@ -32,7 +30,6 @@
             <h3>Choroszcz</h3>
             <p>ul. Rynek 5, 16-070 Choroszcz</p>
             <p><strong>Tel:</strong> +48 123 456 783</p>
-            <p><strong>Email:</strong> choroszcz@zydrent.pl</p>
         </div>
 
         <div class="branch-card">
@@ -40,17 +37,25 @@
             <h3>Mońki</h3>
             <p>ul. Białostocka 10, 19-100 Mońki</p>
             <p><strong>Tel:</strong> +48 123 456 784</p>
-            <p><strong>Email:</strong> monki@zydrent.pl</p>
         </div>
     </div>
 
     <div class="quick-contact">
         <h2>Napisz do nas</h2>
+
+        {% if messages %}
+            {% for message in messages %}
+                <p style="color: green; text-align: center; font-weight: bold;">{{ message }}</p>
+            {% endfor %}
+        {% endif %}
+
         <form method="post" class="contact-form">
             {% csrf_token %}
-            <input type="text" placeholder="Twoje imię" required>
-            <input type="email" placeholder="Twój e-mail" required>
-            <textarea placeholder="W czym możemy pomóc?" rows="5" required></textarea>
+
+            {{ form.name }}
+            {{ form.email }}
+            {{ form.body }}
+
             <button type="submit" class="btn-send">Wyślij wiadomość</button>
         </form>
     </div>

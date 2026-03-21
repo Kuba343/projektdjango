@@ -1,10 +1,12 @@
+from django.conf import settings
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
+from django.core.mail import send_mail
 from django.shortcuts import render
 from django.shortcuts import render, redirect
 from django.shortcuts import render, get_object_or_404
 from django.contrib import messages
-from .forms import RegistrationForm, LoginForm
+from .forms import RegistrationForm, LoginForm, ContactForm
 from .models import Car, Addon
 from django.contrib.auth import authenticate, login as auth_login
 from django.contrib.auth import logout as django_logout
@@ -72,3 +74,47 @@ def about_view(request):
 def calculator_view(request):
     # Na razie tylko wyświetlamy pustą stronę, żeby błąd zniknął
     return render(request, 'calculator.html')
+
+
+def contact_view(request):
+    if request.method == 'POST':
+        form = ContactForm(request.POST)
+        if form.is_valid():
+            # Zapis do bazy danych
+            contact = form.save()
+
+            # Przygotowanie treści e-maila
+            temat = f"Nowa wiadomość od: {contact.name}"
+            tresc = f"""
+            Masz nową wiadomość z formularza kontaktowego:
+
+            Od: {contact.name}
+            E-mail klienta: {contact.email}
+
+            Treść wiadomości:
+            {contact.body}
+
+            ---
+            Wiadomość zapisana w bazie o ID: {contact.id}
+            """
+
+            # Wysyłka
+            try:
+                send_mail(
+                    temat,
+                    tresc,
+                    settings.EMAIL_HOST_USER,  # Od kogo (Twój e-mail o2)
+                    ['kubaszklarz2003@o2.pl'],  # Do kogo (Też Twój e-mail)
+                    fail_silently=False,
+                )
+                messages.success(request, 'Dziękujemy! Wiadomość została wysłana.')
+            except Exception as e:
+                # Jeśli mail nie pójdzie, i tak mamy go w bazie, ale wypiszemy błąd w konsoli
+                print(f"Błąd wysyłki: {e}")
+                messages.warning(request, 'Wiadomość zapisana, ale wystąpił problem z powiadomieniem e-mail.')
+
+            return redirect('contact')
+    else:
+        form = ContactForm()
+
+    return render(request, 'contact.html', {'form': form})
