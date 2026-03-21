@@ -116,7 +116,7 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [
-    BASE_DIR / "static",
+    BASE_DIR / "strona" / "static",
 ]
 # Konfiguracja systemów logowania.
 # Pozwala na sprawdzanie użytkownika zarówno po nicku (admin), jak i po mailu (klient).
