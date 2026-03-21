@@ -10,10 +10,9 @@
 
 <body>
     <nav class="navbar">
-        <a href="{% url 'home' %}" class="logo">
-            <div class="logo-main">Żyd🚗Rent</div>
+        <a href="{% url 'home' %}" class="logo-image">
+            <img src="{% static 'images/logo.png' %}" alt="Logo MV-RENT">
         </a>
-
         <div class="nav-links">
             <a href="{% url 'home' %}">Strona Główna</a>
             <a href="{% url 'car_list' %}">Flota</a>
