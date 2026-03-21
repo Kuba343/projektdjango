@@ -77,7 +77,7 @@ class InspectionItem(models.Model):
         return self.name
 #Rodzaje dodatkow typu akcesoria, ubezpieczenie
 class AddonType(models.Model):
-    name=models.Chgit arField(max_length=50)
+    name=models.CarField(max_length=50)
     def __str__(self):
         return self.name
 # TABELE GŁÓWNE:
