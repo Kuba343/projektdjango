@@ -7,6 +7,7 @@ from django.contrib import messages
 from .forms import RegistrationForm, LoginForm
 from .models import Car, Addon
 from django.contrib.auth import authenticate, login as auth_login
+from django.contrib.auth import logout as django_logout
 
 def home(request):
     return render(request, "home.html")
@@ -56,6 +57,10 @@ def login(request):
 
     return render(request, 'login.html', {'form': form})
 
+def logout_view(request):
+    django_logout(request) # To wylogowuje użytkownika
+    return redirect('home')
+
 def contact_view(request):
     # Na razie tylko wyświetlamy pustą stronę, żeby błąd zniknął
     return render(request, 'contact.html')
@@ -63,3 +68,11 @@ def contact_view(request):
 def about_view(request):
     # Na razie tylko wyświetlamy pustą stronę, żeby błąd zniknął
     return render(request, 'about.html')
+
+def mail_view(request):
+    # Na razie tylko wyświetlamy pustą stronę, żeby błąd zniknął
+    return render(request, 'mail.html')
+
+def calculator_view(request):
+    # Na razie tylko wyświetlamy pustą stronę, żeby błąd zniknął
+    return render(request, 'calculator.html')
