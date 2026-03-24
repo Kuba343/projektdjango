@@ -210,4 +210,3 @@ def calculate_view(request, car_id):
         "price": price
     })
 
-
