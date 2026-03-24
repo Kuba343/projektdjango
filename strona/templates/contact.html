@@ -7,37 +7,20 @@
 <div class="contact-page">
     <div class="contact-hero">
         <h1>Skontaktuj się z nami</h1>
-        <p>Jesteśmy dostępni w 4 lokalizacjach. Wybierz najbliższy oddział!</p>
+        <p>Jesteśmy dostępni w naszych oddziałach. Wybierz najbliższy!</p>
     </div>
 
     <div class="branches-container">
-        <div class="branch-card">
-            <div class="branch-icon">📍</div>
-            <h3>Białystok</h3>
-            <p>ul. Lipowa 12, 15-001 Białystok</p>
-            <p><strong>Tel:</strong> +48 123 456 781</p>
-        </div>
-
-        <div class="branch-card">
-            <div class="branch-icon">📍</div>
-            <h3>Warszawa</h3>
-            <p>al. Jerozolimskie 45, 00-001 Warszawa</p>
-            <p><strong>Tel:</strong> +48 123 456 782</p>
-        </div>
-
-        <div class="branch-card">
-            <div class="branch-icon">📍</div>
-            <h3>Choroszcz</h3>
-            <p>ul. Rynek 5, 16-070 Choroszcz</p>
-            <p><strong>Tel:</strong> +48 123 456 783</p>
-        </div>
-
-        <div class="branch-card">
-            <div class="branch-icon">📍</div>
-            <h3>Mońki</h3>
-            <p>ul. Białostocka 10, 19-100 Mońki</p>
-            <p><strong>Tel:</strong> +48 123 456 784</p>
-        </div>
+        {% for branch in oddzialy %}
+            <div class="branch-card">
+                <div class="branch-icon">📍</div>
+                <h3>{{ branch.city.name }}</h3> <p>ul. {{ branch.street }}</p>
+                <p>{{ branch.postal_code }} {{ branch.city.name }}</p>
+                <p><strong>Tel:</strong> {{ branch.phone }}</p>
+            </div>
+        {% empty %}
+            <p style="text-align: center; width: 100%;">Aktualnie brak zarejestrowanych oddziałów w bazie.</p>
+        {% endfor %}
     </div>
 
     <div class="quick-contact">
@@ -45,16 +28,30 @@
 
         {% if messages %}
             {% for message in messages %}
-                <p style="color: green; text-align: center; font-weight: bold;">{{ message }}</p>
+                <p style="color: {% if message.tags == 'success' %}green{% else %}orange{% endif %};
+                          text-align: center; font-weight: bold;">
+                    {{ message }}
+                </p>
             {% endfor %}
         {% endif %}
 
         <form method="post" class="contact-form">
             {% csrf_token %}
 
-            {{ form.name }}
-            {{ form.email }}
-            {{ form.body }}
+            <div class="form-group">
+                {{ form.name.label_tag }}
+                {{ form.name }}
+            </div>
+
+            <div class="form-group">
+                {{ form.email.label_tag }}
+                {{ form.email }}
+            </div>
+
+            <div class="form-group">
+                {{ form.body.label_tag }}
+                {{ form.body }}
+            </div>
 
             <button type="submit" class="btn-send">Wyślij wiadomość</button>
         </form>
