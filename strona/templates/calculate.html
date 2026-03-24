@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+
+<h2>{{ car.model }}</h2>
+
+<form method="POST">
+    {% csrf_token %}
+    <input type="date" name="start_date" required>
+    <input type="date" name="end_date" required>
+
+    <h3>Dodatki:</h3>
+    {% for addon in addons %}
+        <input type="checkbox" name="addons" value="{{ addon.id }}">
+        {{ addon.name }} ({{ addon.daily_price }} zł/dzień)<br>
+    {% endfor %}
+
+    <button type="submit">Oblicz</button>
+</form>
+
+{% if price %}
+    <h2>Cena: {{ price }} zł</h2>
+{% endif %}
