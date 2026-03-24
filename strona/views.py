@@ -147,27 +147,25 @@ def get_available_cars(start, end):
     )
 
 def search_cars(request):
-    print("REQUEST METHOD:", request.method)
-    print("POST DATA:", request.POST)
     cars = Car.objects.none()
+    start_date = None
+    end_date = None
 
     if request.method == "POST":
-        start = request.POST.get("start_date")
-        end = request.POST.get("end_date")
+        start_date = request.POST.get("start_date")
+        end_date = request.POST.get("end_date")
 
-        print("START RAW:", start)
-        print("END RAW:", end)
-
-        if start and end:
-            start = datetime.strptime(start, "%Y-%m-%d").date()
-            end = datetime.strptime(end, "%Y-%m-%d").date()
+        if start_date and end_date:
+            start = datetime.strptime(start_date, "%Y-%m-%d").date()
+            end = datetime.strptime(end_date, "%Y-%m-%d").date()
 
             cars = get_available_cars(start, end)
 
-            print("CARS COUNT:", cars.count())
-            print("SQL:", cars.query)
-
-    return render(request, "calculator.html", {"cars": cars})
+    return render(request, "calculator.html", {
+        "cars": cars,
+        "start_date": start_date,
+        "end_date": end_date
+    })
 
 
 
@@ -189,24 +187,38 @@ def calculate_rental_price(car, start, end, addons=None):
 
 def calculate_view(request, car_id):
     car = Car.objects.get(id=car_id)
-    addons = []   # ← naprawia błąd przy GET
+
+    # Pobieramy daty z GET
+    start = request.GET.get("start")
+    end = request.GET.get("end")
+
+    # Jeśli GET jest pusty → STOP
+    if not start or not end:
+        return HttpResponse("Brak dat w zapytaniu. Wróć do wyszukiwarki aut.")
+
+    # Zamieniamy GET na date
+    start = datetime.strptime(start, "%Y-%m-%d").date()
+    end = datetime.strptime(end, "%Y-%m-%d").date()
+
+    addons = []
     price = None
 
+    # Obsługa POST
     if request.method == "POST":
-        start = request.POST.get("start_date")
-        end = request.POST.get("end_date")
-
-        start = datetime.strptime(start, "%Y-%m-%d").date()
-        end = datetime.strptime(end, "%Y-%m-%d").date()
-
         addons_ids = request.POST.getlist("addons")
-        addons = Addon.objects.filter(id__in=addons_ids)  # ← poprawne
+        addons = Addon.objects.filter(id__in=addons_ids)
 
         price = calculate_rental_price(car, start, end, addons)
 
     return render(request, "calculate.html", {
         "car": car,
         "addons": addons,
-        "price": price
+        "price": price,
+        "start": start,
+        "end": end
     })
+
+
+
+
 
