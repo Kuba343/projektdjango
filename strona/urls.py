@@ -4,6 +4,8 @@ from django.conf.urls.static import static
 from . import views
 from .models import Car
 from .views import calculator_view
+from django.urls import path
+from . import views
 
 urlpatterns = [
     path('', views.home, name="home"),
@@ -17,6 +19,10 @@ urlpatterns = [
 
     #Przekierowanie do szczegółów auta po kliknięciu kafelka
     path("cars/<int:car_id>/", views.car_detail, name="car_detail"),
+
+    #urle do podstrony calculator
+    path("search/", views.search_cars, name="search_cars"),
+    path("calculate/<int:car_id>/", views.calculate_view, name="calculate"),
 ]
 #potrzebne do wstawianie zdjęc z bazy
 if settings.DEBUG:
