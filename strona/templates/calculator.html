@@ -12,7 +12,8 @@
     <h2>Dostępne auta:</h2>
         {% for car in cars %}
             <p>
-                <a href="{% url 'calculate' car.id %}">{{ car }}</a>
+                <a href="{% url 'calculate' car.id %}?start={{ start_date }}&end={{ end_date }}">
+                    {{ car }}</a>
             </p>
         {% empty %}
             <p>Brak aut</p>
