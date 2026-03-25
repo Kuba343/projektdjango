@@ -3,19 +3,8 @@
 
 {% block content %}
     <div class="hero">
-        <div>
-            <h1>Wynajmij samochód</h1>
-            <p>Mały wybór za to wysokie ceny</p>
-        </div>
-    </div>
-
-    <div class="search-box">
-        <form action="{% url 'car_list' %}">
-            <input type="text" placeholder="Miasto odbioru">
-            <input type="date">
-            <input type="date">
-            <button type="submit">Szukaj</button>
-        </form>
+        <h1>Wynajmij samochód</h1>
+        <p>Mały wybór za to wysokie ceny</p>
     </div>
 
     <div class="features">
@@ -30,6 +19,42 @@
         <div class="feature">
             <h3>dodatkowe opłaty</h3>
             <p>taktyka aby zarobić i się nie narobić</p>
+        </div>
+    </div>
+
+    <div class="flota-container">
+        <h2 class="flota-title">Nasza Flota</h2>
+        <div class="car-grid">
+            {% for car in cars %}
+            <div class="car-card">
+                <div class="car-img-wrapper">
+                    {% if car.image %}
+                        <img src="{{ car.image.url }}" alt="{{ car.model }}">
+                    {% else %}
+                        <div class="car-placeholder">Brak zdjęcia</div>
+                    {% endif %}
+                </div>
+
+                <div class="car-details">
+                    <span class="status-badge {% if car.is_available %}available{% else %}unavailable{% endif %}">
+                        {% if car.is_available %}Dostępny{% else %}Wypożyczony{% endif %}
+                    </span>
+                    <h2>{{ car.model.brand.name }} {{ car.model.name }}</h2>
+
+                    <div class="car-specs">
+                        <span>🐎 {{ car.horsepower }} KM</span>
+                        <span>⛽ {{ car.fuel_type.name }}</span>
+                        <span>📍 {{ car.current_branch.street.city.name }}</span>
+                    </div>
+
+                    <div class="price-tag">
+                        {{ car.price_per_day }} zł <small>/ doba</small>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+                <p class="empty-msg">Obecnie nie mamy żadnych gratów na stanie.</p>
+            {% endfor %}
         </div>
     </div>
 {% endblock %}

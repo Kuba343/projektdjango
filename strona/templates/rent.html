@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="rent-hero">
+    <h1>Znajdź auto dla siebie</h1>
+    <p>Wybierz termin i miasto, a my pokażemy co jeszcze mamy dostępne.</p>
+</div>
+
+<div class="search-box">
+    <form action="{% url 'rent' %}" method="GET">
+        <input type="text" name="city" placeholder="Miasto odbioru" value="{{ city|default:'' }}">
+        <input type="date" name="start_date" value="{{ start_date|default:'' }}">
+        <input type="date" name="end_date" value="{{ end_date|default:'' }}">
+        <button type="submit">Szukaj</button>
+    </form>
+    <script>
+    // Pobieramy dzisiejszą datę w formacie RRRR-MM-DD
+    const today = new Date().toISOString().split('T')[0];
+
+    // Ustawiamy atrybut 'min' dla obu pól daty
+    const startDateInput = document.querySelector('input[name="start_date"]');
+    const endDateInput = document.querySelector('input[name="end_date"]');
+
+    startDateInput.setAttribute('min', today);
+    endDateInput.setAttribute('min', today);
+
+    // Dodatkowo: data końcowa nie może być wcześniej niż początkowa
+    startDateInput.addEventListener('change', function() {
+        endDateInput.setAttribute('min', startDateInput.value);
+    });
+</script>
+</div>
+
+<div class="flota-container">
+    <h2 class="flota-title">Dostępne auta</h2>
+    <div class="car-grid">
+        {% for car in cars %}
+        <div class="car-card">
+            <div class="car-img-wrapper">
+                {% if car.image %}
+                    <img src="{{ car.image.url }}" alt="{{ car.model }}">
+                {% else %}
+                    <div class="car-placeholder">Brak zdjęcia</div>
+                {% endif %}
+            </div>
+
+            <div class="car-details">
+                <span class="status-badge available">Dostępny</span>
+                <h2>{{ car.model.brand.name }} {{ car.model.name }}</h2>
+
+                <div class="car-specs">
+                    <span>🐎 {{ car.horsepower }} KM</span>
+                    <span>⛽ {{ car.fuel_type.name }}</span>
+                    <span>📍 {{ car.current_branch.street.city.name }}</span>
+                </div>
+
+                <div class="price-tag">
+                    {{ car.price_per_day }} zł <small>/ doba</small>
+                </div>
+
+                <button class="btn-send" style="width: 100%; margin-top: 15px;">Wypożycz teraz</button>
+            </div>
+        </div>
+        {% empty %}
+            <div class="empty-msg">
+                <h3>Brak dostępnych aut w tym terminie lub mieście.</h3>
+                <p>Spróbuj zmienić daty lub poszukać w innym oddziale.</p>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

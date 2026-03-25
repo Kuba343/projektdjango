@@ -9,7 +9,7 @@ from . import views
 
 urlpatterns = [
     path('', views.home, name="home"),
-    path('cars/', views.car_list, name='car_list'),
+    path('wypozycz/', views.rent_page, name='rent'),
     path('rejestracja/',views.register,name='register'),
     path('login/', views.login, name='login'),
     path('kontakt/', views.contact_view, name='contact'),
@@ -17,8 +17,7 @@ urlpatterns = [
     path('kalkulator/', calculator_view, name='calculator'),
     path('logout/', views.logout_view, name='logout'), # Tu używamy TWOJEJ funkcji wylogowania
 
-    #Przekierowanie do szczegółów auta po kliknięciu kafelka
-    path("cars/<int:car_id>/", views.car_detail, name="car_detail"),
+
 
     #urle do podstrony calculator
     path("search/", views.search_cars, name="search_cars"),

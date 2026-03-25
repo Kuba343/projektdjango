@@ -2,31 +2,34 @@ from django.conf import settings
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
+from django.http import HttpResponse
 from django.shortcuts import render
 from django.shortcuts import render, redirect
 from django.shortcuts import render, get_object_or_404
 from django.contrib import messages
 from .forms import RegistrationForm, LoginForm, ContactForm
-from .models import Car, Addon, Branch
+from .models import Car, Addon, Branch, Rental
 from django.contrib.auth import authenticate, login as auth_login
 from django.contrib.auth import logout as django_logout
 from django.db.models import Q
 from .models import Car, Addon
 from django.shortcuts import render
-from datetime import datetime
+from datetime import datetime, date
+
 
 def home(request):
-    return render(request, "home.html")
+    cars = Car.objects.all() # Pobieramy wszystkie auta
+    return render(request, 'home.html', {'cars': cars})
 #podstrona cars
 def car_list(request):
+    city = request.GET.get('city')
+    start = request.GET.get('start')
+    end = request.GET.get('end')
     cars = Car.objects.all()
-    return render(request, "car_list.html", {"cars": cars})
 
-#podstrona cars/car_detail
-def car_detail(request, car_id):
-    car = get_object_or_404(Car, id=car_id)
-    addons = Addon.objects.all()
-    return render(request, "car_detail.html", {"car": car, "addons": addons})
+    if city:
+        cars=cars.filter(branch__city__icontains=city)
+    return render(request, "rentalrent.html", {"cars": cars, "city": city})
 
 def register(request):
     if request.method == "POST":
@@ -217,8 +220,48 @@ def calculate_view(request, car_id):
         "start": start,
         "end": end
     })
+def rent_page(request):
+    city=request.GET.get("city")
+    start_date = request.GET.get('start_date')
+    end_date = request.GET.get('end_date')
 
+    today = date.today()
+    today_str = str(today)
 
+    cars=Car.objects.all()
 
+    #to filtruje po miescie
+    if city and city != "":
+        cars = cars.filter(current_branch__street__city__name__icontains=city)    #to filtruje po terminie
 
+    #blokada to samo co w skrypcie zeby szukac tylko w przyszlosci
+    if start_date and start_date < today_str:
+        start_date=today_str
+
+    if start_date and end_date and end_date < start_date:
+        end_date = start_date
+
+    #tutaj filtruje po dostepnosci rental
+    if start_date and end_date:
+        try:
+            # Szukamy rezerwacji nakładających się na termin
+            occupied_cars_ids = Rental.objects.filter(
+                Q(pickup_date__range=[start_date, end_date]) |
+                Q(return_date__range=[start_date, end_date]) |
+                Q(pickup_date__lte=start_date, return_date__gte=end_date)
+            ).values_list('car_id', flat=True)
+
+        # Wykluczamy te auta z listy dostępnych
+            cars = cars.exclude(id__in=occupied_cars_ids)
+        except ValueError:
+            # kolejna zapora przed blednymi datami
+            pass
+    context = {
+        "cars": cars,
+        "city": city,
+        "start_date": start_date,
+        "end_date": end_date,
+        "today": today_str
+    }
+    return render(request, "rent.html", context)
 
