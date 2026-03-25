@@ -215,7 +215,7 @@
         "user": 5,
         "content_type": 14,
         "object_id": "1",
-        "object_repr": "15-001 Bia│ystok",
+        "object_repr": "15-001 Białystok",
         "action_flag": 1,
         "change_message": "[{\"added\": {}}]"
     }
@@ -228,7 +228,7 @@
         "user": 5,
         "content_type": 14,
         "object_id": "2",
-        "object_repr": "19-100 Mo˝ki",
+        "object_repr": "19-100 Mońki",
         "action_flag": 1,
         "change_message": "[{\"added\": {}}]"
     }
@@ -436,7 +436,7 @@
         "user": 5,
         "content_type": 27,
         "object_id": "2",
-        "object_repr": "Bia│ostocka",
+        "object_repr": "Białostocka",
         "action_flag": 1,
         "change_message": "[{\"added\": {}}]"
     }
@@ -527,7 +527,7 @@
         "user": 5,
         "content_type": 9,
         "object_id": "2",
-        "object_repr": "Bia│ostocka 51 859909911",
+        "object_repr": "Białostocka 51 859909911",
         "action_flag": 1,
         "change_message": "[{\"added\": {}}]"
     }
@@ -2126,7 +2126,7 @@
     "model": "strona.city",
     "pk": 1,
     "fields": {
-        "name": "Bia│ystok",
+        "name": "Białystok",
         "zip_code": "15-001"
     }
 },
@@ -2134,7 +2134,7 @@
     "model": "strona.city",
     "pk": 2,
     "fields": {
-        "name": "Mo˝ki",
+        "name": "Mońki",
         "zip_code": "19-100"
     }
 },
@@ -2171,7 +2171,7 @@
     "model": "strona.role",
     "pk": 4,
     "fields": {
-        "name": "Konsultant Biura Obs│ugi"
+        "name": "Konsultant Biura Obsługi"
     }
 },
 {
@@ -2192,28 +2192,28 @@
     "model": "strona.inspectionitem",
     "pk": 2,
     "fields": {
-        "name": "Ciťnienie w oponach"
+        "name": "Ciśnienie w oponach"
     }
 },
 {
     "model": "strona.inspectionitem",
     "pk": 3,
     "fields": {
-        "name": "Stan klockˇw hamulcowych"
+        "name": "Stan klocków hamulcowych"
     }
 },
 {
     "model": "strona.inspectionitem",
     "pk": 4,
     "fields": {
-        "name": "Oťwietlenie"
+        "name": "Oświetlenie"
     }
 },
 {
     "model": "strona.inspectionitem",
     "pk": 5,
     "fields": {
-        "name": "CzystoťŠ wnŕtrza"
+        "name": "Czystotość wnętrza"
     }
 },
 {
@@ -2282,7 +2282,7 @@
     "pk": 2,
     "fields": {
         "city": 2,
-        "name": "Bia│ostocka"
+        "name": "Białostocka"
     }
 },
 {
@@ -2290,7 +2290,7 @@
     "pk": 3,
     "fields": {
         "city": 3,
-        "name": "»wirki i Wigury"
+        "name": "Żwirki i Wigury"
     }
 },
 {
