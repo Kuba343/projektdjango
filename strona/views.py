@@ -8,7 +8,7 @@ from django.shortcuts import render, redirect
 from django.shortcuts import render, get_object_or_404
 from django.contrib import messages
 from .forms import RegistrationForm, LoginForm, ContactForm
-from .models import Car, Addon, Branch, Rental
+from .models import Car, Addon, Branch, Rental, City
 from django.contrib.auth import authenticate, login as auth_login
 from django.contrib.auth import logout as django_logout
 from django.db.models import Q
@@ -18,8 +18,9 @@ from datetime import datetime, date
 
 
 def home(request):
-    cars = Car.objects.all() # Pobieramy wszystkie auta
-    return render(request, 'home.html', {'cars': cars})
+    cars = Car.objects.all()[:6] # Pokazujemy np. tylko 6 aut na start
+    cities = City.objects.all()
+    return render(request, 'home.html', {'cars': cars, 'cities': cities})
 #podstrona cars
 def car_list(request):
     city = request.GET.get('city')

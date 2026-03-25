@@ -3,27 +3,38 @@
 
 {% block content %}
     <div class="hero">
-        <h1>Wynajmij samochód</h1>
-        <p>Mały wybór za to wysokie ceny</p>
+        <h1>Znajdź idealny samochód na każdą podróż</h1>
+        <p>Szeroki wybór nowoczesnych pojazdów w najlepszych cenach na rynku</p>
     </div>
 
     <div class="features">
         <div class="feature">
-            <h3>Mały wybór</h3>
-            <p>Od rozbitków po stare auta</p>
+            <h3>Bogata flota</h3>
+            <p>Od miejskich aut po luksusowe SUV-y</p>
         </div>
         <div class="feature">
-            <h3>Wysokie ceny</h3>
-            <p>regularnie nowe złomy</p>
+            <h3>Atrakcyjne ceny</h3>
+            <p>Przejrzyste warunki bez ukrytych kosztów</p>
         </div>
         <div class="feature">
-            <h3>dodatkowe opłaty</h3>
-            <p>taktyka aby zarobić i się nie narobić</p>
+            <h3>Minimum formalności</h3>
+            <p>Szybki proces rezerwacji online w kilka minut</p>
         </div>
     </div>
-
+    <div class="cities-section">
+    <h2 class="section-title">Znajdziesz nas w:</h2>
+    <div class="city-badges">
+        {% for city in cities %}
+            <a href="{% url 'rent' %}?city={{ city.name }}" class="city-badge">
+                📍 {{ city.name }}
+            </a>
+        {% empty %}
+            <span>Wkrótce nowe lokalizacje!</span>
+        {% endfor %}
+    </div>
+</div>
     <div class="flota-container">
-        <h2 class="flota-title">Nasza Flota</h2>
+        <h2 class="flota-title">Dostępne samochody</h2>
         <div class="car-grid">
             {% for car in cars %}
             <div class="car-card">
@@ -53,7 +64,7 @@
                 </div>
             </div>
             {% empty %}
-                <p class="empty-msg">Obecnie nie mamy żadnych gratów na stanie.</p>
+                <p class="empty-msg">Aktualnie przygotowujemy nowe pojazdy do wynajmu. Zapraszamy wkrótce.</p>
             {% endfor %}
         </div>
     </div>
