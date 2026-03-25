@@ -1,18 +1,19 @@
-# Używamy oficjalnego obrazu Pythona
 FROM python:3.11-slim
 
 # Ustawiamy katalog roboczy
 WORKDIR /app
 
-# Instalujemy zależności
+# Kopiujemy listę bibliotek
 COPY requirements.txt .
+
+# Instalujemy biblioteki
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Kopiujemy resztę projektu
+# Kopiujemy resztę plików projektu
 COPY . .
 
-# Otwieramy port dla Django
+# Port dla Django
 EXPOSE 8000
 
-# Komenda startowa
+# Start serwera
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]

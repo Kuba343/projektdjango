@@ -9,7 +9,8 @@ https://docs.djangoproject.com/en/6.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
-
+import dj_database_url
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -74,10 +75,9 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db_data' / 'db.sqlite3',
-    }
+    'default': dj_database_url.config(
+        default=os.environ.get('DATABASE_URL')
+    )
 }
 
 
@@ -141,3 +141,5 @@ EMAIL_HOST_USER = 'wypozyczalniastrona@gmail.com'
 EMAIL_HOST_PASSWORD = 'lppw chje tucc zcps'
 
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

@@ -7,7 +7,7 @@ __pycache__/
 *.pyc
 
 # Baza danych (opcjonalnie)
-db.sqlite3
+db_data/db.sqlite3
 
 # Pliki logów
 *.log

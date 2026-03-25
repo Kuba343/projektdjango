@@ -1,0 +1,26 @@
+services:
+  db:
+    image: postgres:15
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=rentals_db
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=pass
+
+  web:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgres://user:pass@db:5432/rentals_db
+    depends_on:
+      - db
+
+volumes:
+  postgres_data:
