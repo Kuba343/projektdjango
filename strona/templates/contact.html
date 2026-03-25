@@ -14,12 +14,17 @@
         {% for branch in oddzialy %}
             <div class="branch-card">
                 <div class="branch-icon">📍</div>
-                <h3>{{ branch.city.name }}</h3> <p>ul. {{ branch.street }}</p>
-                <p>{{ branch.postal_code }} {{ branch.city.name }}</p>
-                <p><strong>Tel:</strong> {{ branch.phone }}</p>
+
+                <h3>{{ branch.street.city.name }}</h3>
+
+                <p>ul. {{ branch.street.name }} {{ branch.building_number }}</p>
+
+                <p>{{ branch.street.city.postal_code }} {{ branch.street.city.name }}</p>
+
+                <p><strong>Tel:</strong> {{ branch.phone_number }}</p>
             </div>
         {% empty %}
-            <p style="text-align: center; width: 100%;">Aktualnie brak zarejestrowanych oddziałów w bazie.</p>
+            <p style="text-align: center; width: 100%;">Aktualnie brak zarejestrowanych oddziałów.</p>
         {% endfor %}
     </div>
 

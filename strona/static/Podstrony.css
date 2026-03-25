@@ -1,4 +1,119 @@
 /* =========================================
+   RESPONSYWNOŚĆ (MEDIA QUERIES)
+   ========================================= */
+
+/* 1. TABLETY I MAŁE LAPTOPY (do 1024px) */
+@media (max-width: 1024px) {
+    .navbar {
+        padding: 10px 20px;
+    }
+
+    .nav-links {
+        gap: 10px;
+    }
+
+    .search-box {
+        width: 90%;
+        flex-direction: column; /* Wyszukiwarka w pionie */
+    }
+}
+
+/* 2. TELEFONY (do 768px) */
+@media (max-width: 768px) {
+    /* Navbar - ukrywamy linki lub pozwalamy im się zawijać */
+    .navbar {
+        height: auto;
+        flex-wrap: wrap;
+        padding: 10px;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .logo-image img {
+        height: 100px; /* Mniejsze logo na telefonie */
+        width: auto;
+    }
+
+    .nav-links {
+        width: 100%;
+        justify-content: center;
+        order: 3; /* Linki pod logo i userem */
+        font-size: 14px;
+        flex-wrap: wrap;
+    }
+
+    /* Hero */
+    .hero h1 {
+        font-size: 28px; /* Mniejszy napis główny */
+    }
+
+    .hero p, .rent-hero p {
+        font-size: 16px;
+        padding: 0 20px;
+    }
+
+    /* Features (Kafelki na stronie głównej) */
+    .features {
+        flex-direction: column;
+        align-items: center;
+        padding: 20px;
+    }
+
+    .feature {
+        width: 90%;
+    }
+
+    /* Oddziały (Branches) - już masz, ale upewnij się, że działa */
+    .branches-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .branch-card {
+        width: 100%;
+        max-width: none;
+    }
+
+    /* Formularz kontaktowy */
+    .quick-contact {
+        padding: 20px;
+        margin: 20px;
+    }
+
+    /* Flota (Grid aut) */
+    .car-grid {
+        grid-template-columns: 1fr; /* Tylko jedno auto w rzędzie */
+        padding: 0 10px;
+    }
+
+    /* Footer */
+    .footer-content {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .footer-section {
+        min-width: 100%;
+    }
+}
+
+/* 3. BARDZO MAŁE EKRANY (do 480px) */
+@media (max-width: 480px) {
+    .hero h1 {
+        font-size: 24px;
+    }
+
+    .price-tag {
+        font-size: 20px;
+    }
+
+    .dropbtn {
+        padding: 5px 10px;
+        font-size: 13px;
+    }
+}
+
+/* =========================================
    GŁÓWNE STYLE
    ========================================= */
 body { margin: 0; font-family: Arial, sans-serif; background: white; color: black; }
@@ -192,31 +307,40 @@ a { color: inherit; text-decoration: none; }
 
 .branches-container {
     display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 30px;
-    padding: 50px 20px;
-    max-width: 800px;
-    margin: 0 auto;
+    justify-content: center; /* Centruje karty, jeśli byłoby ich mniej niż 3 */
+    gap: 20px;               /* Odstęp między kartami */
+    padding: 40px 20px;
+    flex-wrap: nowrap;       /* Zmusza do trzymania się w jednej linii */
+    max-width: 1200px;       /* Szerokość całego paska */
+    margin: 0 auto;          /* Centruje pasek na stronie */
 }
 
+/* Pojedyncza karta */
 .branch-card {
-    background: white;
-    border-radius: 12px;
+    flex: 1;                 /* Każda karta zajmuje tyle samo miejsca */
+    min-width: 280px;        /* Minimalna szerokość, żeby nie były za wąskie */
+    max-width: 350px;        /* Maksymalna szerokość, żeby nie były za szerokie */
+    background: #fff;
     padding: 30px;
-    width: 350px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    border-top: 5px solid red; /* Ten czerwony pasek z góry */
     text-align: center;
-    transition: 0.3s;
-    border-top: 4px solid red;
-    box-sizing: border-box;
+    transition: transform 0.3s ease;
 }
 
 .branch-card:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 8px 25px rgba(255,0,0,0.15);
+    transform: translateY(-10px); /* Delikatny efekt po najechaniu */
 }
-
+/* Responsywność - na telefonach jedna pod drugą */
+@media (max-width: 900px) {
+    .branches-container {
+        flex-wrap: wrap;
+    }
+    .branch-card {
+        flex: 1 1 100%; /* Na małych ekranach bierze całą szerokość */
+    }
+}
 .branch-icon {
     font-size: 40px;
     margin-bottom: 15px;

@@ -21,16 +21,8 @@ def home(request):
     cars = Car.objects.all()[:6] # Pokazujemy np. tylko 6 aut na start
     cities = City.objects.all()
     return render(request, 'home.html', {'cars': cars, 'cities': cities})
-#podstrona cars
-def car_list(request):
-    city = request.GET.get('city')
-    start = request.GET.get('start')
-    end = request.GET.get('end')
-    cars = Car.objects.all()
 
-    if city:
-        cars=cars.filter(branch__city__icontains=city)
-    return render(request, "rentalrent.html", {"cars": cars, "city": city})
+
 
 def register(request):
     if request.method == "POST":
@@ -70,10 +62,6 @@ def login(request):
 def logout_view(request):
     django_logout(request) # To wylogowuje użytkownika
     return redirect('home')
-
-def contact_view(request):
-    # Na razie tylko wyświetlamy pustą stronę, żeby błąd zniknął
-    return render(request, 'contact.html')
 
 def about_view(request):
     # Na razie tylko wyświetlamy pustą stronę, żeby błąd zniknął
@@ -140,8 +128,7 @@ Wiadomość zapisana w bazie o ID: {contact.id}
     else:
         form = ContactForm()
 
-    return render(request, 'contact.html', {'form': form})
-
+    return render(request, 'contact.html', {'form': form, 'oddzialy': oddzialy})
 
 #Podstrona calculator
 def get_available_cars(start, end):
