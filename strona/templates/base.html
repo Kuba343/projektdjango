@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{% static 'Podstrony.css' %}?v=1.1">
+    <link rel="stylesheet" href="{% static 'Podstrony.css' %}?v=1.2">
     <title>{% block title %}MV-RENT{% endblock %}</title>
 </head>
 
@@ -13,7 +13,14 @@
         <a href="{% url 'home' %}" class="logo-image">
             <img src="{% static 'images/MVVV.png' %}" alt="Logo MV-RENT">
         </a>
-        <div class="nav-links">
+
+        <button class="hamburger" id="hamburger" type="button" aria-label="Otwórz menu">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+        </button>
+
+        <div class="nav-links" id="nav-links">
             <a href="{% url 'home' %}">Strona Główna</a>
             <a href="{% url 'rent' %}">Wypożycz</a>
             <a href="{% url 'about' %}">O nas</a>
@@ -45,11 +52,12 @@
         {% block content %}
         {% endblock %}
     </main>
+
     <footer class="main-footer">
         <div class="footer-content">
             <div class="footer-section about">
                 <h3>MV-RENT</h3>
-                <p>Twój zaufany partner w podróży. Oferujemy nowoczesną flotę pojazdów dostosowaną do Twoich potrzeb.</p>
+                <p>Twój zaufany partner w podróży. Oferujemy nowoczesną flotę pojazdów.</p>
             </div>
             <div class="footer-section links">
                 <h4>Szybkie linki</h4>
@@ -66,8 +74,28 @@
             </div>
         </div>
         <div class="footer-bottom">
-            <p>&copy; 2026 MV-RENT Wypożyczalnia Samochodów. Wszelkie prawa zastrzeżone.</p>
+            <p>&copy; 2026 MV-RENT. Wszelkie prawa zastrzeżone.</p>
         </div>
     </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const hamburger = document.getElementById('hamburger');
+            const navLinks = document.getElementById('nav-links');
+
+            // Sprawdzamy w konsoli czy elementy istnieją
+            if (hamburger && navLinks) {
+                hamburger.addEventListener('click', function() {
+                    // Toggle dodaje klasę 'active' jeśli jej nie ma,
+                    // i usuwa ją, jeśli już jest.
+                    navLinks.classList.toggle('active');
+                    hamburger.classList.toggle('is-active');
+                    console.log("Kliknięto! Klasa active: " + navLinks.classList.contains('active'));
+                });
+            } else {
+                console.error("Nie znaleziono elementu hamburger lub nav-links!");
+            }
+        });
+    </script>
 </body>
 </html>
