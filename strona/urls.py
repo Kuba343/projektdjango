@@ -16,12 +16,7 @@ urlpatterns = [
     path('o-nas/', views.about_view, name='about'),
     path('kalkulator/', calculator_view, name='calculator'),
     path('logout/', views.logout_view, name='logout'),
-
-
-
-    #urle do podstrony calculator
-    path("search/", views.search_cars, name="search_cars"),
-    path("calculate/<int:car_id>/", views.calculate_view, name="calculate"),
+    path('faq/', views.faq, name='faq'),
 ]
 #potrzebne do wstawianie zdjęc z bazy
 if settings.DEBUG:

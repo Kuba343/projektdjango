@@ -130,84 +130,7 @@ Wiadomość zapisana w bazie o ID: {contact.id}
 
     return render(request, 'contact.html', {'form': form, 'oddzialy': oddzialy})
 
-#Podstrona calculator
-def get_available_cars(start, end):
-    return Car.objects.exclude(
-        rental__pickup_date__lt=end,
-        rental__return_date__gt=start
-    )
 
-def search_cars(request):
-    cars = Car.objects.none()
-    start_date = None
-    end_date = None
-
-    if request.method == "POST":
-        start_date = request.POST.get("start_date")
-        end_date = request.POST.get("end_date")
-
-        if start_date and end_date:
-            start = datetime.strptime(start_date, "%Y-%m-%d").date()
-            end = datetime.strptime(end_date, "%Y-%m-%d").date()
-
-            cars = get_available_cars(start, end)
-
-    return render(request, "calculator.html", {
-        "cars": cars,
-        "start_date": start_date,
-        "end_date": end_date
-    })
-
-
-
-def calculate_rental_price(car, start, end, addons=None):
-    days = (end - start).days
-
-    if days <= 0:
-        days = 1
-
-    base_price = car.price_per_day * days
-
-    addons_cost = 0
-    if addons:
-        for addon in addons:
-            addons_cost += addon.daily_price * days
-
-    return base_price + addons_cost
-
-
-def calculate_view(request, car_id):
-    car = Car.objects.get(id=car_id)
-
-    # Pobieramy daty z GET
-    start = request.GET.get("start")
-    end = request.GET.get("end")
-
-    # Jeśli GET jest pusty → STOP
-    if not start or not end:
-        return HttpResponse("Brak dat w zapytaniu. Wróć do wyszukiwarki aut.")
-
-    # Zamieniamy GET na date
-    start = datetime.strptime(start, "%Y-%m-%d").date()
-    end = datetime.strptime(end, "%Y-%m-%d").date()
-
-    addons = []
-    price = None
-
-    # Obsługa POST
-    if request.method == "POST":
-        addons_ids = request.POST.getlist("addons")
-        addons = Addon.objects.filter(id__in=addons_ids)
-
-        price = calculate_rental_price(car, start, end, addons)
-
-    return render(request, "calculate.html", {
-        "car": car,
-        "addons": addons,
-        "price": price,
-        "start": start,
-        "end": end
-    })
 def rent_page(request):
     city=request.GET.get("city")
     start_date = request.GET.get('start_date')
@@ -252,4 +175,141 @@ def rent_page(request):
         "today": today_str
     }
     return render(request, "rent.html", context)
+
+
+#FAQ
+def faq(request):
+    faq_wynajem = [
+        ("Czy samochód może prowadzić inna osoba niż ta z umowy?",
+         "Tak, ale tylko pod warunkiem, że dodatkowy kierowca zostanie dopisany do umowy przed rozpoczęciem wynajmu. "
+         "Każda osoba musi okazać ważne prawo jazdy oraz dokument tożsamości. Dopisanie kierowcy wiąże się z opłatą "
+         "20 zł za dzień. Niedozwolone jest przekazywanie pojazdu osobom nieuprawnionym, ponieważ w przypadku szkody "
+         "ubezpieczenie może nie obowiązywać."),
+
+        ("Czy mogę wynająć samochód bez kaucji?",
+         "Tak, oferujemy opcję wynajmu bez kaucji, jednak wymaga to wykupienia rozszerzonego pakietu ubezpieczenia. "
+         "Opcja ta jest dostępna dla większości klas pojazdów, z wyłączeniem aut premium i sportowych."),
+
+        ("Czy mogę przedłużyć wynajem?",
+         "Tak, przedłużenie wynajmu jest możliwe, o ile pojazd jest dostępny w danym terminie. Wystarczy skontaktować "
+         "się z nami telefonicznie lub mailowo. Opłata za dodatkowe dni naliczana jest zgodnie z obowiązującym cennikiem."),
+
+        ("Czy mogę odebrać auto w innym mieście?",
+         "Tak, oferujemy usługę podstawienia pojazdu do dowolnego miasta w Polsce. Koszt zależy od odległości od "
+         "najbliższego oddziału. Usługa musi zostać zgłoszona minimum 24 godziny wcześniej."),
+
+        ("Czy mogę zwrócić auto poza godzinami pracy?",
+         "Tak, w wielu lokalizacjach dostępne są specjalne skrytki lub parkingi umożliwiające zwrot pojazdu 24/7. "
+         "W takim przypadku kluczyki należy pozostawić w dedykowanej skrzynce, a pojazd zaparkować w wyznaczonym miejscu."),
+
+        ("Czy mogę wyjechać autem za granicę?",
+         "Tak, ale wymaga to wcześniejszego zgłoszenia oraz dopłaty. Nie wszystkie kraje są objęte ubezpieczeniem, "
+         "dlatego przed wyjazdem konieczne jest potwierdzenie dostępności tej opcji."),
+
+        ("Czy mogę wynająć auto na miesiąc?",
+         "Tak, oferujemy atrakcyjne pakiety wynajmu średnioterminowego i długoterminowego. Im dłuższy okres wynajmu, "
+         "tym niższa cena za dobę. Pakiety obejmują serwis, ubezpieczenie i wsparcie techniczne."),
+
+        ("Czy mogę zmienić termin rezerwacji?",
+         "Tak, o ile pojazd jest dostępny w nowym terminie. Zmiana terminu może wiązać się z różnicą w cenie, jeśli "
+         "nowy okres przypada na sezon wysokiego popytu."),
+
+        ("Czy mogę wybrać konkretny model auta?",
+         "Gwarantujemy klasę pojazdu, natomiast konkretny model zależy od dostępności w danym oddziale. Jeśli masz "
+         "preferencje, postaramy się je uwzględnić."),
+
+        ("Czy mogę wynająć auto bez limitu kilometrów?",
+         "Tak, oferujemy pakiety bez limitu kilometrów, idealne na dłuższe podróże. Opcja ta jest dostępna dla większości "
+         "klas pojazdów."),
+
+        ("Czy mogę wynająć auto na firmę?",
+         "Tak, wystawiamy faktury VAT oraz oferujemy specjalne warunki współpracy dla firm, w tym wynajem flotowy."),
+
+        ("Czy mogę otrzymać auto z automatem?",
+         "Tak, posiadamy dużą liczbę pojazdów z automatyczną skrzynią biegów. Warto zaznaczyć tę opcję podczas rezerwacji."),
+
+        ("Czy mogę zwrócić auto w innym oddziale?",
+         "Tak, możliwy jest zwrot w innej lokalizacji za dodatkową opłatą. Koszt zależy od odległości między oddziałami."),
+    ]
+
+    faq_platnosci = [
+        ("Po jakim czasie odblokowywana jest kaucja?",
+         "Kaucja jest zwalniana zazwyczaj w ciągu 24–72 godzin od zwrotu pojazdu. Czas ten zależy od banku, rodzaju "
+         "karty oraz obciążenia systemów płatniczych. W przypadku kart kredytowych blokada znika szybciej, natomiast "
+         "przy kartach debetowych proces może potrwać nieco dłużej. Jeśli kaucja nie wróci po 5 dniach roboczych, "
+         "zalecamy kontakt z bankiem."),
+
+        ("Jakie formy płatności akceptujecie?",
+         "Akceptujemy płatności kartą debetową, kredytową, BLIK, szybkie przelewy oraz gotówkę w wybranych oddziałach. "
+         "W przypadku wynajmu samochodów klasy premium wymagane jest posiadanie karty kredytowej. Wszystkie płatności "
+         "są realizowane w bezpiecznym systemie płatniczym zgodnym z normami PCI DSS."),
+
+        ("Czy mogę zapłacić gotówką?",
+         "Tak, ale w przypadku płatności gotówką nadal wymagane jest zabezpieczenie kaucji kartą. Gotówka nie jest "
+         "akceptowana przy wynajmie aut premium."),
+    ]
+
+    faq_uzytkowanie = [
+        ("Czy samochód musi być zwrócony z pełnym bakiem?",
+         "Tak, pojazd należy zwrócić z takim samym poziomem paliwa, z jakim został wydany. Jeśli auto zostanie zwrócone "
+         "z mniejszą ilością paliwa, naliczona zostanie opłata za brakujące litry według aktualnego cennika oraz "
+         "koszt obsługi. Można również wykupić opcję zwrotu bez tankowania."),
+
+        ("Czy pobieracie opłatę za spóźnienie?",
+         "Tak, w przypadku zwrotu pojazdu po czasie naliczana jest opłata za kolejną rozpoczętą godzinę lub dobę, "
+         "w zależności od regulaminu. Jeśli przewidujesz opóźnienie, skontaktuj się z nami wcześniej."),
+
+        ("Czy auta mają GPS?",
+         "Większość pojazdów posiada wbudowaną nawigację lub obsługę Android Auto i Apple CarPlay. Jeśli potrzebujesz "
+         "dedykowanego urządzenia GPS, poinformuj nas o tym podczas rezerwacji."),
+
+        ("Czy auta mają klimatyzację?",
+         "Tak, wszystkie nasze pojazdy są wyposażone w klimatyzację. W autach wyższej klasy dostępna jest również "
+         "klimatyzacja dwustrefowa lub trzystrefowa."),
+    ]
+
+    faq_ubezpieczenia = [
+        ("Czy samochód jest ubezpieczony?",
+         "Tak, wszystkie nasze pojazdy posiadają pełne ubezpieczenie OC, AC oraz Assistance. W zależności od wybranego "
+         "pakietu może obowiązywać udział własny w szkodzie. Istnieje możliwość wykupienia pakietu redukującego udział "
+         "własny do zera, co zapewnia pełen komfort podczas podróży."),
+
+        ("Czy auta mają pełne ubezpieczenie?",
+         "Tak, ale udział własny w szkodzie zależy od wybranego pakietu. Można wykupić pakiet redukujący udział własny "
+         "do zera, co zapewnia pełną ochronę."),
+
+        ("Czy samochody są regularnie serwisowane?",
+         "Tak, każdy pojazd przechodzi regularne przeglądy techniczne oraz kontrole bezpieczeństwa. Dbamy o to, aby "
+         "nasza flota była w idealnym stanie technicznym i wizualnym."),
+
+        ("Czy auta są dezynfekowane?",
+         "Tak, każdy pojazd jest dokładnie czyszczony i dezynfekowany przed wydaniem. Dbamy o najwyższe standardy "
+         "higieny i bezpieczeństwa."),
+    ]
+
+    faq_wyposazenie = [
+        ("Czy samochody są wyposażone w zimowe opony?",
+         "Tak, w sezonie zimowym wszystkie pojazdy są wyposażone w opony zimowe zgodnie z obowiązującymi przepisami. "
+         "W niektórych regionach dostępne są również łańcuchy śniegowe na życzenie."),
+
+        ("Czy mogę zamówić fotelik dziecięcy?",
+         "Tak, oferujemy foteliki dla dzieci w różnych kategoriach wagowych. Fotelik należy zarezerwować wcześniej, "
+         "aby zagwarantować jego dostępność. Montaż fotelika leży po stronie klienta."),
+
+        ("Czy mogę dodać drugiego kierowcę?",
+         "Tak, koszt dopisania dodatkowego kierowcy wynosi 20 zł za dzień. Każdy kierowca musi spełniać wymagania "
+         "dotyczące wieku i stażu jazdy."),
+    ]
+
+    return render(request, "faq.html", {
+        "faq_wynajem": faq_wynajem,
+        "faq_platnosci": faq_platnosci,
+        "faq_uzytkowanie": faq_uzytkowanie,
+        "faq_ubezpieczenia": faq_ubezpieczenia,
+        "faq_wyposazenie": faq_wyposazenie,
+    })
+
+
+
+
 
