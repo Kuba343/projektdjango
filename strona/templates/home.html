@@ -7,64 +7,50 @@
         <p>Szeroki wybór nowoczesnych pojazdów w najlepszych cenach na rynku</p>
     </div>
 
-    <div class="features">
-        <div class="feature">
-            <h3>Bogata flota</h3>
-            <p>Od miejskich aut po luksusowe SUV-y</p>
-        </div>
-        <div class="feature">
-            <h3>Atrakcyjne ceny</h3>
-            <p>Przejrzyste warunki bez ukrytych kosztów</p>
-        </div>
-        <div class="feature">
-            <h3>Minimum formalności</h3>
-            <p>Szybki proces rezerwacji online w kilka minut</p>
-        </div>
-    </div>
     <div class="cities-section">
-    <h2 class="section-title">Znajdziesz nas w:</h2>
-    <div class="city-badges">
-        {% for city in cities %}
-            <a href="{% url 'rent' %}?city={{ city.name }}" class="city-badge">
-                📍 {{ city.name }}
-            </a>
-        {% empty %}
-            <span>Wkrótce nowe lokalizacje!</span>
-        {% endfor %}
+        <h2 class="section-title">Znajdziesz nas w:</h2>
+        <div class="city-badges">
+            {% for city in cities %}
+                <a href="{% url 'rent' %}?city={{ city.name }}" class="city-badge">
+                    📍 {{ city.name }}
+                </a>
+            {% empty %}
+                <span>Wkrótce nowe lokalizacje!</span>
+            {% endfor %}
+        </div>
     </div>
-</div>
+
     <div class="flota-container">
-        <h2 class="flota-title">Dostępne samochody</h2>
+        <h2 class="flota-title">Dostępne modele</h2>
         <div class="car-grid">
             {% for car in cars %}
             <div class="car-card">
                 <div class="car-img-wrapper">
                     {% if car.image %}
-                        <img src="{{ car.image.url }}" alt="{{ car.model }}">
+                        <img src="{{ car.image.url }}" alt="{{ car.model.brand.name }} {{ car.model.name }}">
                     {% else %}
                         <div class="car-placeholder">Brak zdjęcia</div>
                     {% endif %}
                 </div>
 
-                <div class="car-details">
-                    <span class="status-badge {% if car.is_available %}available{% else %}unavailable{% endif %}">
-                        {% if car.is_available %}Dostępny{% else %}Wypożyczony{% endif %}
-                    </span>
-                    <h2>{{ car.model.brand.name }} {{ car.model.name }}</h2>
+                <div class="car-details" style="text-align: center;">
+                    <h2 style="margin: 0 0 10px 0; font-size: 24px;">{{ car.model.brand.name }} {{ car.model.name }}</h2>
 
-                    <div class="car-specs">
-                        <span>🐎 {{ car.horsepower }} KM</span>
-                        <span>⛽ {{ car.fuel_type.name }}</span>
-                        <span>📍 {{ car.current_branch.street.city.name }}</span>
+                    <div class="price-tag" style="color: red; font-size: 26px; font-weight: bold; margin-bottom: 20px;">
+                        {{ car.price_per_day }} zł <small style="color: #999; font-size: 14px; font-weight: normal;">/ doba</small>
                     </div>
 
-                    <div class="price-tag">
-                        {{ car.price_per_day }} zł <small>/ doba</small>
-                    </div>
+                    <a href="{% url 'rent' %}" style="text-decoration: none;">
+                        <button style="width: 100%; background-color: red; color: white; border: none; padding: 15px; border-radius: 8px; cursor: pointer; font-weight: bold; text-transform: uppercase; font-size: 14px; transition: 0.3s;">
+                            Sprawdź dostępność
+                        </button>
+                    </a>
                 </div>
             </div>
             {% empty %}
-                <p class="empty-msg">Aktualnie przygotowujemy nowe pojazdy do wynajmu. Zapraszamy wkrótce.</p>
+                <p class="empty-msg" style="text-align: center; grid-column: 1 / -1; padding: 50px; color: #888;">
+                    Aktualnie aktualizujemy naszą flotę. Zapraszamy ponownie!
+                </p>
             {% endfor %}
         </div>
     </div>

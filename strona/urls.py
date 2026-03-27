@@ -15,7 +15,7 @@ urlpatterns = [
     path('kontakt/', views.contact_view, name='contact'),
     path('o-nas/', views.about_view, name='about'),
     path('kalkulator/', calculator_view, name='calculator'),
-    path('logout/', views.logout_view, name='logout'), # Tu używamy TWOJEJ funkcji wylogowania
+    path('logout/', views.logout_view, name='logout'),
 
 
 

@@ -4,32 +4,16 @@
 {% block content %}
 <div class="rent-hero">
     <h1>Znajdź auto dla siebie</h1>
-    <p>Wybierz termin i miasto, a my pokażemy co jeszcze mamy dostępne.</p>
+    <p>Wybierz termin i miasto, a wejdź w szczegóły, aby zobaczyć więcej.</p>
 </div>
 
 <div class="search-box">
     <form action="{% url 'rent' %}" method="GET">
         <input type="text" name="city" placeholder="Miasto odbioru" value="{{ city|default:'' }}">
-        <input type="date" name="start_date" value="{{ start_date|default:'' }}">
-        <input type="date" name="end_date" value="{{ end_date|default:'' }}">
+        <input type="date" name="start_date" id="start_date" value="{{ start_date|default:'' }}">
+        <input type="date" name="end_date" id="end_date" value="{{ end_date|default:'' }}">
         <button type="submit">Szukaj</button>
     </form>
-    <script>
-    // Pobieramy dzisiejszą datę w formacie RRRR-MM-DD
-    const today = new Date().toISOString().split('T')[0];
-
-    // Ustawiamy atrybut 'min' dla obu pól daty
-    const startDateInput = document.querySelector('input[name="start_date"]');
-    const endDateInput = document.querySelector('input[name="end_date"]');
-
-    startDateInput.setAttribute('min', today);
-    endDateInput.setAttribute('min', today);
-
-    // Dodatkowo: data końcowa nie może być wcześniej niż początkowa
-    startDateInput.addEventListener('change', function() {
-        endDateInput.setAttribute('min', startDateInput.value);
-    });
-</script>
 </div>
 
 <div class="flota-container">
@@ -39,7 +23,7 @@
         <div class="car-card">
             <div class="car-img-wrapper">
                 {% if car.image %}
-                    <img src="{{ car.image.url }}" alt="{{ car.model }}">
+                    <img src="{{ car.image.url }}" alt="{{ car.model.name }}">
                 {% else %}
                     <div class="car-placeholder">Brak zdjęcia</div>
                 {% endif %}
@@ -50,24 +34,60 @@
                 <h2>{{ car.model.brand.name }} {{ car.model.name }}</h2>
 
                 <div class="car-specs">
-                    <span>🐎 {{ car.horsepower }} KM</span>
-                    <span>⛽ {{ car.fuel_type.name }}</span>
                     <span>📍 {{ car.current_branch.street.city.name }}</span>
+                    <span style="font-weight: bold; color: #2ecc71;">💰 {{ car.price_per_day }} zł <small>/ doba</small></span>
                 </div>
 
-                <div class="price-tag">
-                    {{ car.price_per_day }} zł <small>/ doba</small>
+                <div id="more-info-{{ car.id }}" class="extra-specs" style="display: none; margin-top: 15px; border-top: 1px dashed #ddd; padding-top: 10px; font-size: 0.9em; color: #555;">
+                    <p style="margin: 5px 0;">🔧 <strong>Kategoria:</strong> {{ car.category.name }}</p>
+                    <p style="margin: 5px 0;">🐎 <strong>Moc:</strong> {{ car.horsepower }} KM</p>
+                    <p style="margin: 5px 0;">⛽ <strong>Paliwo:</strong> {{ car.fuel_type.name }}</p>
+                    <p style="margin: 5px 0;">🎨 <strong>Kolor:</strong> {{ car.color|default:"Nieokreślony" }}</p>
+                    <p style="margin: 5px 0;">📅 <strong>Rok:</strong> {{ car.year|default:"2024" }}</p>
                 </div>
 
-                <button class="btn-send" style="width: 100%; margin-top: 15px;">Wypożycz teraz</button>
+                <button type="button" class="btn-more" onclick="toggleInfo({{ car.id }}, this)" style="background: none; border: none; color: red; cursor: pointer; padding: 10px 0; width: 100%; text-align: left; font-weight: bold;">
+                    + Więcej informacji
+                </button>
+
+                <button class="btn-send" style="width: 100%; margin-top: 10px; background-color: red; color: white; border: none; padding: 10px; border-radius: 5px; cursor: pointer; font-weight: bold;">
+                    Wypożycz teraz
+                </button>
             </div>
         </div>
         {% empty %}
-            <div class="empty-msg">
+            <div class="empty-msg" style="grid-column: 1 / -1; text-align: center; padding: 50px;">
                 <h3>Brak dostępnych aut w tym terminie lub mieście.</h3>
                 <p>Spróbuj zmienić daty lub poszukać w innym oddziale.</p>
             </div>
         {% endfor %}
     </div>
 </div>
+
+<script>
+    // --- LOGIKA DAT ---
+    const today = new Date().toISOString().split('T')[0];
+    const startDateInput = document.getElementById('start_date');
+    const endDateInput = document.getElementById('end_date');
+
+    startDateInput.setAttribute('min', today);
+    endDateInput.setAttribute('min', today);
+
+    startDateInput.addEventListener('change', function() {
+        endDateInput.setAttribute('min', startDateInput.value);
+    });
+
+    // --- LOGIKA ROZWIJANIA INFO ---
+    function toggleInfo(carId, btn) {
+        const infoDiv = document.getElementById('more-info-' + carId);
+
+        if (infoDiv.style.display === "none") {
+            infoDiv.style.display = "block";
+            btn.innerHTML = "- Mniej informacji";
+        } else {
+            infoDiv.style.display = "none";
+            btn.innerHTML = "+ Więcej informacji";
+        }
+    }
+</script>
 {% endblock %}
