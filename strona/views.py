@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.contrib.auth import authenticate
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
 from django.http import HttpResponse
@@ -131,6 +132,7 @@ Wiadomość zapisana w bazie o ID: {contact.id}
     return render(request, 'contact.html', {'form': form, 'oddzialy': oddzialy})
 
 
+@login_required(login_url='login')  # Jeśli ktoś nie jest zalogowany, wyrzuci go do logowania
 def rent_page(request):
     city=request.GET.get("city")
     start_date = request.GET.get('start_date')
