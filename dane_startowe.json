@@ -2331,7 +2331,9 @@
         "horsepower": 510,
         "price_per_day": "599.00",
         "is_available": true,
-        "image": ""
+        "image": "",
+        "year": 2024,
+        "color": "czarny"
     }
 },
 {

@@ -108,7 +108,7 @@ class Car(models.Model):
     fuel_type = models.ForeignKey(FuelType, on_delete=models.PROTECT)
     current_branch = models.ForeignKey(Branch, on_delete=models.CASCADE)
     horsepower = models.IntegerField()
-    year=models.IntegerField()
+    year = models.IntegerField()
     color=models.CharField(max_length=50)
     price_per_day=models.DecimalField(max_digits=10, decimal_places=2)
     is_available = models.BooleanField(default=True)
