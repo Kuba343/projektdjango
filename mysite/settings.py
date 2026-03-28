@@ -127,7 +127,7 @@ AUTHENTICATION_BACKENDS = [
 ]
 #zdjęcia przechowywane w bazie
 MEDIA_URL = '/media/'
-MEIDA_ROOT = BASE_DIR / 'media'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 #potrzebe do wysylania maila do nas
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'

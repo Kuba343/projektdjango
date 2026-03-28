@@ -17,10 +17,7 @@ urlpatterns = [
     path('kalkulator/', calculator_view, name='calculator'),
     path('logout/', views.logout_view, name='logout'),
     path('faq/', views.faq, name='faq'),
-]
-#potrzebne do wstawianie zdjęc z bazy
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 
-#to jest do tego aby po kliknieciu wyloguj dawalo nas na strone glowna
+
