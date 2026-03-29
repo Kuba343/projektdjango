@@ -9,14 +9,14 @@ from django.shortcuts import render, redirect
 from django.shortcuts import render, get_object_or_404
 from django.contrib import messages
 from .forms import RegistrationForm, LoginForm, ContactForm
-from .models import Car, Addon, Branch, Rental, City
+from .models import Car, Addon, Branch, Rental, City, RentalStatus, PaymentMethod, UserProfile
 from django.contrib.auth import authenticate, login as auth_login
 from django.contrib.auth import logout as django_logout
 from django.db.models import Q
 from .models import Car, Addon
 from django.shortcuts import render
 from datetime import datetime, date
-
+from django.db import transaction
 
 def home(request):
     cars = Car.objects.all()[:6] # Pokazujemy np. tylko 6 aut na start
@@ -312,6 +312,59 @@ def faq(request):
     })
 
 
+@login_required
+@transaction.atomic #to dziala tak ze jak cos padnie to nie zostanie byle jaki rekord w bazie
+def checkout_view(request, car_id):
+    car = get_object_or_404(Car, id=car_id)
 
+    # Pobieramy daty z URL
+    start_date = request.GET.get("start_date")
+    end_date = request.GET.get("end_date")
 
+    # Zabezpieczenie przed brakiem dat
+    if not start_date or start_date == "None":
+        # Sprawdź w urls.py jak nazywa się Twoja strona z autami (np. 'home' lub 'rent')
+        return redirect('home')
 
+    # --- POPRAWKA PROFILU ---
+    # Szukamy profilu bezpośrednio w tabeli UserProfile
+    try:
+        profile = UserProfile.objects.get(user=request.user)
+    except UserProfile.DoesNotExist:
+        # Jeśli nie znajdzie, przekieruj do strony głównej (lub stwórz go awaryjnie)
+        # return redirect('home')
+        # ALBO stworzenie awaryjne, jeśli nie boisz się błędu z datą urodzenia:
+        # profile = UserProfile.objects.create(user=request.user, phone_number="000", birth_date="2000-01-01")
+        from django.contrib import messages
+        messages.error(request, "Błąd: Nie znaleziono Twojego profilu klienta.")
+        return redirect('home')
+    # -----------------------
+
+    status_pending, _ = RentalStatus.objects.get_or_create(name="W trakcie")
+
+    # Tworzymy rezerwację
+    rental = Rental.objects.create(
+        user=profile,
+        car=car,
+        pickup_date=start_date,
+        return_date=end_date,
+        status=status_pending,
+        total_price=car.price_per_day
+    )
+
+    addons = Addon.objects.all()
+    payment_methods = PaymentMethod.objects.all()
+
+    return render(request, "checkout.html", {
+        'rental': rental,
+        'car': car,
+        'addons': addons,
+        'payment_methods': payment_methods,
+        'start_date': start_date,
+        'end_date': end_date
+    })
+def payment_pending_view(request):
+    return render(request, "payment_pending.html")
+
+def success_view(request):
+    return render(request, "success.html")

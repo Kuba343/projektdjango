@@ -17,6 +17,10 @@ urlpatterns = [
     path('kalkulator/', calculator_view, name='calculator'),
     path('logout/', views.logout_view, name='logout'),
     path('faq/', views.faq, name='faq'),
+    path('checkout/<int:car_id>/', views.checkout_view, name='checkout'),
+    path('payment-pending/<int:rental_id>/', views.payment_pending_view, name='payment_pending'),
+    path('success/<int:rental_id>/', views.success_view, name='success'),
+
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 

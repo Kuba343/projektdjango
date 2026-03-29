@@ -50,9 +50,11 @@
                     + Więcej informacji
                 </button>
 
-                <button class="btn-send" style="width: 100%; margin-top: 10px; background-color: red; color: white; border: none; padding: 10px; border-radius: 5px; cursor: pointer; font-weight: bold;">
+                <a href="{% url 'checkout' car.id %}?start_date={{ start_date }}&end_date={{ end_date }}"
+                   class="btn-send"
+                   style="display: block; text-align: center; text-decoration: none; width: 100%; margin-top: 10px; background-color: red; color: white; border: none; padding: 10px; border-radius: 5px; cursor: pointer; font-weight: bold;">
                     Wypożycz teraz
-                </button>
+                </a>
             </div>
         </div>
         {% empty %}
