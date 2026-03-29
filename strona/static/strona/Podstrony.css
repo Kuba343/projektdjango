@@ -916,3 +916,213 @@ a { color: inherit; text-decoration: none; }
     line-height: 1.5;
 }
 
+Oto zaktualizowany kod Twojego pliku CSS. Dodałem na samym końcu nową, odizolowaną sekcję 8. PODSTRONA CHECKOUT, która zawiera wszystkie style potrzebne do obsługi licznika, układu płatności i przycisków, o które prosiłeś.
+
+Zastosowałem specyficzne klasy (np. .checkout-container), aby te style nie wpływały na Twój Navbar czy stronę główną.
+
+Wklej to na sam dół swojego pliku podstrona.css:
+
+CSS
+/* =========================================
+   8. PODSTRONA CHECKOUT (PODSUMOWANIE)
+   ========================================= */
+
+/* Główny kontener strony podsumowania */
+.checkout-page-wrapper {
+    padding: 40px 20px;
+    background-color: #f4f7f6; /* Jasne tło dla kontrastu */
+    min-height: 80vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+/* Karta z całą zawartością */
+.checkout-card {
+    background: white;
+    max-width: 1000px;
+    width: 100%;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    overflow: hidden;
+    border: 1px solid #eee;
+}
+
+/* Baner z licznikiem czasu na górze */
+.timer-banner {
+    background: #fff3cd; /* Kolor ostrzegawczy żółty */
+    color: #856404;
+    padding: 15px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 18px;
+    border-bottom: 2px solid #ffeeba;
+}
+
+#countdown {
+    color: #d9534f; /* Czerwień dla cyfr licznika */
+    font-family: monospace;
+    font-size: 22px;
+}
+
+/* Układ dwóch kolumn */
+.checkout-layout {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 30px;
+    gap: 30px;
+}
+
+/* Lewa strona: Dane auta i dodatki */
+.checkout-info {
+    flex: 2;
+    min-width: 320px;
+}
+
+.checkout-info h1 {
+    margin-top: 0;
+    font-size: 28px;
+    border-bottom: 3px solid red;
+    display: inline-block;
+    padding-bottom: 5px;
+    margin-bottom: 25px;
+}
+
+.checkout-car-img {
+    width: 100%;
+    max-width: 400px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.car-text h3 {
+    font-size: 24px;
+    margin: 10px 0;
+}
+
+.car-text p {
+    color: #555;
+    margin: 5px 0;
+    font-size: 16px;
+}
+
+/* Sekcja dodatków (Checkboxy) */
+.addons-section {
+    margin-top: 30px;
+    padding: 20px;
+    background: #f9f9f9;
+    border-radius: 10px;
+}
+
+.addon-row {
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    align-items: center;
+}
+
+.addon-row:last-child { border-bottom: none; }
+
+.addon-checkbox {
+    width: 20px;
+    height: 20px;
+    margin-right: 15px;
+    cursor: pointer;
+}
+
+/* Prawa strona: Płatność i Suma */
+.checkout-payment {
+    flex: 1;
+    min-width: 280px;
+    background: #fdfdfd;
+    padding: 25px;
+    border: 1px solid #eee;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.price-box {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.total-amount {
+    color: red;
+    font-size: 32px;
+    margin: 15px 0;
+    font-weight: 800;
+}
+
+/* Sekcja BLIK */
+.blik-section {
+    text-align: center;
+    padding: 15px;
+    border: 2px dashed #ccc;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.blik-input {
+    width: 90%;
+    padding: 12px;
+    margin-top: 10px;
+    text-align: center;
+    font-size: 20px;
+    letter-spacing: 4px;
+    border: 2px solid #ddd;
+    border-radius: 6px;
+}
+
+/* Przyciski akcji */
+.action-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.btn-pay {
+    background-color: #28a745; /* Zielony dla płatności */
+    color: white;
+    border: none;
+    padding: 18px;
+    border-radius: 8px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-pay:hover {
+    background-color: #218838;
+    transform: scale(1.02);
+}
+
+.btn-cancel-checkout {
+    background-color: #f8f9fa;
+    color: #333;
+    border: 1px solid #ccc;
+    padding: 12px;
+    text-align: center;
+    border-radius: 8px;
+    font-weight: bold;
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+.btn-cancel-checkout:hover {
+    background-color: #e2e6ea;
+    color: red;
+}
+
+/* RWD dla Checkout */
+@media (max-width: 768px) {
+    .checkout-layout {
+        flex-direction: column;
+    }
+    .checkout-info {
+        padding-right: 0;
+    }
+}

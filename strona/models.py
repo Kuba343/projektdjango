@@ -139,6 +139,7 @@ class Rental(models.Model):
     pickup_date=models.DateField()
     return_date=models.DateField()
     total_price=models.DecimalField(max_digits=10, decimal_places=2,default=0.00)
+    created_at = models.DateTimeField(auto_now_add=True)
     def __str__(self):
         return f"{self.user} {self.status} {self.pickup_date} {self.return_date}"
 #Rejestr wplat

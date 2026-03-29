@@ -17,6 +17,8 @@ from .models import Car, Addon
 from django.shortcuts import render
 from datetime import datetime, date
 from django.db import transaction
+from django.utils import timezone
+from datetime import timedelta, date
 
 def home(request):
     cars = Car.objects.all()[:6] # Pokazujemy np. tylko 6 aut na start
@@ -132,43 +134,50 @@ Wiadomość zapisana w bazie o ID: {contact.id}
     return render(request, 'contact.html', {'form': form, 'oddzialy': oddzialy})
 
 
-@login_required(login_url='login')  # Jeśli ktoś nie jest zalogowany, wyrzuci go do logowania
+@login_required(login_url='login')
 def rent_page(request):
-    city=request.GET.get("city")
+    city = request.GET.get("city")
     start_date = request.GET.get('start_date')
     end_date = request.GET.get('end_date')
 
     today = date.today()
     today_str = str(today)
 
-    cars=Car.objects.all()
+    cars = Car.objects.all()
 
-    #to filtruje po miescie
+    # 1. Filtrowanie po mieście
     if city and city != "":
-        cars = cars.filter(current_branch__street__city__name__icontains=city)    #to filtruje po terminie
+        cars = cars.filter(current_branch__street__city__name__icontains=city)
 
-    #blokada to samo co w skrypcie zeby szukac tylko w przyszlosci
+    # 2. Blokada dat wstecznych
     if start_date and start_date < today_str:
-        start_date=today_str
+        start_date = today_str
 
     if start_date and end_date and end_date < start_date:
         end_date = start_date
 
-    #tutaj filtruje po dostepnosci rental
+    # 3. Filtrowanie po dostępności (z uwzględnieniem wygasania rezerwacji)
     if start_date and end_date:
         try:
-            # Szukamy rezerwacji nakładających się na termin
+            # Definiujemy czas "świeżości" rezerwacji (5 minut)
+            expiration_time = timezone.now() - timedelta(minutes=5)
+
+            # Szukamy rezerwacji nakładających się na termin, ALE:
+            # Ignorujemy te, które są "W trakcie" i są starsze niż 5 minut (wygasły)
             occupied_cars_ids = Rental.objects.filter(
                 Q(pickup_date__range=[start_date, end_date]) |
                 Q(return_date__range=[start_date, end_date]) |
                 Q(pickup_date__lte=start_date, return_date__gte=end_date)
+            ).exclude(
+                status__name="W trakcie",
+                created_at__lt=expiration_time  # Jeśli stworzona dawniej niż 5 min temu
             ).values_list('car_id', flat=True)
 
-        # Wykluczamy te auta z listy dostępnych
+            # Wykluczamy zajęte auta
             cars = cars.exclude(id__in=occupied_cars_ids)
         except ValueError:
-            # kolejna zapora przed blednymi datami
             pass
+
     context = {
         "cars": cars,
         "city": city,
@@ -177,7 +186,6 @@ def rent_page(request):
         "today": today_str
     }
     return render(request, "rent.html", context)
-
 
 #FAQ
 def faq(request):
@@ -323,22 +331,16 @@ def checkout_view(request, car_id):
 
     # Zabezpieczenie przed brakiem dat
     if not start_date or start_date == "None":
-        # Sprawdź w urls.py jak nazywa się Twoja strona z autami (np. 'home' lub 'rent')
-        return redirect('home')
+        from django.contrib import messages
+        messages.warning(request, "Proszę najpierw wybrać daty wynajmu.")
 
-    # --- POPRAWKA PROFILU ---
     # Szukamy profilu bezpośrednio w tabeli UserProfile
     try:
         profile = UserProfile.objects.get(user=request.user)
     except UserProfile.DoesNotExist:
-        # Jeśli nie znajdzie, przekieruj do strony głównej (lub stwórz go awaryjnie)
-        # return redirect('home')
-        # ALBO stworzenie awaryjne, jeśli nie boisz się błędu z datą urodzenia:
-        # profile = UserProfile.objects.create(user=request.user, phone_number="000", birth_date="2000-01-01")
         from django.contrib import messages
         messages.error(request, "Błąd: Nie znaleziono Twojego profilu klienta.")
-        return redirect('home')
-    # -----------------------
+        return redirect('rent')
 
     status_pending, _ = RentalStatus.objects.get_or_create(name="W trakcie")
 
@@ -368,3 +370,14 @@ def payment_pending_view(request):
 
 def success_view(request):
     return render(request, "success.html")
+
+
+def cancel_rental(request, rental_id):
+    # Pobieramy rezerwację (tylko jeśli należy do zalogowanego użytkownika)
+    rental = get_object_or_404(Rental, id=rental_id, user__user=request.user)
+
+    # Usuwamy ją z bazy - to natychmiast odblokowuje auto w wyszukiwarce!
+    rental.delete()
+
+    # Wracamy na stronę główną lub listę aut
+    return redirect('rent')

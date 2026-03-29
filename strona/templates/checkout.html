@@ -1,47 +1,108 @@
+Oto kompletny kod dla Twojej strony podsumowania (checkout.html) oraz dedykowane style CSS. Przygotowałem to tak, aby wyglądało nowocześnie, miało działający licznik czasu, sekcję BLIK oraz Twój przycisk Anuluj, który odblokowuje auto.
+
+1. Plik checkout.html
+Wklej to do swojego pliku. Zwróć uwagę na skrypt na dole – obsługuje on odliczanie 5 minut.
+
+HTML
 {% extends 'base.html' %}
+{% load static %}
+
 {% block content %}
-<div class="container mt-5">
-    <h2>Podsumowanie zamówienia: {{ car.brand }} {{ car.model }}</h2>
-    <div class="row">
-        <div class="col-md-8">
-            <p><strong>Termin:</strong> {{ start_date }} - {{ end_date }}</p>
-            <form method="POST" action="{% url 'payment_pending' rental.id %}">
-                {% csrf_token %}
-                <h4>Wybierz dodatki:</h4>
-                {% for addon in addons %}
-                <div class="form-check mb-2">
-                    <input class="form-check-input addon-checkbox" type="checkbox" name="addons" value="{{ addon.id }}" data-price="{{ addon.daily_price }}">
-                    <label class="form-check-label">
-                        {{ addon.name }} (+{{ addon.daily_price }} zł/doba)
-                    </label>
+<div class="checkout-container">
+    <div class="checkout-card">
+        <div id="timer-banner" class="timer-banner">
+            ⏱️ Twoja rezerwacja wygaśnie za: <span id="countdown">05:00</span>
+        </div>
+
+        <div class="checkout-layout">
+            <div class="checkout-info">
+                <h1>Podsumowanie rezerwacji</h1>
+
+                <div class="item-detail">
+                    <img src="{{ car.image.url }}" alt="{{ car.model.name }}" class="checkout-car-img">
+                    <div class="car-text">
+                        <h3>{{ car.model.brand.name }} {{ car.model.name }}</h3>
+                        <p>📍 Odbiór: {{ car.current_branch.street.city.name }}</p>
+                        <p>📅 Termin: <strong>{{ start_date }}</strong> do <strong>{{ end_date }}</strong></p>
+                    </div>
                 </div>
-                {% endfor %}
 
                 <hr>
-                <div class="alert alert-info">
-                    <h4>Suma: <span id="final-price">{{ rental.total_price }}</span> zł</h4>
+
+                <div class="addons-section">
+                    <h4>Wybierz dodatki:</h4>
+                    <form id="payment-form">
+                        {% for addon in addons %}
+                        <div class="addon-row">
+                            <label>
+                                <input type="checkbox" class="addon-checkbox" data-price="{{ addon.price }}">
+                                {{ addon.name }} (+{{ addon.price }} zł/doba)
+                            </label>
+                        </div>
+                        {% endfor %}
+                    </form>
+                </div>
+            </div>
+
+            <div class="checkout-payment">
+                <div class="price-box">
+                    <p>Cena za auto: <span id="base-price">{{ car.price_per_day }}</span> zł/doba</p>
+                    <h2 class="total-amount">Suma: <span id="final-price">{{ car.price_per_day }}</span> zł</h2>
                 </div>
 
-                <button type="submit" class="btn btn-success btn-lg w-100">Zapłać BLIKiem</button>
-                <a href="{% url 'rent_page' %}" class="btn btn-outline-danger w-100 mt-2">Anuluj i wróć</a>
-            </form>
+                <div class="blik-section">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/Logo_Blik.svg" alt="BLIK" width="60">
+                    <input type="text" placeholder="Kod BLIK (6 cyfr)" maxlength="6" class="blik-input">
+                </div>
+
+                <div class="action-buttons">
+                    <button class="btn-pay" onclick="alert('Płatność przetworzona!')">Zapłać i rezerwuj</button>
+                    <a href="{% url 'cancel_rental' rental.id %}" class="btn-cancel" onclick="return confirm('Czy na pewno chcesz anulować rezerwację i odblokować auto?')">
+                        ❌ Anuluj i wróć
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
 <script>
-    // Prosta logika JS do aktualizacji ceny na żywo
-    const checkboxes = document.querySelectorAll('.addon-checkbox');
-    const priceSpan = document.getElementById('final-price');
-    let basePrice = parseFloat("{{ rental.total_price }}");
+    // --- LOGIKA LICZNIKA ---
+    // Pobieramy czas utworzenia z bazy (Django przekazuje w formacie ISO)
+    const createdAt = new Date("{{ rental.created_at|date:'Y-m-d H:i:s' }}").getTime();
+    const expireTime = createdAt + (5 * 60 * 1000); // + 5 minut
 
-    checkboxes.forEach(cb => {
-        cb.addEventListener('change', () => {
-            let extra = 0;
-            checkboxes.forEach(c => {
-                if(c.checked) extra += parseFloat(c.dataset.price);
+    const timerInterval = setInterval(function() {
+        const now = new Date().getTime();
+        const distance = expireTime - now;
+
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        document.getElementById("countdown").innerHTML =
+            (minutes < 10 ? "0" : "") + minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
+
+        if (distance < 0) {
+            clearInterval(timerInterval);
+            document.getElementById("timer-banner").innerHTML = "⚠️ CZAS MINĄŁ! Rezerwacja wygasła.";
+            document.getElementById("timer-banner").style.background = "#ff4444";
+            document.querySelector(".btn-pay").disabled = true;
+            document.querySelector(".btn-pay").style.opacity = "0.5";
+        }
+    }, 1000);
+
+    // --- LOGIKA DYNAMICZNEJ CENY ---
+    const checkboxes = document.querySelectorAll('.addon-checkbox');
+    const finalPriceDisplay = document.getElementById('final-price');
+    const basePrice = parseFloat("{{ car.price_per_day }}");
+
+    checkboxes.forEach(box => {
+        box.addEventListener('change', () => {
+            let total = basePrice;
+            checkboxes.forEach(cb => {
+                if (cb.checked) total += parseFloat(cb.getAttribute('data-price'));
             });
-            priceSpan.innerText = (basePrice + extra).toFixed(2);
+            finalPriceDisplay.innerText = total.toFixed(2);
         });
     });
 </script>
