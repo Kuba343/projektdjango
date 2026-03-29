@@ -159,22 +159,26 @@ def rent_page(request):
     # 3. Filtrowanie po dostępności (z uwzględnieniem wygasania rezerwacji)
     if start_date and end_date:
         try:
-            # Definiujemy czas "świeżości" rezerwacji (5 minut)
+            # Definiujemy czas graniczny (5 minut temu)
             expiration_time = timezone.now() - timedelta(minutes=5)
 
-            # Szukamy rezerwacji nakładających się na termin, ALE:
-            # Ignorujemy te, które są "W trakcie" i są starsze niż 5 minut (wygasły)
+            # Szukamy rezerwacji, które blokują auto:
+            # Muszą nakładać się datami ORAZ spełniać jeden z warunków:
+            # a) Są opłacone (blokują na stałe)
+            # b) Są "W trakcie", ale jeszcze NIE wygasły (stworzone w ciągu ostatnich 5 min)
+
             occupied_cars_ids = Rental.objects.filter(
-                Q(pickup_date__range=[start_date, end_date]) |
-                Q(return_date__range=[start_date, end_date]) |
-                Q(pickup_date__lte=start_date, return_date__gte=end_date)
-            ).exclude(
-                status__name="W trakcie",
-                created_at__lt=expiration_time  # Jeśli stworzona dawniej niż 5 min temu
+                # Warunek dat (kolizja terminów)
+                Q(pickup_date__lte=end_date, return_date__gte=start_date)
+            ).filter(
+                # Warunek aktywności rezerwacji
+                Q(status__name="Opłacona") |
+                Q(status__name="W trakcie", created_at__gte=expiration_time)
             ).values_list('car_id', flat=True)
 
-            # Wykluczamy zajęte auta
+            # Wykluczamy te konkretne auta
             cars = cars.exclude(id__in=occupied_cars_ids)
+
         except ValueError:
             pass
 
@@ -324,15 +328,17 @@ def faq(request):
 @transaction.atomic #to dziala tak ze jak cos padnie to nie zostanie byle jaki rekord w bazie
 def checkout_view(request, car_id):
     car = get_object_or_404(Car, id=car_id)
+    all_addons = Addon.objects.all()
 
     # Pobieramy daty z URL
     start_date = request.GET.get("start_date")
     end_date = request.GET.get("end_date")
 
-    # Zabezpieczenie przed brakiem dat
-    if not start_date or start_date == "None":
+    # 2. POPRAWKA: Zabezpieczenie przed pustymi datami (ValidationError)
+    if not start_date or not end_date or start_date == "" or end_date == "":
         from django.contrib import messages
-        messages.warning(request, "Proszę najpierw wybrać daty wynajmu.")
+        messages.warning(request, "Proszę najpierw wybrać daty wynajmu w wyszukiwarce!")
+        return redirect('rent')
 
     # Szukamy profilu bezpośrednio w tabeli UserProfile
     try:
@@ -373,11 +379,16 @@ def success_view(request):
 
 
 def cancel_rental(request, rental_id):
-    # Pobieramy rezerwację (tylko jeśli należy do zalogowanego użytkownika)
-    rental = get_object_or_404(Rental, id=rental_id, user__user=request.user)
+    # 1. Znajdź rezerwację w bazie (get_object_or_404 to zabezpieczenie)
+    from django.shortcuts import get_object_or_404
+    rental = get_object_or_404(Rental, id=rental_id)
 
-    # Usuwamy ją z bazy - to natychmiast odblokowuje auto w wyszukiwarce!
+    # 2. Skasuj ją (to zwalnia auto w Twoim filtrze rent_page)
     rental.delete()
 
-    # Wracamy na stronę główną lub listę aut
-    return redirect('rent')
+    # 3. Dodaj komunikat (opcjonalnie)
+    from django.contrib import messages
+    messages.info(request, "Anulowano rezerwację. Auto jest już dostępne dla innych.")
+
+    # 4. Wrzuć użytkownika na stronę z autami
+    return redirect('rent') # 'rent' to nazwa Twojego URL-a od listy aut

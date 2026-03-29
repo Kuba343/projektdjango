@@ -20,6 +20,7 @@ urlpatterns = [
     path('checkout/<int:car_id>/', views.checkout_view, name='checkout'),
     path('payment-pending/<int:rental_id>/', views.payment_pending_view, name='payment_pending'),
     path('success/<int:rental_id>/', views.success_view, name='success'),
+    path('cancel-rental/<int:rental_id>/', views.cancel_rental, name='cancel_rental'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
