@@ -1,0 +1,1340 @@
+[
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$jVVPWzuFnWDnnD5tYh0ja7$KaS4/aOzcvZkU9IXIX2+2IdZxGUzSgVJ2GNWYuaho8g=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "nazwa",
+    "first_name": "imie",
+    "last_name": "nazwisko",
+    "email": "email123@wp.pl",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-03-18T20:07:38.550Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$ZAnQIbuS6VGGTNbSTfG3ye$w8MUMs1clmpFqwqUXE3RyBoNXlN/hv2D1Jfx1pc8EPA=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "nazwanazwa",
+    "first_name": "imie",
+    "last_name": "nazwisko",
+    "email": "email123@o2.pl",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-03-18T20:08:20.405Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$KF7jRmvM9SAQFU2QnbyvfI$GVFjsJEerBKn/FRo0T8E6tpVuV0kJpKfYHaXuwE6Hk4=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "nazwanazwa1235541",
+    "first_name": "imie",
+    "last_name": "nazwisko",
+    "email": "email12333@o2.pl",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-03-18T20:12:57.967Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$l01GgC9PemDDX6VjJYzK8R$9i2GsAuDMFWUu3h1ss6jRli2jYsKo4pEdTau5NWzo78=",
+    "last_login": "2026-03-21T11:57:05.380Z",
+    "is_superuser": false,
+    "username": "buba",
+    "first_name": "kuba",
+    "last_name": "buba",
+    "email": "123@o2.pl",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-03-21T11:08:09.798Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$sDxliLjAqX2XFkOTr3jmAN$vRc+pK4Dp63ua7oJdb8b6OPj6iwYeg8+iwvblrPWh7Q=",
+    "last_login": "2026-03-25T17:07:17.439Z",
+    "is_superuser": true,
+    "username": "admin",
+    "first_name": "",
+    "last_name": "",
+    "email": "admin123@o2.pl",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2026-03-25T17:06:50.629Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$Yn9j1fzXkba435wRVrGepx$abHWtE2YPMdWoUtjKCIB1iHKP6JN/EZRMvAobOtPvSg=",
+    "last_login": "2026-03-29T10:59:06.118Z",
+    "is_superuser": true,
+    "username": "root",
+    "first_name": "",
+    "last_name": "",
+    "email": "root@o2.pl",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2026-03-25T20:04:52.544Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$SSnKKlVRSj9aXaJDf6bxT7$FFjebMP+xL1rBI8lCsFZO2iG5je+M7qDoS1Aa2PoVS4=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "nazwanazwa33",
+    "first_name": "asdsasda",
+    "last_name": "gasfasfsaf",
+    "email": "nazwa123@o2.pl",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-03-27T15:10:43.675Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$ja7If6Br8BSeg19eLp9QJ8$HkBANL/k//VIIHgXjRG1ezDstOq4p1Qb+Ka/DR5+u4c=",
+    "last_login": "2026-03-30T18:20:12.386Z",
+    "is_superuser": false,
+    "username": "kuba343",
+    "first_name": "dsadassda",
+    "last_name": "asdasdasd",
+    "email": "kuba343@o2.pl",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-03-28T20:57:21.225Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "ee4ff22favnaneniihh3nmaiy9l9wjum",
+  "fields": {
+    "session_data": ".eJxVjEEOwiAQRe_C2hBbGJi6dN8zNMMMSNVAUtqV8e7apAvd_vfef6mJtjVPW4vLNIu6KFCn3y0QP2LZgdyp3KrmWtZlDnpX9EGbHqvE5_Vw_w4ytfytWTx6FhudYThDjzxA9N4jooNo0RkjnekFBjRJukQJEkAIZF0ICVi9P9cjN_4:1w5RhN:o1mfHLIUXeYIhaSb5YHSTE5Q1B_QfS-8CFZOorsmwMM",
+    "expire_date": "2026-04-08T17:07:17.444Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "w0x9h9bjewwrsedtxcv70q28xztd7fuf",
+  "fields": {
+    "session_data": ".eJxVjEEOwiAQRe_C2hCgQDsu3XsGMjOAVA0kpV0Z765NutDtf-_9lwi4rSVsPS1hjuIsrDj9boT8SHUH8Y711iS3ui4zyV2RB-3y2mJ6Xg7376BgL9968uCzI0IC7XI2BhiJrTWOlInEetLoWBFT8m5gAALrs8ojA-LAo3h_AAAROME:1w3uII:rwsT5-4i_c6E8ItEcu4bS57Uh5uXw93Oyb4jyTmoD3Q",
+    "expire_date": "2026-04-04T11:15:02.761Z"
+  }
+},
+{
+  "model": "strona.brand",
+  "pk": 1,
+  "fields": {
+    "name": "Toyota"
+  }
+},
+{
+  "model": "strona.brand",
+  "pk": 2,
+  "fields": {
+    "name": "BMW"
+  }
+},
+{
+  "model": "strona.brand",
+  "pk": 3,
+  "fields": {
+    "name": "Audi"
+  }
+},
+{
+  "model": "strona.brand",
+  "pk": 4,
+  "fields": {
+    "name": "Mercedes-Benz"
+  }
+},
+{
+  "model": "strona.brand",
+  "pk": 5,
+  "fields": {
+    "name": "Porsche"
+  }
+},
+{
+  "model": "strona.carcategory",
+  "pk": 1,
+  "fields": {
+    "name": "Mini (A)"
+  }
+},
+{
+  "model": "strona.carcategory",
+  "pk": 2,
+  "fields": {
+    "name": "Ekonomiczne (B)"
+  }
+},
+{
+  "model": "strona.carcategory",
+  "pk": 3,
+  "fields": {
+    "name": "Kompaktowe (C)"
+  }
+},
+{
+  "model": "strona.carcategory",
+  "pk": 4,
+  "fields": {
+    "name": "Premium (E)"
+  }
+},
+{
+  "model": "strona.carcategory",
+  "pk": 5,
+  "fields": {
+    "name": "Dostawcze"
+  }
+},
+{
+  "model": "strona.carcategory",
+  "pk": 6,
+  "fields": {
+    "name": "SUV"
+  }
+},
+{
+  "model": "strona.carcategory",
+  "pk": 7,
+  "fields": {
+    "name": "Sportowe"
+  }
+},
+{
+  "model": "strona.fueltype",
+  "pk": 1,
+  "fields": {
+    "name": "Benzyna"
+  }
+},
+{
+  "model": "strona.fueltype",
+  "pk": 2,
+  "fields": {
+    "name": "Diesel"
+  }
+},
+{
+  "model": "strona.fueltype",
+  "pk": 3,
+  "fields": {
+    "name": "Benzyna + Gaz"
+  }
+},
+{
+  "model": "strona.fueltype",
+  "pk": 4,
+  "fields": {
+    "name": "Elektryczny"
+  }
+},
+{
+  "model": "strona.fueltype",
+  "pk": 5,
+  "fields": {
+    "name": "Hybryda"
+  }
+},
+{
+  "model": "strona.rentalstatus",
+  "pk": 1,
+  "fields": {
+    "name": "Oczekuj─ůca"
+  }
+},
+{
+  "model": "strona.rentalstatus",
+  "pk": 2,
+  "fields": {
+    "name": "Potwierdzona"
+  }
+},
+{
+  "model": "strona.rentalstatus",
+  "pk": 3,
+  "fields": {
+    "name": "W trakcie"
+  }
+},
+{
+  "model": "strona.rentalstatus",
+  "pk": 4,
+  "fields": {
+    "name": "Zwr├│cona"
+  }
+},
+{
+  "model": "strona.rentalstatus",
+  "pk": 5,
+  "fields": {
+    "name": "Anulowana"
+  }
+},
+{
+  "model": "strona.paymentmethod",
+  "pk": 1,
+  "fields": {
+    "name": "Blik"
+  }
+},
+{
+  "model": "strona.paymentmethod",
+  "pk": 2,
+  "fields": {
+    "name": "Karta"
+  }
+},
+{
+  "model": "strona.paymentmethod",
+  "pk": 3,
+  "fields": {
+    "name": "Przelew"
+  }
+},
+{
+  "model": "strona.city",
+  "pk": 1,
+  "fields": {
+    "name": "Bia┼éystok",
+    "zip_code": "15-001"
+  }
+},
+{
+  "model": "strona.city",
+  "pk": 2,
+  "fields": {
+    "name": "Mo┼äki",
+    "zip_code": "19-100"
+  }
+},
+{
+  "model": "strona.city",
+  "pk": 3,
+  "fields": {
+    "name": "Warszawa",
+    "zip_code": "00-001"
+  }
+},
+{
+  "model": "strona.role",
+  "pk": 1,
+  "fields": {
+    "name": "Administrator"
+  }
+},
+{
+  "model": "strona.role",
+  "pk": 2,
+  "fields": {
+    "name": "Mechanik"
+  }
+},
+{
+  "model": "strona.role",
+  "pk": 3,
+  "fields": {
+    "name": "Manager Floty"
+  }
+},
+{
+  "model": "strona.role",
+  "pk": 4,
+  "fields": {
+    "name": "Konsultant Biura Obs┼éugi"
+  }
+},
+{
+  "model": "strona.role",
+  "pk": 5,
+  "fields": {
+    "name": "Kierowca"
+  }
+},
+{
+  "model": "strona.inspectionitem",
+  "pk": 1,
+  "fields": {
+    "name": "Poziom oleju"
+  }
+},
+{
+  "model": "strona.inspectionitem",
+  "pk": 2,
+  "fields": {
+    "name": "Ci┼Ťnienie w oponach"
+  }
+},
+{
+  "model": "strona.inspectionitem",
+  "pk": 3,
+  "fields": {
+    "name": "Stan klock├│w hamulcowych"
+  }
+},
+{
+  "model": "strona.inspectionitem",
+  "pk": 4,
+  "fields": {
+    "name": "O┼Ťwietlenie"
+  }
+},
+{
+  "model": "strona.inspectionitem",
+  "pk": 5,
+  "fields": {
+    "name": "Czystoto┼Ť─ç wn─Ötrza"
+  }
+},
+{
+  "model": "strona.inspectionitem",
+  "pk": 6,
+  "fields": {
+    "name": "Zarysowania karoserii"
+  }
+},
+{
+  "model": "strona.addontype",
+  "pk": 1,
+  "fields": {
+    "name": "Ubezpieczenie"
+  }
+},
+{
+  "model": "strona.addontype",
+  "pk": 2,
+  "fields": {
+    "name": "Akcesoria"
+  }
+},
+{
+  "model": "strona.carmodel",
+  "pk": 1,
+  "fields": {
+    "brand": 1,
+    "name": "Corolla"
+  }
+},
+{
+  "model": "strona.carmodel",
+  "pk": 2,
+  "fields": {
+    "brand": 3,
+    "name": "A6"
+  }
+},
+{
+  "model": "strona.carmodel",
+  "pk": 3,
+  "fields": {
+    "brand": 2,
+    "name": "M3"
+  }
+},
+{
+  "model": "strona.carmodel",
+  "pk": 4,
+  "fields": {
+    "brand": 1,
+    "name": "RAV4"
+  }
+},
+{
+  "model": "strona.carmodel",
+  "pk": 5,
+  "fields": {
+    "brand": 5,
+    "name": "911 Turbo S"
+  }
+},
+{
+  "model": "strona.street",
+  "pk": 1,
+  "fields": {
+    "city": 1,
+    "name": "Lipowa"
+  }
+},
+{
+  "model": "strona.street",
+  "pk": 2,
+  "fields": {
+    "city": 2,
+    "name": "Bia┼éostocka"
+  }
+},
+{
+  "model": "strona.street",
+  "pk": 3,
+  "fields": {
+    "city": 3,
+    "name": "┼╗wirki i Wigury"
+  }
+},
+{
+  "model": "strona.branch",
+  "pk": 1,
+  "fields": {
+    "street": 1,
+    "building_number": "22",
+    "phone_number": "853133133"
+  }
+},
+{
+  "model": "strona.branch",
+  "pk": 2,
+  "fields": {
+    "street": 2,
+    "building_number": "51",
+    "phone_number": "859909911"
+  }
+},
+{
+  "model": "strona.branch",
+  "pk": 3,
+  "fields": {
+    "street": 3,
+    "building_number": "15",
+    "phone_number": "853119992"
+  }
+},
+{
+  "model": "strona.car",
+  "pk": 1,
+  "fields": {
+    "model": 3,
+    "category": 4,
+    "fuel_type": 1,
+    "current_branch": 1,
+    "horsepower": 510,
+    "year": 2024,
+    "color": "Czarny",
+    "price_per_day": "599.00",
+    "is_available": true,
+    "image": "cars/bmw_m3.png"
+  }
+},
+{
+  "model": "strona.car",
+  "pk": 2,
+  "fields": {
+    "model": 5,
+    "category": 4,
+    "fuel_type": 1,
+    "current_branch": 1,
+    "horsepower": 650,
+    "year": 2025,
+    "color": "Czerwony",
+    "price_per_day": "749.00",
+    "is_available": true,
+    "image": "cars/porsche_911.png"
+  }
+},
+{
+  "model": "strona.userprofile",
+  "pk": 1,
+  "fields": {
+    "user": [
+      "nazwa"
+    ],
+    "license_number": null,
+    "phone_number": "321321322",
+    "birth_date": "2003-10-15"
+  }
+},
+{
+  "model": "strona.userprofile",
+  "pk": 2,
+  "fields": {
+    "user": [
+      "nazwanazwa"
+    ],
+    "license_number": null,
+    "phone_number": "123456789",
+    "birth_date": "1999-06-18"
+  }
+},
+{
+  "model": "strona.userprofile",
+  "pk": 3,
+  "fields": {
+    "user": [
+      "nazwanazwa1235541"
+    ],
+    "license_number": null,
+    "phone_number": "123456787",
+    "birth_date": "1999-06-18"
+  }
+},
+{
+  "model": "strona.userprofile",
+  "pk": 4,
+  "fields": {
+    "user": [
+      "buba"
+    ],
+    "license_number": null,
+    "phone_number": "123466141",
+    "birth_date": "2004-06-27"
+  }
+},
+{
+  "model": "strona.userprofile",
+  "pk": 5,
+  "fields": {
+    "user": [
+      "nazwanazwa33"
+    ],
+    "license_number": null,
+    "phone_number": "333333333",
+    "birth_date": "2002-10-16"
+  }
+},
+{
+  "model": "strona.userprofile",
+  "pk": 6,
+  "fields": {
+    "user": [
+      "kuba343"
+    ],
+    "license_number": null,
+    "phone_number": "766133221",
+    "birth_date": "2002-06-05"
+  }
+},
+{
+  "model": "strona.rental",
+  "pk": 5,
+  "fields": {
+    "user": 6,
+    "car": 2,
+    "status": 3,
+    "pickup_date": "2026-03-30",
+    "return_date": "2026-04-04",
+    "total_price": "749.00",
+    "created_at": "2026-03-29T11:36:57.954Z"
+  }
+},
+{
+  "model": "strona.rental",
+  "pk": 6,
+  "fields": {
+    "user": 6,
+    "car": 2,
+    "status": 3,
+    "pickup_date": "2026-03-30",
+    "return_date": "2026-04-04",
+    "total_price": "749.00",
+    "created_at": "2026-03-29T11:37:42.755Z"
+  }
+},
+{
+  "model": "strona.rental",
+  "pk": 7,
+  "fields": {
+    "user": 6,
+    "car": 1,
+    "status": 3,
+    "pickup_date": "2026-04-02",
+    "return_date": "2026-05-10",
+    "total_price": "599.00",
+    "created_at": "2026-03-29T11:38:14.456Z"
+  }
+},
+{
+  "model": "strona.rental",
+  "pk": 10,
+  "fields": {
+    "user": 6,
+    "car": 2,
+    "status": 3,
+    "pickup_date": "2026-05-10",
+    "return_date": "2026-06-10",
+    "total_price": "749.00",
+    "created_at": "2026-03-29T11:44:37.287Z"
+  }
+},
+{
+  "model": "strona.rental",
+  "pk": 11,
+  "fields": {
+    "user": 6,
+    "car": 2,
+    "status": 3,
+    "pickup_date": "2026-05-10",
+    "return_date": "2026-06-10",
+    "total_price": "749.00",
+    "created_at": "2026-03-29T11:47:04.254Z"
+  }
+},
+{
+  "model": "strona.rental",
+  "pk": 12,
+  "fields": {
+    "user": 6,
+    "car": 2,
+    "status": 3,
+    "pickup_date": "2026-05-10",
+    "return_date": "2026-06-10",
+    "total_price": "749.00",
+    "created_at": "2026-03-29T11:47:55.985Z"
+  }
+},
+{
+  "model": "strona.rental",
+  "pk": 14,
+  "fields": {
+    "user": 6,
+    "car": 2,
+    "status": 3,
+    "pickup_date": "2026-03-31",
+    "return_date": "2026-04-04",
+    "total_price": "749.00",
+    "created_at": "2026-03-30T17:01:07.023Z"
+  }
+},
+{
+  "model": "strona.addon",
+  "pk": 1,
+  "fields": {
+    "type": 2,
+    "name": "Fotelik dzieci─Öcy",
+    "daily_price": "30.00"
+  }
+},
+{
+  "model": "strona.addon",
+  "pk": 2,
+  "fields": {
+    "type": 2,
+    "name": "Baga┼╝nik na dach",
+    "daily_price": "50.00"
+  }
+},
+{
+  "model": "strona.addon",
+  "pk": 3,
+  "fields": {
+    "type": 2,
+    "name": "Pakiet Zima(odmra┼╝acz + skrobaczka)",
+    "daily_price": "20.00"
+  }
+},
+{
+  "model": "strona.addon",
+  "pk": 4,
+  "fields": {
+    "type": 1,
+    "name": "Pe┼éne ubezpieczenie (SCDW)",
+    "daily_price": "80.00"
+  }
+},
+{
+  "model": "strona.contactmessage",
+  "pk": 1,
+  "fields": {
+    "name": "Jakub Szkklarz",
+    "email": "kubaszklarz2003@o2.pl",
+    "body": "pomocy",
+    "created_at": "2026-03-21T17:34:49.905Z"
+  }
+},
+{
+  "model": "strona.contactmessage",
+  "pk": 2,
+  "fields": {
+    "name": "Jakub",
+    "email": "kubaszklarz2003@o2.pl",
+    "body": "pomocy",
+    "created_at": "2026-03-21T17:35:54.728Z"
+  }
+},
+{
+  "model": "strona.contactmessage",
+  "pk": 3,
+  "fields": {
+    "name": "Jakub",
+    "email": "123@o2.pl",
+    "body": "pomocy szybko",
+    "created_at": "2026-03-21T17:45:37.899Z"
+  }
+},
+{
+  "model": "strona.contactmessage",
+  "pk": 4,
+  "fields": {
+    "name": "sadsad",
+    "email": "kubaszklarz2003@o2.pl",
+    "body": "sdaodsaosadsad",
+    "created_at": "2026-03-21T17:53:55.481Z"
+  }
+},
+{
+  "model": "strona.contactmessage",
+  "pk": 5,
+  "fields": {
+    "name": "Jakub Szklarz",
+    "email": "dasdasadssad@o2.pl",
+    "body": "tak tak",
+    "created_at": "2026-03-21T20:37:20.120Z"
+  }
+},
+{
+  "model": "strona.contactmessage",
+  "pk": 6,
+  "fields": {
+    "name": "sdadsa",
+    "email": "123@o2.pl",
+    "body": "sadasdasd fsadsasad",
+    "created_at": "2026-03-21T20:39:01.457Z"
+  }
+},
+{
+  "model": "strona.contactmessage",
+  "pk": 7,
+  "fields": {
+    "name": "asddas",
+    "email": "333@o2.pl",
+    "body": "asdsds",
+    "created_at": "2026-03-21T20:42:25.550Z"
+  }
+},
+{
+  "model": "strona.contactmessage",
+  "pk": 8,
+  "fields": {
+    "name": "dsaadsasd",
+    "email": "dassadsa123@o2.pl",
+    "body": "asdasds",
+    "created_at": "2026-03-21T20:43:53.783Z"
+  }
+},
+{
+  "model": "strona.contactmessage",
+  "pk": 9,
+  "fields": {
+    "name": "dsadsa",
+    "email": "saa3@o2.pl",
+    "body": "sdaasdsa",
+    "created_at": "2026-03-21T20:45:08.241Z"
+  }
+},
+{
+  "model": "strona.contactmessage",
+  "pk": 10,
+  "fields": {
+    "name": "asddasasd",
+    "email": "dasasdsad@o2.pl",
+    "body": "23@o2.pl",
+    "created_at": "2026-03-21T20:46:03.407Z"
+  }
+},
+{
+  "model": "strona.contactmessage",
+  "pk": 11,
+  "fields": {
+    "name": "saddsa",
+    "email": "sdaasd1@o2.pl",
+    "body": "saddsaasd",
+    "created_at": "2026-03-21T20:47:22.264Z"
+  }
+},
+{
+  "model": "strona.contactmessage",
+  "pk": 12,
+  "fields": {
+    "name": "sadssa",
+    "email": "123@o2.pl",
+    "body": "pomocy patryk",
+    "created_at": "2026-03-21T21:07:08.838Z"
+  }
+},
+{
+  "model": "strona.contactmessage",
+  "pk": 13,
+  "fields": {
+    "name": "dasdsa",
+    "email": "321@o2.pl",
+    "body": "dsasdasadsdasda pomocy patryk",
+    "created_at": "2026-03-21T21:13:52.858Z"
+  }
+},
+{
+  "model": "strona.contactmessage",
+  "pk": 14,
+  "fields": {
+    "name": "saasadsdasda",
+    "email": "kubaszklarz2003@o2.pl",
+    "body": "patryk tutaj",
+    "created_at": "2026-03-21T21:15:26.597Z"
+  }
+},
+{
+  "model": "strona.contactmessage",
+  "pk": 15,
+  "fields": {
+    "name": "sadsdsad",
+    "email": "kubaszklarz2003@o2.pl",
+    "body": "pomocy",
+    "created_at": "2026-03-21T21:15:55.668Z"
+  }
+},
+{
+  "model": "strona.contactmessage",
+  "pk": 16,
+  "fields": {
+    "name": "asdadsas",
+    "email": "123@o2.pl",
+    "body": "patryk widzisz mnie",
+    "created_at": "2026-03-21T21:20:54.423Z"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 1,
+  "fields": {
+    "action_time": "2026-03-28T20:28:17.168Z",
+    "user": [
+      "root"
+    ],
+    "content_type": [
+      "strona",
+      "car"
+    ],
+    "object_id": "1",
+    "object_repr": "M3 Premium (E)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Image\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 2,
+  "fields": {
+    "action_time": "2026-03-28T20:35:42.053Z",
+    "user": [
+      "root"
+    ],
+    "content_type": [
+      "strona",
+      "car"
+    ],
+    "object_id": "1",
+    "object_repr": "M3 Premium (E)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Image\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 3,
+  "fields": {
+    "action_time": "2026-03-28T20:39:50.948Z",
+    "user": [
+      "root"
+    ],
+    "content_type": [
+      "strona",
+      "car"
+    ],
+    "object_id": "1",
+    "object_repr": "M3 Premium (E)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Image\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 4,
+  "fields": {
+    "action_time": "2026-03-29T08:20:34.318Z",
+    "user": [
+      "root"
+    ],
+    "content_type": [
+      "strona",
+      "brand"
+    ],
+    "object_id": "5",
+    "object_repr": "Porsche",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 5,
+  "fields": {
+    "action_time": "2026-03-29T08:20:50.670Z",
+    "user": [
+      "root"
+    ],
+    "content_type": [
+      "strona",
+      "carmodel"
+    ],
+    "object_id": "5",
+    "object_repr": "911 Turbo S",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 6,
+  "fields": {
+    "action_time": "2026-03-29T08:24:07.790Z",
+    "user": [
+      "root"
+    ],
+    "content_type": [
+      "strona",
+      "car"
+    ],
+    "object_id": "2",
+    "object_repr": "911 Turbo S Premium (E)",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 7,
+  "fields": {
+    "action_time": "2026-03-29T09:23:27.081Z",
+    "user": [
+      "root"
+    ],
+    "content_type": [
+      "strona",
+      "paymentmethod"
+    ],
+    "object_id": "1",
+    "object_repr": "Blik",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 8,
+  "fields": {
+    "action_time": "2026-03-29T09:23:36.262Z",
+    "user": [
+      "root"
+    ],
+    "content_type": [
+      "strona",
+      "paymentmethod"
+    ],
+    "object_id": "2",
+    "object_repr": "Karta",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 9,
+  "fields": {
+    "action_time": "2026-03-29T09:23:38.119Z",
+    "user": [
+      "root"
+    ],
+    "content_type": [
+      "strona",
+      "paymentmethod"
+    ],
+    "object_id": "3",
+    "object_repr": "Przelew",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 10,
+  "fields": {
+    "action_time": "2026-03-29T09:23:44.529Z",
+    "user": [
+      "root"
+    ],
+    "content_type": [
+      "strona",
+      "rentalstatus"
+    ],
+    "object_id": "1",
+    "object_repr": "Oczekuj─ůca",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 11,
+  "fields": {
+    "action_time": "2026-03-29T09:23:46.152Z",
+    "user": [
+      "root"
+    ],
+    "content_type": [
+      "strona",
+      "rentalstatus"
+    ],
+    "object_id": "2",
+    "object_repr": "Potwierdzona",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 12,
+  "fields": {
+    "action_time": "2026-03-29T09:23:47.669Z",
+    "user": [
+      "root"
+    ],
+    "content_type": [
+      "strona",
+      "rentalstatus"
+    ],
+    "object_id": "3",
+    "object_repr": "W trakcie",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 13,
+  "fields": {
+    "action_time": "2026-03-29T09:23:49.199Z",
+    "user": [
+      "root"
+    ],
+    "content_type": [
+      "strona",
+      "rentalstatus"
+    ],
+    "object_id": "4",
+    "object_repr": "Zwr├│cona",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 14,
+  "fields": {
+    "action_time": "2026-03-29T09:23:50.777Z",
+    "user": [
+      "root"
+    ],
+    "content_type": [
+      "strona",
+      "rentalstatus"
+    ],
+    "object_id": "5",
+    "object_repr": "Anulowana",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 15,
+  "fields": {
+    "action_time": "2026-03-29T10:34:49.864Z",
+    "user": [
+      "root"
+    ],
+    "content_type": [
+      "strona",
+      "transfer"
+    ],
+    "object_id": "1",
+    "object_repr": "Transfer object (1)",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 16,
+  "fields": {
+    "action_time": "2026-03-29T10:35:21.416Z",
+    "user": [
+      "root"
+    ],
+    "content_type": [
+      "strona",
+      "transfer"
+    ],
+    "object_id": "1",
+    "object_repr": "Transfer object (1)",
+    "action_flag": 2,
+    "change_message": "[]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 17,
+  "fields": {
+    "action_time": "2026-03-29T10:38:01.933Z",
+    "user": [
+      "root"
+    ],
+    "content_type": [
+      "strona",
+      "transfer"
+    ],
+    "object_id": "2",
+    "object_repr": "Transfer object (2)",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 18,
+  "fields": {
+    "action_time": "2026-03-29T10:38:10.035Z",
+    "user": [
+      "root"
+    ],
+    "content_type": [
+      "strona",
+      "transfer"
+    ],
+    "object_id": "1",
+    "object_repr": "Transfer object (1)",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 19,
+  "fields": {
+    "action_time": "2026-03-29T10:38:13.633Z",
+    "user": [
+      "root"
+    ],
+    "content_type": [
+      "strona",
+      "transfer"
+    ],
+    "object_id": "2",
+    "object_repr": "Transfer object (2)",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 20,
+  "fields": {
+    "action_time": "2026-03-29T10:59:28.866Z",
+    "user": [
+      "root"
+    ],
+    "content_type": [
+      "strona",
+      "addon"
+    ],
+    "object_id": "3",
+    "object_repr": "Akcesoria Pakiet Zima(odmra┼╝acz + skrobaczka) 20",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 21,
+  "fields": {
+    "action_time": "2026-03-29T10:59:37.614Z",
+    "user": [
+      "root"
+    ],
+    "content_type": [
+      "strona",
+      "addon"
+    ],
+    "object_id": "1",
+    "object_repr": "Akcesoria Fotelik dzieci─Öcy 30.00",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Daily price\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 22,
+  "fields": {
+    "action_time": "2026-03-29T10:59:41.931Z",
+    "user": [
+      "root"
+    ],
+    "content_type": [
+      "strona",
+      "addon"
+    ],
+    "object_id": "2",
+    "object_repr": "Akcesoria Baga┼╝nik na dach 50.00",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Daily price\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 23,
+  "fields": {
+    "action_time": "2026-03-29T11:00:02.340Z",
+    "user": [
+      "root"
+    ],
+    "content_type": [
+      "strona",
+      "addon"
+    ],
+    "object_id": "4",
+    "object_repr": "Ubezpieczenie Pe┼éne ubezpieczenie (SCDW) 80",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+}
+]
