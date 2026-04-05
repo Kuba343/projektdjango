@@ -18,7 +18,7 @@ services:
     ports:
       - "8000:8000"
     environment:
-      - DATABASE_URL=postgres://user:pass@db:5432/rentals_db
+      - DATABASE_URL=postgresql://neondb_owner:npg_i9lWB3ATgHKw@ep-polished-glitter-agbmdnof-pooler.c-2.eu-central-1.aws.neon.tech/neondb?sslmode=require
     depends_on:
       - db
 
