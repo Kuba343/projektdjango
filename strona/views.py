@@ -1,3 +1,4 @@
+import hashlib
 from django.conf import settings
 from django.contrib.auth import authenticate
 from django.contrib.auth.decorators import login_required
@@ -19,11 +20,47 @@ from datetime import datetime, date
 from django.db import transaction, InternalError, connection
 from django.utils import timezone
 from datetime import timedelta, date
+import json
+import requests #pokazuje blad ale dziala nie usuwac
+
 
 def home(request):
-    cars = Car.objects.all()[:6] # Pokazujemy np. tylko 6 aut na start
+    # --- LOGIKA TPAY: Sprawdzanie czy użytkownik właśnie zapłacił ---
+    payment_status = request.GET.get('status')
+    rental_id = request.GET.get('rental_id')
+
+    if payment_status == 'success' and rental_id:
+        try:
+            # Szukamy konkretnej rezerwacji tego użytkownika
+            # Dodatkowo sprawdzamy, czy nie jest starsza niż np. 30 minut dla bezpieczeństwa
+            kwadrans_temu = timezone.now() - timedelta(minutes=30)
+
+            rezerwacja = Rental.objects.filter(
+                id=rental_id,
+                user__user=request.user,  # zakladając relację Rental -> UserProfile -> User
+                status__name="Oczekujący",
+                created_at__gte=kwadrans_temu
+            ).first()
+
+            if rezerwacja:
+                status_potwierdzony, _ = RentalStatus.objects.get_or_create(name="Opłacona")
+                rezerwacja.status = status_potwierdzony
+                rezerwacja.save()
+                messages.success(request, "Dziękujemy! Płatność została potwierdzona, auto czeka na Ciebie.")
+
+                # Czyścimy pasek adresu z parametrów ?status=success..., żeby F5 nie psuło niczego
+                return redirect('home')
+        except Exception as e:
+            print(f"Błąd aktualizacji statusu: {e}")
+
+    # --- STANDARDOWA LOGIKA HOME ---
+    cars = Car.objects.all()[:6]
     cities = City.objects.all()
-    return render(request, 'home.html', {'cars': cars, 'cities': cities})
+
+    return render(request, 'home.html', {
+        'cars': cars,
+        'cities': cities
+    })
 
 
 
@@ -139,55 +176,56 @@ Wiadomość zapisana w bazie o ID: {contact.id}
 
 @login_required(login_url='login')
 def rent_page(request):
-    # Pobieranie parametrów z GET
     city = request.GET.get("city")
     start_date = request.GET.get('start_date')
     end_date = request.GET.get('end_date')
     sort_by = request.GET.get('sort')
 
     today = date.today()
-    today_str = str(today)
     cars = Car.objects.all()
 
-    # 1. Sprawdzenie prawa jazdy dla komunikatu (strażnik profilu)
     profile = UserProfile.objects.filter(user=request.user).first()
     has_license = bool(profile and profile.license_number and profile.license_number.strip())
 
-    # 2. Filtrowanie
     if city and city != "":
         cars = cars.filter(current_branch__street__city__name__icontains=city)
 
-    # 3. Logika dostępności (5 minut)
+    # Logika dostępności uwzględniająca 5-minutową blokadę "Oczekujących"
     if start_date and end_date:
         try:
+            # Granica czasu dla rezerwacji tymczasowych (5 minut temu)
             expiration_time = timezone.now() - timedelta(minutes=5)
+
+            # Pobieramy ID aut, które są zajęte:
+            # 1. Mają status "Opłacona" lub "W trakcie" w tych datach
+            # 2. Mają status "Oczekujący" i zostały stworzone mniej niż 5 minut temu
             occupied_cars_ids = Rental.objects.filter(
                 Q(pickup_date__lte=end_date, return_date__gte=start_date) &
-                (Q(status__name="Opłacona") | Q(status__name="W trakcie", created_at__gte=expiration_time))
+                (
+                    Q(status__name__in=["Opłacona", "W trakcie"]) |
+                    (Q(status__name="Oczekujący") & Q(created_at__gte=expiration_time))
+                )
             ).values_list('car_id', flat=True)
 
             cars = cars.exclude(id__in=occupied_cars_ids)
         except (ValueError, TypeError):
             pass
 
-    # 4. Sortowanie
-    if sort_by == 'price_low':
-        cars = cars.order_by('price_per_day')
-    elif sort_by == 'price_high':
-        cars = cars.order_by('-price_per_day')
-    elif sort_by == 'year_new':
-        cars = cars.order_by('-year')
-    elif sort_by == 'mileage_low':
-        cars = cars.order_by('mileage')
-    else:
-        cars = cars.order_by('id')
+    # Sortowanie
+    sort_dict = {
+        'price_low': 'price_per_day',
+        'price_high': '-price_per_day',
+        'year_new': '-year',
+        'mileage_low': 'mileage'
+    }
+    cars = cars.order_by(sort_dict.get(sort_by, 'id'))
 
     context = {
         "cars": cars,
         "city": city,
         "start_date": start_date,
         "end_date": end_date,
-        "today": today_str,
+        "today": str(today),
         "sort": sort_by,
         "has_license": has_license
     }
@@ -197,19 +235,16 @@ def rent_page(request):
 @login_required(login_url='login')
 def checkout_view(request, car_id):
     car = get_object_or_404(Car, id=car_id)
-    profile = get_object_or_404(UserProfile, user=request.user)
-    addons = Addon.objects.all()
+    profile, _ = UserProfile.objects.get_or_create(user=request.user)
+    addons_queryset = Addon.objects.all()
 
-    # Pobieramy daty z GET (z linku "Wypożycz teraz")
     start_date_str = request.GET.get("start_date")
     end_date_str = request.GET.get("end_date")
 
-    # Strażnik dat
     if not start_date_str or not end_date_str:
-        messages.warning(request, "Proszę najpierw wybrać daty wynajmu!")
         return redirect('rent')
 
-    # --- OBLICZANIE CENY PRZEZ FUNKCJĘ SQL ---
+    # 1. Obliczanie bazowej liczby dni i ceny auta
     try:
         d1 = datetime.strptime(start_date_str, "%Y-%m-%d")
         d2 = datetime.strptime(end_date_str, "%Y-%m-%d")
@@ -217,81 +252,59 @@ def checkout_view(request, car_id):
         if days <= 0: days = 1
 
         with connection.cursor() as cursor:
-            # Wywołujemy funkcję SQL (f_id_addon ustawiamy na NULL/None na początku)
-            cursor.execute(
-                "SELECT oblicz_cene_wypozyczenia(%s, %s, %s, %s)",
-                [car.id, None, days, profile.id]
-            )
-            total_price = round(cursor.fetchone()[0], 2)
+            cursor.execute("SELECT oblicz_cene_wypozyczenia(%s, %s, %s, %s)", [car.id, None, days, profile.id])
+            base_total_price = round(cursor.fetchone()[0], 2)
     except Exception as e:
-        messages.error(request, f"Błąd podczas obliczania ceny: {e}")
+        messages.error(request, f"Błąd danych: {e}")
         return redirect('rent')
 
-    # --- ZAPIS "W LOCIE" (GET) ---
-    rental = None
-    if request.method == 'GET':
+    # 2. REZERWACJA WSTĘPNA (Blokada 5 min)
+    status_awaiting, _ = RentalStatus.objects.get_or_create(name="Oczekująca")
+
+    rental, created = Rental.objects.get_or_create(
+        user=profile,
+        car=car,
+        pickup_date=start_date_str,
+        return_date=end_date_str,
+        status=status_awaiting,
+        defaults={'total_price': base_total_price}
+    )
+
+    # 3. OBSŁUGA PRZYCISKU "ZAPŁAĆ" (POST)
+    if request.method == 'POST':
         try:
             with transaction.atomic():
-                status_pending, _ = RentalStatus.objects.get_or_create(name="W trakcie")
+                # Pobierz wybrane ID dodatków z formularza
+                selected_addons_ids = request.POST.getlist('selected_addons')
 
-                # Tworzymy rezerwację (Trigger w Neonie sprawdzi tu prawo jazdy)
-                rental = Rental.objects.create(
-                    user=profile,
-                    car=car,
-                    pickup_date=start_date_str,
-                    return_date=end_date_str,
-                    status=status_pending,
-                    total_price=total_price
-                )
-        except InternalError as e:
-            # Obsługa błędu z triggera (np. brak prawa jazdy)
-            messages.error(request, str(e).split('CONTEXT:')[0])
+                # Oblicz sumę cen wybranych dodatków
+                addons_total_price = 0
+                if selected_addons_ids:
+                    selected_addons = Addon.objects.filter(id__in=selected_addons_ids)
+                    for addon in selected_addons:
+                        addons_total_price += float(addon.daily_price) * days
+
+                # AKTUALIZACJA CENY KOŃCOWEJ (Auto + Dodatki)
+                final_total = float(base_total_price) + float(addons_total_price)
+                rental.total_price = round(final_total, 2)
+
+                # Zapisujemy wybrane dodatki do sesji (skoro nie masz ManyToMany w Rental)
+                request.session['temp_addons'] = selected_addons_ids
+
+                rental.save()
+
+                # Teraz Tpay dostanie poprawną, zwiększoną kwotę z bazy
+                return redirect('tpay_json_process', rental_id=rental.id)
+        except Exception as e:
+            messages.error(request, f"Błąd finalizacji: {e}")
             return redirect('rent')
-
-    # --- FINALIZACJA (POST) ---
-    if request.method == 'POST':
-        # Szukamy rezerwacji, która właśnie została stworzona
-        rental = Rental.objects.filter(user=profile, car=car, status__name="W trakcie").last()
-
-        if rental:
-            try:
-                with transaction.atomic():
-                    # Zmiana statusu na opłaconą
-                    status_paid, _ = RentalStatus.objects.get_or_create(name="Opłacona")
-                    rental.status = status_paid
-
-                    # Dodawanie wybranych dodatków i aktualizacja ceny końcowej
-                    selected_addons = request.POST.getlist('selected_addons')
-                    final_calculated_price = total_price  # Zaczynamy od bazowej
-
-                    for addon_id in selected_addons:
-                        addon_obj = Addon.objects.get(id=addon_id)
-                        RentalAddon.objects.create(rental=rental, addon=addon_obj)
-
-                        # Ponowne wywołanie funkcji SQL dla każdego dodatku, aby doliczyć go do ceny
-                        with connection.cursor() as cursor:
-                            cursor.execute(
-                                "SELECT oblicz_cene_wypozyczenia(%s, %s, %s, %s)",
-                                [car.id, addon_id, days, profile.id]
-                            )
-                            # Twoja funkcja liczy auto+dodatek, więc doliczamy różnicę lub aktualizujemy
-                            # Zakładając, że funkcja zwraca (auto + konkretny_dodatek) po rabatach:
-                            final_calculated_price = cursor.fetchone()[0]
-
-                    rental.total_price = final_calculated_price
-                    rental.save()
-
-                messages.success(request, "Płatność udana! Auto zostało zarezerwowane.")
-                return redirect('my_rentals')
-            except Exception as e:
-                messages.error(request, f"Błąd podczas finalizacji: {e}")
 
     return render(request, "checkout.html", {
         'car': car,
-        'addons': addons,
+        'addons': addons_queryset,
         'start_date': start_date_str,
         'end_date': end_date_str,
-        'total_price': total_price,  # Cena z funkcji SQL
+        'total_price': base_total_price,  # Wyświetlamy bazową, JS w HTML doliczy resztę wizualnie
         'rental': rental
     })
 #FAQ
@@ -435,16 +448,74 @@ def success_view(request):
 
 
 def cancel_rental(request, rental_id):
-    # 1. Znajdź rezerwację w bazie (get_object_or_404 to zabezpieczenie)
-    from django.shortcuts import get_object_or_404
+    rental = get_object_or_404(Rental, id=rental_id, user__user=request.user)
+
+    # Pobieramy lub tworzymy status "Anulowana"
+    status_canceled, _ = RentalStatus.objects.get_or_create(name="Anulowana")
+
+    rental.status = status_canceled
+    rental.save()
+
+    messages.info(request, "Rezerwacja została anulowana.")
+
+    # Przekierowujemy z powrotem do wyszukiwarki, zachowując daty jeśli to możliwe
+    return redirect('rent')
+
+
+def tpay_json_redirect(request, rental_id):
     rental = get_object_or_404(Rental, id=rental_id)
 
-    # 2. Skasuj ją (to zwalnia auto w Twoim filtrze rent_page)
-    rental.delete()
+    # TWOJE DANE Z OBRAZKA
+    client_id = "01KNZ2JFMG4P9F74T8JQ79NT32-01KNZ35MAX1H1EMBNQPCBFC1E9"
+    secret = "ef85248e567cf5bdd39b916d00cf0d2d8b15e131d8343c64512fe472bdef3373"
 
-    # 3. Dodaj komunikat (opcjonalnie)
-    from django.contrib import messages
-    messages.info(request, "Anulowano rezerwację. Auto jest już dostępne dla innych.")
+    # 1. Pobieramy Token dostępu od Tpay
+    auth_url = "https://openapi.sandbox.tpay.com/oauth/auth"
+    auth_data = {
+        "client_id": client_id,
+        "client_secret": secret,
+        "scope": "read write"
+    }
 
-    # 4. Wrzuć użytkownika na stronę z autami
-    return redirect('rent') # 'rent' to nazwa Twojego URL-a od listy aut
+    try:
+        auth_response = requests.post(auth_url, data=auth_data)
+        token = auth_response.json().get('access_token')
+
+        # 2. Tworzymy transakcję przez API
+        transaction_url = "https://openapi.sandbox.tpay.com/transactions"
+        headers = {
+            "Authorization": f"Bearer {token}",
+            "Content-Type": "application/json"
+        }
+
+        payload = {
+            "amount": float(rental.total_price),
+            "description": f"Wynajem auta #{rental.id}",
+            "hiddenDescription": f"rental_{rental.id}",
+            "payer": {
+                "email": request.user.email,
+                "name": request.user.get_full_name() or request.user.username
+            },
+            "callbacks": {
+                "payerUrls": {
+                    "success": request.build_absolute_uri(f'/?status=success&rental_id={rental.id}'),
+                    "error": request.build_absolute_uri('/rent/?payment=failed')
+                }
+            }
+        }
+
+        transaction_response = requests.post(transaction_url, headers=headers, json=payload)
+        res_data = transaction_response.json()
+
+        # 3. Pobieramy link do płatności i przekierowujemy użytkownika
+        payment_url = res_data.get('transactionPaymentUrl')
+
+        if payment_url:
+            return redirect(payment_url)
+        else:
+            messages.error(request, "Błąd Tpay: Nie udało się wygenerować linku.")
+            return redirect('checkout', car_id=rental.car.id)
+
+    except Exception as e:
+        messages.error(request, f"Błąd komunikacji z Tpay: {e}")
+        return redirect('checkout', car_id=rental.car.id)

@@ -21,7 +21,7 @@ urlpatterns = [
     path('payment-pending/<int:rental_id>/', views.payment_pending_view, name='payment_pending'),
     path('success/<int:rental_id>/', views.success_view, name='success'),
     path('cancel-rental/<int:rental_id>/', views.cancel_rental, name='cancel_rental'),
-
+    path('proces-platnosci/<int:rental_id>/', views.tpay_json_redirect, name='tpay_json_process'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 

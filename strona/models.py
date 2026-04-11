@@ -40,7 +40,7 @@ class FuelType(models.Model):
 class RentalStatus(models.Model):
     STATUS_CHOICES=[
         ('Oczekująca','Oczekująca'),#Czeka na platnosc
-        ('Potwierdzona', 'Potwierdzona'),#Zaplacone
+        ('Opłacona', 'Opłacona'),#Zaplacone
         ('W trakcie', 'W trakcie'),#Samochod  u klienta
         ('Zwrócona', 'Zwrócona'),#Samochód wrocil
         ('Anulowana','Anulowana'),#Anulowane

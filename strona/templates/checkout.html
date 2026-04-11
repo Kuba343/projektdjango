@@ -6,9 +6,9 @@
     <div class="checkout-card">
 
         {% if messages %}
-        <div style="max-width: 1200px; margin: 10px auto; padding: 0 20px;">
+        <div class="messages-container">
             {% for message in messages %}
-            <div style="padding: 15px; background-color: #ff4d4d; color: white; border-radius: 5px; margin-bottom: 15px; font-weight: bold;">
+            <div class="alert alert-error">
                 ⚠️ {{ message }}
             </div>
             {% endfor %}
@@ -16,29 +16,33 @@
         {% endif %}
 
         <div id="timer-banner" class="timer-banner">
-            ⏱️ Twoja rezerwacja wygaśnie za: <span id="countdown">05:00</span>
+            <span class="timer-icon">⏱️</span> Twoja rezerwacja wygaśnie za: <strong id="countdown">05:00</strong>
         </div>
 
         <form method="POST" id="checkout-form">
             {% csrf_token %}
             <div class="checkout-layout">
+
                 <div class="checkout-info-section">
                     <h1 class="checkout-title">Podsumowanie wynajmu</h1>
 
                     <div class="checkout-car-display">
-                        {% if car.image %}
-                            <img src="{{ car.image.url }}" alt="{{ car.model.name }}" class="checkout-car-img">
-                        {% else %}
-                            <div class="no-img-placeholder">Brak zdjęcia</div>
-                        {% endif %}
+                        <div class="car-image-container">
+                            {% if car.image %}
+                                <img src="{{ car.image.url }}" alt="{{ car.model.name }}" class="checkout-car-img">
+                            {% else %}
+                                <div class="no-img-placeholder">Brak zdjęcia</div>
+                            {% endif %}
+                        </div>
 
                         <div class="car-details-text">
-                            <h2>{{ car.model.brand.name }} {{ car.model.name }}</h2>
+                            <span class="brand-label">{{ car.model.brand.name }}</span>
+                            <h2>{{ car.model.name }}</h2>
                             <div class="info-badge">📍 Oddział: {{ car.current_branch.street.city.name }}</div>
-                            <p class="date-info">
-                                <strong>Odbiór:</strong> {{ start_date }} <br>
-                                <strong>Zwrot:</strong> {{ end_date }}
-                            </p>
+                            <div class="dates-summary">
+                                <p><strong>Odbiór:</strong> {{ start_date }}</p>
+                                <p><strong>Zwrot:</strong> {{ end_date }}</p>
+                            </div>
                         </div>
                     </div>
 
@@ -47,48 +51,60 @@
                         <div class="addon-list">
                             {% for addon in addons %}
                             <label class="addon-item">
-                                <input type="checkbox" name="selected_addons" value="{{ addon.id }}"
-                                       class="addon-checkbox" data-price="{{ addon.daily_price }}">
-                                <span>{{ addon.name }}</span>
+                                <div class="addon-checkbox-wrapper">
+                                    <input type="checkbox" name="selected_addons" value="{{ addon.id }}"
+                                           class="addon-checkbox" data-price="{{ addon.daily_price }}">
+                                    <span class="addon-name">{{ addon.name }}</span>
+                                </div>
                                 <span class="addon-price">+{{ addon.daily_price }} zł/doba</span>
                             </label>
                             {% empty %}
-                                <p>Brak dostępnych dodatków.</p>
+                                <p class="empty-msg">Brak dostępnych dodatków.</p>
                             {% endfor %}
                         </div>
                     </div>
                 </div>
 
-                <div class="checkout-payment-section">
-                    <div class="summary-sticky">
-                        <div class="price-breakdown">
-                            <p>Cena po rabatach: <strong>{{ total_price }} zł</strong></p>
-                            <div class="total-price-wrapper">
-                                <span>Łącznie do zapłaty:</span>
-                                <h2 id="final-price">{{ total_price }} zł</h2>
+
+                    <div class="checkout-payment-section">
+                        <div class="summary-sticky">
+                            <div class="payment-card-action" style="text-align: center;"> <h3 class="payment-title">Płatność</h3>
+
+                                <div class="price-center-box" style="margin-bottom: 20px;">
+                                    <p style="margin: 0; color: #666;">Cena bazowa: <strong>{{ total_price }} zł</strong></p>
+                                    <p style="margin: 5px 0 0 0; font-size: 0.9rem; color: #333;">Łącznie do zapłaty:</p>
+                                    <div id="final-price" style="font-size: 2.5rem; font-weight: 800; color: #ff0000; line-height: 1.2;">
+                                        {{ total_price }} zł
+                                    </div>
+                                </div>
+
+                                <input type="radio" name="payment_method" value="tpay" checked style="display:none;">
+
+                                <button type="submit" class="btn-confirm-pay" style="width: 100%; justify-content: center;">
+                                    <div class="btn-pay-content" style="display: flex; align-items: center; justify-content: center; gap: 10px;">
+                                        <span>ZAPŁAĆ</span>
+                                    </div>
+                                </button>
+
+                                <div style="margin-top: 15px;">
+                                    <a href="{% url 'cancel_rental' rental.id %}"
+                                       class="btn-abort"
+                                       onclick="return confirm('Czy na pewno chcesz anulować rezerwację?')">
+                                        ❌ Anuluj rezerwację
+                                    </a>
+                                </div>
+
                             </div>
                         </div>
-
-                        <div class="blik-container">
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/Logo_Blik.svg" alt="BLIK">
-                            <input type="text" name="blik_code" placeholder="KOD BLIK" maxlength="6" class="blik-input-field" required>
-                        </div>
-
-                        <div class="checkout-actions">
-                            <button type="submit" class="btn-confirm-pay">ZAPŁAĆ I POTWIERDŹ</button>
-                            <a href="{% url 'rent' %}?start_date={{ start_date }}&end_date={{ end_date }}" class="btn-abort" onclick="return confirm('Czy na pewno chcesz anulować?')">
-                                ❌ Anuluj
-                            </a>
-                        </div>
                     </div>
-                </div>
+
             </div>
         </form>
     </div>
 </div>
 
 <script>
-    // Licznik 5 minut
+    // --- LICZNIK 5 MINUT ---
     let timeLeft = 300;
     const countdownEl = document.getElementById("countdown");
     const timer = setInterval(() => {
@@ -97,25 +113,36 @@
         countdownEl.innerHTML = (mins < 10 ? "0":"") + mins + ":" + (secs < 10 ? "0":"") + secs;
         if (timeLeft <= 0) {
             clearInterval(timer);
-            document.querySelector(".btn-confirm-pay").disabled = true;
-            document.querySelector(".btn-confirm-pay").innerText = "REZERWACJA WYGASŁA";
+            const btn = document.querySelector(".btn-confirm-pay");
+            if(btn) {
+                btn.disabled = true;
+                btn.innerText = "SESJA WYGASŁA";
+                btn.style.opacity = "0.5";
+            }
         }
         timeLeft--;
     }, 1000);
 
-    // Dynamiczna cena w JS (poglądowa)
+    // --- DYNAMICZNE PRZELICZANIE CENY ---
     const boxes = document.querySelectorAll('.addon-checkbox');
     const priceDisplay = document.getElementById('final-price');
     const base = parseFloat("{{ total_price }}".replace(',', '.'));
 
+    const d1 = new Date("{{ start_date }}");
+    const d2 = new Date("{{ end_date }}");
+    const diffTime = Math.abs(d2 - d1);
+    let days = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    if (days <= 0) days = 1;
+
     boxes.forEach(b => {
         b.addEventListener('change', () => {
-            let currentTotal = base;
+            let addonsTotal = 0;
             boxes.forEach(cb => {
                 if(cb.checked) {
-                    currentTotal += parseFloat(cb.getAttribute('data-price').replace(',', '.'));
+                    addonsTotal += parseFloat(cb.getAttribute('data-price').replace(',', '.')) * days;
                 }
             });
+            let currentTotal = base + addonsTotal;
             priceDisplay.innerText = currentTotal.toFixed(2).replace('.', ',') + " zł";
         });
     });
