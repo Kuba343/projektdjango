@@ -8,12 +8,40 @@
 </div>
 
 <div class="search-box">
-    <form action="{% url 'rent' %}" method="GET">
+    <form action="{% url 'rent' %}" method="GET" style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center;">
         <input type="text" name="city" placeholder="Miasto odbioru" value="{{ city|default:'' }}">
         <input type="date" name="start_date" id="start_date" value="{{ start_date }}">
-<input type="date" name="end_date" id="end_date" value="{{ end_date }}">
-        <button type="submit">Szukaj</button>
+        <input type="date" name="end_date" id="end_date" value="{{ end_date }}">
+
+        <select id="sort" name="sort" style="padding: 10px; border-radius: 5px; border: 1px solid #ccc;">
+            <option value="">Sortuj domyślnie</option>
+            <option value="price_low">Cena: od najniższej</option>
+            <option value="price_high">Cena: od najwyższej</option>
+            <option value="year_new">Rocznik: od najnowszego</option>
+            <option value="mileage_low">Przebieg: od najniższego</option>
+        </select>
+
+        <script>
+            const params = new URLSearchParams(window.location.search);
+            const sort = params.get("sort");
+            if (sort) {
+                document.getElementById("sort").value = sort;
+            }
+        </script>
+
+        <button type="submit" onclick="return validateDates(event)">Szukaj</button>
     </form>
+</div>
+
+<div class="messages-container" id="js-messages" style="max-width: 1200px; margin: 20px auto; padding: 0 20px;">
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}"
+                 style="padding: 15px; background-color: #ff4d4d; color: white; border-radius: 5px; font-weight: bold; margin-bottom: 10px;">
+                ⚠️ {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
 </div>
 
 <div class="flota-container">
@@ -44,7 +72,7 @@
                     <p style="margin: 5px 0;">⛽ <strong>Paliwo:</strong> {{ car.fuel_type.name }}</p>
                     <p style="margin: 5px 0;">🎨 <strong>Kolor:</strong> {{ car.color|default:"Nieokreślony" }}</p>
                     <p style="margin: 5px 0;">📅 <strong>Rok:</strong> {{ car.year }}</p>
-                    <p style="margin: 5px 0;">🛣️ <strong>Przebieg:</strong> {{ car.milage }}</p>
+                    <p style="margin: 5px 0;">🛣️ <strong>Przebieg:</strong> {{ car.mileage }}</p>
                 </div>
 
                 <button type="button" class="btn-more" onclick="toggleInfo({{ car.id }}, this)" style="background: none; border: none; color: red; cursor: pointer; padding: 10px 0; width: 100%; text-align: left; font-weight: bold;">
@@ -53,6 +81,7 @@
 
                 <a href="{% url 'checkout' car.id %}?start_date={{ request.GET.start_date }}&end_date={{ request.GET.end_date }}"
                    class="btn-send"
+                   onclick="return validateDates(event)"
                    style="display: block; text-align: center; text-decoration: none; width: 100%; margin-top: 10px; background-color: red; color: white; border: none; padding: 10px; border-radius: 5px; cursor: pointer; font-weight: bold;">
                     Wypożycz teraz
                 </a>
@@ -68,6 +97,28 @@
 </div>
 
 <script>
+    // --- FUNKCJA WALIDACJI (Czerwony pasek) ---
+    function validateDates(event) {
+        const sDate = document.getElementById('start_date').value;
+        const eDate = document.getElementById('end_date').value;
+        const msgDiv = document.getElementById('js-messages');
+
+        if (!sDate || !eDate) {
+            event.preventDefault(); // Blokuje akcję
+
+            // Wstrzykujemy czerwony pasek
+            msgDiv.innerHTML = `
+                <div class="alert alert-error" style="padding: 15px; background-color: #ff4d4d; color: white; border-radius: 5px; font-weight: bold; margin-bottom: 10px;">
+                    ⚠️ Proszę najpierw wybrać daty wynajmu!
+                </div>
+            `;
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            return false;
+        }
+        return true;
+    }
+
     // --- LOGIKA DAT ---
     const today = new Date().toISOString().split('T')[0];
     const startDateInput = document.getElementById('start_date');
@@ -83,7 +134,6 @@
     // --- LOGIKA ROZWIJANIA INFO ---
     function toggleInfo(carId, btn) {
         const infoDiv = document.getElementById('more-info-' + carId);
-
         if (infoDiv.style.display === "none") {
             infoDiv.style.display = "block";
             btn.innerHTML = "- Mniej informacji";

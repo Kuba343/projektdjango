@@ -41,17 +41,17 @@
             {% csrf_token %}
 
             <div class="form-group">
-                {{ form.name.label_tag }}
+                <label>Imię i nazwisko:</label>
                 {{ form.name }}
             </div>
 
             <div class="form-group">
-                {{ form.email.label_tag }}
+                <label>Adres e-mail:</label>
                 {{ form.email }}
             </div>
 
             <div class="form-group">
-                {{ form.body.label_tag }}
+                <label>Treść wiadomości:</label>
                 {{ form.body }}
             </div>
 

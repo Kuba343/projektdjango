@@ -9,14 +9,14 @@ from django.shortcuts import render, redirect
 from django.shortcuts import render, get_object_or_404
 from django.contrib import messages
 from .forms import RegistrationForm, LoginForm, ContactForm
-from .models import Car, Addon, Branch, Rental, City, RentalStatus, PaymentMethod, UserProfile
+from .models import Car, Addon, Branch, Rental, City, RentalStatus, PaymentMethod, UserProfile, RentalAddon
 from django.contrib.auth import authenticate, login as auth_login
 from django.contrib.auth import logout as django_logout
 from django.db.models import Q
 from .models import Car, Addon
 from django.shortcuts import render
 from datetime import datetime, date
-from django.db import transaction
+from django.db import transaction, InternalError, connection
 from django.utils import timezone
 from datetime import timedelta, date
 
@@ -76,6 +76,9 @@ def calculator_view(request):
 
 
 def contact_view(request):
+
+
+
     oddzialy = Branch.objects.all()
 
 
@@ -136,61 +139,161 @@ Wiadomość zapisana w bazie o ID: {contact.id}
 
 @login_required(login_url='login')
 def rent_page(request):
+    # Pobieranie parametrów z GET
     city = request.GET.get("city")
     start_date = request.GET.get('start_date')
     end_date = request.GET.get('end_date')
+    sort_by = request.GET.get('sort')
 
     today = date.today()
     today_str = str(today)
-
     cars = Car.objects.all()
 
-    # 1. Filtrowanie po mieście
+    # 1. Sprawdzenie prawa jazdy dla komunikatu (strażnik profilu)
+    profile = UserProfile.objects.filter(user=request.user).first()
+    has_license = bool(profile and profile.license_number and profile.license_number.strip())
+
+    # 2. Filtrowanie
     if city and city != "":
         cars = cars.filter(current_branch__street__city__name__icontains=city)
 
-    # 2. Blokada dat wstecznych
-    if start_date and start_date < today_str:
-        start_date = today_str
-
-    if start_date and end_date and end_date < start_date:
-        end_date = start_date
-
-    # 3. Filtrowanie po dostępności (z uwzględnieniem wygasania rezerwacji)
+    # 3. Logika dostępności (5 minut)
     if start_date and end_date:
         try:
-            # Definiujemy czas graniczny (5 minut temu)
             expiration_time = timezone.now() - timedelta(minutes=5)
-
-            # Szukamy rezerwacji, które blokują auto:
-            # Muszą nakładać się datami ORAZ spełniać jeden z warunków:
-            # a) Są opłacone (blokują na stałe)
-            # b) Są "W trakcie", ale jeszcze NIE wygasły (stworzone w ciągu ostatnich 5 min)
-
             occupied_cars_ids = Rental.objects.filter(
-                # Warunek dat (kolizja terminów)
-                Q(pickup_date__lte=end_date, return_date__gte=start_date)
-            ).filter(
-                # Warunek aktywności rezerwacji
-                Q(status__name="Opłacona") |
-                Q(status__name="W trakcie", created_at__gte=expiration_time)
+                Q(pickup_date__lte=end_date, return_date__gte=start_date) &
+                (Q(status__name="Opłacona") | Q(status__name="W trakcie", created_at__gte=expiration_time))
             ).values_list('car_id', flat=True)
 
-            # Wykluczamy te konkretne auta
             cars = cars.exclude(id__in=occupied_cars_ids)
-
-        except ValueError:
+        except (ValueError, TypeError):
             pass
+
+    # 4. Sortowanie
+    if sort_by == 'price_low':
+        cars = cars.order_by('price_per_day')
+    elif sort_by == 'price_high':
+        cars = cars.order_by('-price_per_day')
+    elif sort_by == 'year_new':
+        cars = cars.order_by('-year')
+    elif sort_by == 'mileage_low':
+        cars = cars.order_by('mileage')
+    else:
+        cars = cars.order_by('id')
 
     context = {
         "cars": cars,
         "city": city,
         "start_date": start_date,
         "end_date": end_date,
-        "today": today_str
+        "today": today_str,
+        "sort": sort_by,
+        "has_license": has_license
     }
     return render(request, "rent.html", context)
 
+
+@login_required(login_url='login')
+def checkout_view(request, car_id):
+    car = get_object_or_404(Car, id=car_id)
+    profile = get_object_or_404(UserProfile, user=request.user)
+    addons = Addon.objects.all()
+
+    # Pobieramy daty z GET (z linku "Wypożycz teraz")
+    start_date_str = request.GET.get("start_date")
+    end_date_str = request.GET.get("end_date")
+
+    # Strażnik dat
+    if not start_date_str or not end_date_str:
+        messages.warning(request, "Proszę najpierw wybrać daty wynajmu!")
+        return redirect('rent')
+
+    # --- OBLICZANIE CENY PRZEZ FUNKCJĘ SQL ---
+    try:
+        d1 = datetime.strptime(start_date_str, "%Y-%m-%d")
+        d2 = datetime.strptime(end_date_str, "%Y-%m-%d")
+        days = (d2 - d1).days
+        if days <= 0: days = 1
+
+        with connection.cursor() as cursor:
+            # Wywołujemy funkcję SQL (f_id_addon ustawiamy na NULL/None na początku)
+            cursor.execute(
+                "SELECT oblicz_cene_wypozyczenia(%s, %s, %s, %s)",
+                [car.id, None, days, profile.id]
+            )
+            total_price = round(cursor.fetchone()[0], 2)
+    except Exception as e:
+        messages.error(request, f"Błąd podczas obliczania ceny: {e}")
+        return redirect('rent')
+
+    # --- ZAPIS "W LOCIE" (GET) ---
+    rental = None
+    if request.method == 'GET':
+        try:
+            with transaction.atomic():
+                status_pending, _ = RentalStatus.objects.get_or_create(name="W trakcie")
+
+                # Tworzymy rezerwację (Trigger w Neonie sprawdzi tu prawo jazdy)
+                rental = Rental.objects.create(
+                    user=profile,
+                    car=car,
+                    pickup_date=start_date_str,
+                    return_date=end_date_str,
+                    status=status_pending,
+                    total_price=total_price
+                )
+        except InternalError as e:
+            # Obsługa błędu z triggera (np. brak prawa jazdy)
+            messages.error(request, str(e).split('CONTEXT:')[0])
+            return redirect('rent')
+
+    # --- FINALIZACJA (POST) ---
+    if request.method == 'POST':
+        # Szukamy rezerwacji, która właśnie została stworzona
+        rental = Rental.objects.filter(user=profile, car=car, status__name="W trakcie").last()
+
+        if rental:
+            try:
+                with transaction.atomic():
+                    # Zmiana statusu na opłaconą
+                    status_paid, _ = RentalStatus.objects.get_or_create(name="Opłacona")
+                    rental.status = status_paid
+
+                    # Dodawanie wybranych dodatków i aktualizacja ceny końcowej
+                    selected_addons = request.POST.getlist('selected_addons')
+                    final_calculated_price = total_price  # Zaczynamy od bazowej
+
+                    for addon_id in selected_addons:
+                        addon_obj = Addon.objects.get(id=addon_id)
+                        RentalAddon.objects.create(rental=rental, addon=addon_obj)
+
+                        # Ponowne wywołanie funkcji SQL dla każdego dodatku, aby doliczyć go do ceny
+                        with connection.cursor() as cursor:
+                            cursor.execute(
+                                "SELECT oblicz_cene_wypozyczenia(%s, %s, %s, %s)",
+                                [car.id, addon_id, days, profile.id]
+                            )
+                            # Twoja funkcja liczy auto+dodatek, więc doliczamy różnicę lub aktualizujemy
+                            # Zakładając, że funkcja zwraca (auto + konkretny_dodatek) po rabatach:
+                            final_calculated_price = cursor.fetchone()[0]
+
+                    rental.total_price = final_calculated_price
+                    rental.save()
+
+                messages.success(request, "Płatność udana! Auto zostało zarezerwowane.")
+                return redirect('my_rentals')
+            except Exception as e:
+                messages.error(request, f"Błąd podczas finalizacji: {e}")
+
+    return render(request, "checkout.html", {
+        'car': car,
+        'addons': addons,
+        'start_date': start_date_str,
+        'end_date': end_date_str,
+        'total_price': total_price,  # Cena z funkcji SQL
+        'rental': rental
+    })
 #FAQ
 def faq(request):
     faq_wynajem = [
@@ -324,53 +427,6 @@ def faq(request):
     })
 
 
-@login_required
-@transaction.atomic #to dziala tak ze jak cos padnie to nie zostanie byle jaki rekord w bazie
-def checkout_view(request, car_id):
-    car = get_object_or_404(Car, id=car_id)
-    all_addons = Addon.objects.all()
-
-    # Pobieramy daty z URL
-    start_date = request.GET.get("start_date")
-    end_date = request.GET.get("end_date")
-
-    # 2. POPRAWKA: Zabezpieczenie przed pustymi datami (ValidationError)
-    if not start_date or not end_date or start_date == "" or end_date == "":
-        from django.contrib import messages
-        messages.warning(request, "Proszę najpierw wybrać daty wynajmu w wyszukiwarce!")
-        return redirect('rent')
-
-    # Szukamy profilu bezpośrednio w tabeli UserProfile
-    try:
-        profile = UserProfile.objects.get(user=request.user)
-    except UserProfile.DoesNotExist:
-        from django.contrib import messages
-        messages.error(request, "Błąd: Nie znaleziono Twojego profilu klienta.")
-        return redirect('rent')
-
-    status_pending, _ = RentalStatus.objects.get_or_create(name="W trakcie")
-
-    # Tworzymy rezerwację
-    rental = Rental.objects.create(
-        user=profile,
-        car=car,
-        pickup_date=start_date,
-        return_date=end_date,
-        status=status_pending,
-        total_price=car.price_per_day
-    )
-
-    addons = Addon.objects.all()
-    payment_methods = PaymentMethod.objects.all()
-
-    return render(request, "checkout.html", {
-        'rental': rental,
-        'car': car,
-        'addons': addons,
-        'payment_methods': payment_methods,
-        'start_date': start_date,
-        'end_date': end_date
-    })
 def payment_pending_view(request):
     return render(request, "payment_pending.html")
 
