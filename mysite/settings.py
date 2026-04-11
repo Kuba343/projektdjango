@@ -39,7 +39,20 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'strona',
+    'django_q',
 ]
+#potrzebne aby robot sam robil usuwanie co minute oczekujacych rezerwacji
+Q_CLUSTER = {
+    'name': 'DjangQ',
+    'workers': 4,
+    'recycle': 500,
+    'timeout': 60,
+    'compress': True,
+    'save_limit': 250,
+    'queue_limit': 500,
+    'label': 'Django Q',
+    'orm': 'default',
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

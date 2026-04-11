@@ -1,0 +1,26 @@
+{% extends "admin/base_site.html" %}
+{% block content %}
+<div class="content">
+    <h2>{{ title }}</h2>
+    <p>Wybrany oddział: <strong>{{ items.first.current_branch }}</strong></p>
+    
+    <form action="" method="post">
+        {% csrf_token %}
+        
+        <div style="margin: 20px 0;">
+            {{ form.as_p }}
+        </div>
+
+        {% for obj in items %}
+            <input type="hidden" name="_selected_action" value="{{ obj.pk }}" />
+        {% endfor %}
+        
+        <input type="hidden" name="action" value="uruchom_serwis_masowy" />
+        
+        <div class="submit-row">
+            <input type="submit" name="apply" value="Zatwierdź i wykonaj procedurę SQL" style="background: #417690; color: white; padding: 10px 20px; border: none; cursor: pointer; border-radius: 4px;" />
+            <a href=".." style="margin-left: 20px; color: #666;">Anuluj</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

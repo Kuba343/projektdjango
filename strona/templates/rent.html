@@ -43,7 +43,8 @@
                     <p style="margin: 5px 0;">🐎 <strong>Moc:</strong> {{ car.horsepower }} KM</p>
                     <p style="margin: 5px 0;">⛽ <strong>Paliwo:</strong> {{ car.fuel_type.name }}</p>
                     <p style="margin: 5px 0;">🎨 <strong>Kolor:</strong> {{ car.color|default:"Nieokreślony" }}</p>
-                    <p style="margin: 5px 0;">📅 <strong>Rok:</strong> {{ car.year|default:"2024" }}</p>
+                    <p style="margin: 5px 0;">📅 <strong>Rok:</strong> {{ car.year }}</p>
+                    <p style="margin: 5px 0;">🛣️ <strong>Przebieg:</strong> {{ car.milage }}</p>
                 </div>
 
                 <button type="button" class="btn-more" onclick="toggleInfo({{ car.id }}, this)" style="background: none; border: none; color: red; cursor: pointer; padding: 10px 0; width: 100%; text-align: left; font-weight: bold;">

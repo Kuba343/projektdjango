@@ -22,5 +22,14 @@ services:
     depends_on:
       - db
 
+  qcluster:
+    build: .
+    command: python manage.py qcluster
+    volumes:
+      - .:/app
+    environment:
+      - DATABASE_URL=postgresql://neondb_owner:npg_i9lWB3ATgHKw@ep-polished-glitter-agbmdnof-pooler.c-2.eu-central-1.aws.neon.tech/neondb?sslmode=require
+    depends_on:
+      - db
 volumes:
   postgres_data:
