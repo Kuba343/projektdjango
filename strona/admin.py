@@ -2,7 +2,8 @@ from django.contrib import admin
 from django.db import connection
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
-
+from django.db import InternalError, transaction
+from django.contrib import messages
 from django import forms
 from .models import *
 
@@ -32,6 +33,35 @@ class CarAdmin(admin.ModelAdmin):
     list_display = ('model', 'price_per_day', 'is_available')
     list_filter = ('is_available',)
     actions = ['uruchom_serwis_masowy', 'zmien_cene_procentowo']
+
+    def save_model(self, request, obj, form, change):
+        try:
+            # Używamy transaction.atomic, aby błąd triggera nie "zepsuł"
+            # całego połączenia z bazą danych
+            with transaction.atomic():
+                super().save_model(request, obj, form, change)
+        except InternalError as e:
+            # Tutaj przechwytujemy Twój komunikat "Nie można cofnąć przebiegu!!!!!"
+            # Wyciągamy samą treść błędu bez zbędnych technicznych dopisków
+            error_message = str(e).split('\n')[0]
+
+            # Dodajemy ładny komunikat, który pojawi się nad formularzem
+            self.message_user(request, f"Błąd zapisu: {error_message}", messages.ERROR)
+
+            # Zwracamy None, aby Django nie próbowało robić nic więcej
+            return None
+
+    def response_change(self, request, obj):
+        # Jeśli wystąpił błąd w save_model (np. nasz InternalError),
+        # musimy powstrzymać Django przed przekierowaniem na listę aut
+        if "_continue" not in request.POST and messages.get_messages(request):
+            # Zostajemy na tej samej stronie edycji
+            from django.http import HttpResponseRedirect
+            return HttpResponseRedirect(request.path)
+
+        return super().response_change(request, obj)
+
+
 
     def zmien_cene_procentowo(self, request, queryset):
         form = None

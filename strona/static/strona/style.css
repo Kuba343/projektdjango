@@ -1093,3 +1093,97 @@ a { color: inherit; text-decoration: none; }
     .checkout-car-img { margin: 0 auto; }
     .checkout-info-section { border-right: none; border-bottom: 1px solid #eee; }
 }
+
+/* ===== SEKCJA STATUSU ODDZIAŁÓW ===== */
+
+.branch-status-section {
+    padding: 60px 20px;
+    background-color: #f8f9fb;
+}
+
+.status-container-wrapper {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.status-title-alt {
+    text-align: center;
+    font-size: 32px;
+    margin-bottom: 40px;
+}
+
+/* GRID */
+.branch-grid-custom {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 25px;
+}
+
+/* KARTA */
+.branch-card-custom {
+    background: white;
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+    transition: 0.3s;
+}
+
+.branch-card-custom:hover {
+    transform: translateY(-5px);
+}
+
+/* GÓRNA CZĘŚĆ */
+.branch-info-custom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* LEWA STRONA (miasto + ulica) */
+.branch-city-name {
+    display: block;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.branch-street-name {
+    font-size: 14px;
+    color: #666;
+}
+
+/* PRAWA STRONA (licznik aut) */
+.branch-counter-box {
+    text-align: center;
+    min-width: 60px;
+}
+
+/* LICZBA */
+.count-number-custom {
+    font-size: 28px;
+    font-weight: bold;
+}
+
+/* KOLORY */
+.count-green-custom {
+    color: #28a745;
+}
+
+.count-red-custom {
+    color: #dc3545;
+}
+
+/* OPIS */
+.count-label-custom {
+    display: block;
+    font-size: 12px;
+    color: #888;
+}
+
+/* STOPKA */
+.branch-footer-custom {
+    margin-top: 15px;
+    padding-top: 10px;
+    border-top: 1px solid #eee;
+    font-size: 14px;
+    color: #444;
+}

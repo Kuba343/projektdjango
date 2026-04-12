@@ -11,12 +11,41 @@
         <h2 class="section-title">Znajdziesz nas w:</h2>
         <div class="city-badges">
             {% for city in cities %}
-                <a href="{% url 'rent' %}?city={{ city.name }}" class="city-badge">
-                    📍 {{ city.name }}
+                <a href="{% url 'rent' %}?city={{ city.street.city.name }}" class="city-badge">
+                    📍 {{ city.street.city.name }}, {{ city.street.name }}
                 </a>
             {% empty %}
                 <span>Wkrótce nowe lokalizacje!</span>
             {% endfor %}
+        </div>
+    </div>
+
+    <div class="branch-status-section">
+        <div class="status-container-wrapper">
+            <h2 class="status-title-alt">📊 Status floty w oddziałach</h2>
+            <div class="branch-grid-custom">
+                {% for city in cities %}
+                <div class="branch-card-custom">
+                    <div class="branch-info-custom">
+                        <div>
+                            <strong class="branch-city-name">{{ city.street.city.name }}</strong>
+                            <span class="branch-street-name">ul. {{ city.street.name }} {{ city.building_number }}</span>
+                        </div>
+                        <div class="branch-counter-box">
+                            <span class="count-number-custom {% if city.get_car_count > 0 %}count-green-custom{% else %}count-red-custom{% endif %}">
+                                {{ city.get_car_count }}
+                            </span>
+                            <small class="count-label-custom">
+                                {% if city.get_car_count == 1 %}auto{% elif city.get_car_count > 1 and city.get_car_count < 5 %}auta{% else %}aut{% endif %}
+                            </small>
+                        </div>
+                    </div>
+                    <div class="branch-footer-custom">
+                        <span>📞 {{ city.phone_number }}</span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
         </div>
     </div>
 

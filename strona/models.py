@@ -2,7 +2,7 @@ from datetime import date
 from django.utils import timezone
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-from django.db import models
+from django.db import models, connection
 
 
 #funkcja walidujaca wiek
@@ -99,6 +99,14 @@ class Branch(models.Model):
     street = models.ForeignKey(Street, on_delete=models.CASCADE)
     building_number = models.CharField(max_length=10)
     phone_number = models.CharField(max_length=20)
+
+    def get_car_count(self):
+        with connection.cursor() as cursor:
+            # Wywołujemy Twoją funkcję przekazując ID obecnego oddziału
+            cursor.execute("SELECT public.oblicz_ilosc_aut_w_oddziale(%s)", [self.id])
+            result = cursor.fetchone()
+        return result[0] if result else 0
+
     def __str__(self):
         return f"{self.street} {self.building_number} {self.phone_number}"
 #Konkretne auto

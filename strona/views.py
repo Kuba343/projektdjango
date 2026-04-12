@@ -56,10 +56,10 @@ def home(request):
     # --- STANDARDOWA LOGIKA HOME ---
     cars = Car.objects.all()[:6]
     cities = City.objects.all()
-
+    branches = Branch.objects.all()
     return render(request, 'home.html', {
         'cars': cars,
-        'cities': cities
+        'cities': branches
     })
 
 
