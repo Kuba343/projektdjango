@@ -199,7 +199,7 @@ a { color: inherit; text-decoration: none; }
 
     /* MENU ROZWIJANE POD SPÓDEM */
     .nav-links {
-        display: none !important;
+        display: none;
         flex-direction: column !important;
         position: absolute !important;
         top: 70px !important;
@@ -268,7 +268,7 @@ a { color: inherit; text-decoration: none; }
 
 /* UKRYTA ZAWARTOŚĆ DROPDOWNA */
 .dropdown-content {
-    display: none !important;
+    display: none;
     position: absolute !important;
     right: 0;
     top: 100%;
@@ -487,7 +487,7 @@ a { color: inherit; text-decoration: none; }
     border: 1px solid #ccc;
     border-radius: 5px;
     font-family: inherit;
-    box-sizing: border-box; /* Ważne, żeby pola nie wystawały poza kontener */
+    box-sizing: border-box;
 }
 
 .contact-form textarea {
@@ -532,7 +532,7 @@ a { color: inherit; text-decoration: none; }
 
 .car-card:hover {
     transform: translateY(-10px);
-    box-shadow: 0 10px 25px rgba(255, 0, 0, 0.15); /* Czerwona poświata przy hoverze pasująca do Twojego logo */
+    box-shadow: 0 10px 25px rgba(255, 0, 0, 0.15);
 }
 
 .car-img-wrapper {
@@ -581,7 +581,7 @@ a { color: inherit; text-decoration: none; }
 .price-tag {
     font-size: 24px;
     font-weight: bold;
-    color: red; /* Pasuje do Twoich przycisków i navbara */
+    color: red;
 }
 
 .price-tag small {
@@ -860,7 +860,7 @@ a { color: inherit; text-decoration: none; }
     width: 100%;
     max-width: 1100px;
     margin: 30px auto;
-    flex-wrap: nowrap;        /* Absolutny zakaz spadania do nowej linii */
+    flex-wrap: nowrap;
 }
 
 /* Karta osoby - teraz z precyzyjną szerokością */

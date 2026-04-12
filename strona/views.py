@@ -32,12 +32,11 @@ def home(request):
     if payment_status == 'success' and rental_id:
         try:
             # Szukamy konkretnej rezerwacji tego użytkownika
-            # Dodatkowo sprawdzamy, czy nie jest starsza niż np. 30 minut dla bezpieczeństwa
             kwadrans_temu = timezone.now() - timedelta(minutes=30)
 
             rezerwacja = Rental.objects.filter(
                 id=rental_id,
-                user__user=request.user,  # zakladając relację Rental -> UserProfile -> User
+                user__user=request.user,
                 status__name="Oczekujący",
                 created_at__gte=kwadrans_temu
             ).first()
@@ -48,14 +47,12 @@ def home(request):
                 rezerwacja.save()
                 messages.success(request, "Dziękujemy! Płatność została potwierdzona, auto czeka na Ciebie.")
 
-                # Czyścimy pasek adresu z parametrów ?status=success..., żeby F5 nie psuło niczego
                 return redirect('home')
         except Exception as e:
             print(f"Błąd aktualizacji statusu: {e}")
 
     # --- STANDARDOWA LOGIKA HOME ---
-    cars = Car.objects.all()[:6]
-    cities = City.objects.all()
+    cars = Car.objects.all()
     branches = Branch.objects.all()
     return render(request, 'home.html', {
         'cars': cars,
@@ -293,7 +290,6 @@ def checkout_view(request, car_id):
 
                 rental.save()
 
-                # Teraz Tpay dostanie poprawną, zwiększoną kwotę z bazy
                 return redirect('tpay_json_process', rental_id=rental.id)
         except Exception as e:
             messages.error(request, f"Błąd finalizacji: {e}")
@@ -304,7 +300,7 @@ def checkout_view(request, car_id):
         'addons': addons_queryset,
         'start_date': start_date_str,
         'end_date': end_date_str,
-        'total_price': base_total_price,  # Wyświetlamy bazową, JS w HTML doliczy resztę wizualnie
+        'total_price': base_total_price,
         'rental': rental
     })
 #FAQ
@@ -438,14 +434,6 @@ def faq(request):
         "faq_ubezpieczenia": faq_ubezpieczenia,
         "faq_wyposazenie": faq_wyposazenie,
     })
-
-
-def payment_pending_view(request):
-    return render(request, "payment_pending.html")
-
-def success_view(request):
-    return render(request, "success.html")
-
 
 def cancel_rental(request, rental_id):
     rental = get_object_or_404(Rental, id=rental_id, user__user=request.user)

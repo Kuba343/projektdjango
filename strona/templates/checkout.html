@@ -103,48 +103,48 @@
     </div>
 </div>
 
-<script>
-    // --- LICZNIK 5 MINUT ---
-    let timeLeft = 300;
-    const countdownEl = document.getElementById("countdown");
-    const timer = setInterval(() => {
-        let mins = Math.floor(timeLeft / 60);
-        let secs = timeLeft % 60;
-        countdownEl.innerHTML = (mins < 10 ? "0":"") + mins + ":" + (secs < 10 ? "0":"") + secs;
-        if (timeLeft <= 0) {
-            clearInterval(timer);
-            const btn = document.querySelector(".btn-confirm-pay");
-            if(btn) {
-                btn.disabled = true;
-                btn.innerText = "SESJA WYGASŁA";
-                btn.style.opacity = "0.5";
-            }
-        }
-        timeLeft--;
-    }, 1000);
-
-    // --- DYNAMICZNE PRZELICZANIE CENY ---
-    const boxes = document.querySelectorAll('.addon-checkbox');
-    const priceDisplay = document.getElementById('final-price');
-    const base = parseFloat("{{ total_price }}".replace(',', '.'));
-
-    const d1 = new Date("{{ start_date }}");
-    const d2 = new Date("{{ end_date }}");
-    const diffTime = Math.abs(d2 - d1);
-    let days = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    if (days <= 0) days = 1;
-
-    boxes.forEach(b => {
-        b.addEventListener('change', () => {
-            let addonsTotal = 0;
-            boxes.forEach(cb => {
-                if(cb.checked) {
-                    addonsTotal += parseFloat(cb.getAttribute('data-price').replace(',', '.')) * days;
+    <script>
+        // --- LICZNIK 5 MINUT ---
+        let timeLeft = 300;
+        const countdownEl = document.getElementById("countdown");
+        const timer = setInterval(() => {
+            let mins = Math.floor(timeLeft / 60);
+            let secs = timeLeft % 60;
+            countdownEl.innerHTML = (mins < 10 ? "0":"") + mins + ":" + (secs < 10 ? "0":"") + secs;
+            if (timeLeft <= 0) {
+                clearInterval(timer);
+                const btn = document.querySelector(".btn-confirm-pay");
+                if(btn) {
+                    btn.disabled = true;
+                    btn.innerText = "SESJA WYGASŁA";
+                    btn.style.opacity = "0.5";
                 }
+            }
+            timeLeft--;
+        }, 1000);
+
+        // --- DYNAMICZNE PRZELICZANIE CENY ---
+        const boxes = document.querySelectorAll('.addon-checkbox');
+        const priceDisplay = document.getElementById('final-price');
+        const base = parseFloat("{{ total_price }}".replace(',', '.'));
+
+        const d1 = new Date("{{ start_date }}");
+        const d2 = new Date("{{ end_date }}");
+        const diffTime = Math.abs(d2 - d1);
+        let days = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        if (days <= 0) days = 1;
+
+        boxes.forEach(b => {
+            b.addEventListener('change', () => {
+                let addonsTotal = 0;
+                boxes.forEach(cb => {
+                    if(cb.checked) {
+                        addonsTotal += parseFloat(cb.getAttribute('data-price').replace(',', '.')) * days;
+                    }
+                });
+                let currentTotal = base + addonsTotal;
+                priceDisplay.innerText = currentTotal.toFixed(2).replace('.', ',') + " zł";
             });
-            let currentTotal = base + addonsTotal;
-            priceDisplay.innerText = currentTotal.toFixed(2).replace('.', ',') + " zł";
         });
-    });
-</script>
+    </script>
 {% endblock %}

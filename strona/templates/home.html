@@ -51,9 +51,10 @@
 
     <div class="flota-container">
         <h2 class="flota-title">Auta w naszej firmie</h2>
-        <div class="car-grid">
+
+        <div class="car-grid" id="car-container">
             {% for car in cars %}
-            <div class="car-card">
+            <div class="car-card car-item" style="display: none;">
                 <div class="car-img-wrapper">
                     {% if car.image %}
                         <img src="{{ car.image.url }}" alt="{{ car.model.brand.name }} {{ car.model.name }}">
@@ -82,5 +83,46 @@
                 </p>
             {% endfor %}
         </div>
+
+        <div id="pagination-container" style="text-align: center; margin: 50px 0;">
+            <button id="load-more-btn" style="display: none; background-color: #222; color: white; border: none; padding: 15px 40px; border-radius: 50px; cursor: pointer; font-weight: bold; text-transform: uppercase; font-size: 15px; transition: 0.3s; align-items: center; justify-content: center; gap: 10px;">
+                <span>Pokaż więcej</span> <span style="font-size: 20px; line-height: 0;">+</span>
+            </button>
+        </div>
     </div>
+
+    {% block scripts %}
+        <script>
+        document.addEventListener("DOMContentLoaded", function() {
+
+            const allCars = document.querySelectorAll('.car-item');
+            const loadMoreBtn = document.getElementById('load-more-btn');
+
+            const limit = 6;
+            let currentCount = limit;
+
+            function showNextBatch() {
+                allCars.forEach((car, index) => {
+                    car.style.display = index < currentCount ? 'block' : 'none';
+                });
+
+                if (currentCount < allCars.length) {
+                    loadMoreBtn.style.display = 'inline-flex';
+                } else {
+                    loadMoreBtn.style.display = 'none';
+                }
+            }
+
+            showNextBatch();
+
+            loadMoreBtn.addEventListener('click', function() {
+                currentCount += limit;
+                showNextBatch();
+            });
+
+        });
+        </script>
+{% endblock %}
+
+
 {% endblock %}
