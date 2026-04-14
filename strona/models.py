@@ -1,4 +1,6 @@
 from datetime import date
+
+from django.core.validators import RegexValidator
 from django.utils import timezone
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
@@ -131,15 +133,30 @@ class Transfer(models.Model):
     from_branch = models.ForeignKey(Branch,verbose_name="Z oddziału", related_name='transfers_from', on_delete=models.CASCADE)
     to_branch = models.ForeignKey(Branch,verbose_name="Do oddziału", related_name='transfers_to', on_delete=models.CASCADE)
     date = models.DateTimeField(auto_now_add=True)
-#REZERWACJE
-#Rozszerzenie podstawowego uzytkownika django
+
+# 1. Zasada z internetu:dokładnie 9 cyfr lub format z ukośnikami
+license_validator = RegexValidator(
+    regex=r'^[0-9]{5}/[0-9]{2}/[0-9]{2}$|^[0-9]{9}$',
+    message="Numer prawa jazdy musi mieć 9 cyfr (np. 123456789) lub format 12345/67/89."
+)
+
 class UserProfile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE,related_name='profile')
-    license_number = models.CharField(max_length=20, blank=True, null=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
+
+    license_number = models.CharField(
+        max_length=20,
+        blank=True,
+        null=True,
+        unique=True,  #jeden numer dokumentu na jedno konto
+        validators=[license_validator]
+    )
     phone_number = models.CharField(max_length=20)
     birth_date = models.DateField(validators=[validate_age], verbose_name="Data urodzenia")
+
     def __str__(self):
-        return f"{self.user} {self.license_number} {self.phone_number}"
+        return f"{self.user.username} - {self.license_number}"
+
+#REZERWACJE
 #Tabela ktora laczy klienta z samochodem i datami wypozyczen
 class Rental(models.Model):
     user = models.ForeignKey(UserProfile, on_delete=models.CASCADE)

@@ -25,39 +25,34 @@ import requests #pokazuje blad ale dziala nie usuwac
 
 
 def home(request):
-    # --- LOGIKA TPAY: Sprawdzanie czy użytkownik właśnie zapłacił ---
     payment_status = request.GET.get('status')
     rental_id = request.GET.get('rental_id')
 
     if payment_status == 'success' and rental_id:
-        try:
-            # Szukamy konkretnej rezerwacji tego użytkownika
-            kwadrans_temu = timezone.now() - timedelta(minutes=30)
+        # 1. Szukamy rezerwacji (uproszczony filtr)
+        # Jeśli w modelu Rental masz user = ForeignKey(UserProfile), zostaw user__user
+        rezerwacja = Rental.objects.filter(id=rental_id, user__user=request.user).first()
 
-            rezerwacja = Rental.objects.filter(
-                id=rental_id,
-                user__user=request.user,
-                status__name="Oczekujący",
-                created_at__gte=kwadrans_temu
-            ).first()
+        if rezerwacja:
+            # 2. Sprawdzamy czy rezerwacja ma status "Oczekująca" (ID=7)
+            if rezerwacja.status.id == 7:
+                # 3. Pobieramy status "Opłacona" (ID=6)
+                status_oplacona = RentalStatus.objects.get(id=6)
 
-            if rezerwacja:
-                status_potwierdzony, _ = RentalStatus.objects.get_or_create(name="Opłacona")
-                rezerwacja.status = status_potwierdzony
-                rezerwacja.save()
-                messages.success(request, "Dziękujemy! Płatność została potwierdzona, auto czeka na Ciebie.")
+                rezerwacja.status = status_oplacona
+                rezerwacja.save()  # <--- TO ODPALI TRIGGER FAKTUR, KTÓRY DODASZ ZA CHWILĘ
 
+                messages.success(request, "Dziękujemy! Płatność potwierdzona, faktura wygenerowana.")
                 return redirect('home')
-        except Exception as e:
-            print(f"Błąd aktualizacji statusu: {e}")
+            else:
+                messages.info(request, f"Ta rezerwacja ma już status: {rezerwacja.status.name}")
+        else:
+            messages.error(request, "Nie znaleziono Twojej rezerwacji.")
 
     # --- STANDARDOWA LOGIKA HOME ---
     cars = Car.objects.all()
     branches = Branch.objects.all()
-    return render(request, 'home.html', {
-        'cars': cars,
-        'cities': branches
-    })
+    return render(request, 'home.html', {'cars': cars, 'cities': branches})
 
 
 
@@ -179,7 +174,7 @@ def rent_page(request):
     sort_by = request.GET.get('sort')
 
     today = date.today()
-    cars = Car.objects.all()
+    cars = Car.objects.filter(is_available=True)
 
     profile = UserProfile.objects.filter(user=request.user).first()
     has_license = bool(profile and profile.license_number and profile.license_number.strip())
@@ -200,7 +195,7 @@ def rent_page(request):
                 Q(pickup_date__lte=end_date, return_date__gte=start_date) &
                 (
                     Q(status__name__in=["Opłacona", "W trakcie"]) |
-                    (Q(status__name="Oczekujący") & Q(created_at__gte=expiration_time))
+                    (Q(status__name="Oczekująca") & Q(created_at__gte=expiration_time))
                 )
             ).values_list('car_id', flat=True)
 
@@ -233,8 +228,14 @@ def rent_page(request):
 def checkout_view(request, car_id):
     car = get_object_or_404(Car, id=car_id)
     profile, _ = UserProfile.objects.get_or_create(user=request.user)
-    addons_queryset = Addon.objects.all()
 
+
+    #sprawdz czy jest wprowadzony nr prawka
+    if not profile.license_number or profile.license_number.strip() == "":
+        messages.error(request, "Musisz uzupełnić numer prawa jazdy w swoim profilu, aby móc wypożyczyć auto!")
+        return redirect('rent')
+
+    addons_queryset = Addon.objects.all()
     start_date_str = request.GET.get("start_date")
     end_date_str = request.GET.get("end_date")
 

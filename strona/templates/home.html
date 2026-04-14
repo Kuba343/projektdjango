@@ -12,7 +12,7 @@
         <div class="city-badges">
             {% for city in cities %}
                 <a href="{% url 'rent' %}?city={{ city.street.city.name }}" class="city-badge">
-                    📍 {{ city.street.city.name }}, {{ city.street.name }}
+                    📍 {{ city.street.city.name }}, ul.{{ city.street.name }}
                 </a>
             {% empty %}
                 <span>Wkrótce nowe lokalizacje!</span>
