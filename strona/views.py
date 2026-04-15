@@ -177,7 +177,7 @@ def rent_page(request):
     cars = Car.objects.filter(is_available=True)
 
     profile = UserProfile.objects.filter(user=request.user).first()
-    has_license = bool(profile and profile.license_number and profile.license_number.strip())
+    has_license = bool(profile and profile.license_number and profile.license_number.strip())#strip usuwa biale znaki
 
     if city and city != "":
         cars = cars.filter(current_branch__street__city__name__icontains=city)
@@ -192,7 +192,7 @@ def rent_page(request):
             # 1. Mają status "Opłacona" lub "W trakcie" w tych datach
             # 2. Mają status "Oczekujący" i zostały stworzone mniej niż 5 minut temu
             occupied_cars_ids = Rental.objects.filter(
-                Q(pickup_date__lte=end_date, return_date__gte=start_date) &
+                Q(pickup_date__lte=end_date, return_date__gte=start_date) &#lte to <= less than or equal a gte to >= greater than or equal
                 (
                     Q(status__name__in=["Opłacona", "W trakcie"]) |
                     (Q(status__name="Oczekująca") & Q(created_at__gte=expiration_time))
@@ -271,7 +271,7 @@ def checkout_view(request, car_id):
     # 3. OBSŁUGA PRZYCISKU "ZAPŁAĆ" (POST)
     if request.method == 'POST':
         try:
-            with transaction.atomic():
+            with transaction.atomic():#atomic w skrocie oznacza wszystko albo nic jak powstanie gdzies blad nawet pod koniec to wszystko nie dziala z tego
                 # Pobierz wybrane ID dodatków z formularza
                 selected_addons_ids = request.POST.getlist('selected_addons')
 
