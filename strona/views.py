@@ -454,7 +454,7 @@ def cancel_rental(request, rental_id):
 def tpay_json_redirect(request, rental_id):
     rental = get_object_or_404(Rental, id=rental_id)
 
-    # TWOJE DANE Z OBRAZKA
+    # Dane do tpay
     client_id = "01KNZ2JFMG4P9F74T8JQ79NT32-01KNZ35MAX1H1EMBNQPCBFC1E9"
     secret = "ef85248e567cf5bdd39b916d00cf0d2d8b15e131d8343c64512fe472bdef3373"
 
