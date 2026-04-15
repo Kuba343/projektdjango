@@ -56,7 +56,6 @@ class PaymentMethod(models.Model):
         ('Blik','Blik'),
         ('Karta', 'Karta'),
         ('Przelew', 'Przelew'),
-        ('Gotówka', 'Gotówka'),#przy odbiorze gotówka
     ]
     name=models.CharField(max_length=20,choices=PAYMENT_CHOICES)
     def __str__(self):
@@ -181,7 +180,6 @@ class Payment(models.Model):
 class Invoice(models.Model):
     rental = models.OneToOneField(Rental, on_delete=models.CASCADE) # Poprawka na 1:1
     invoice_number = models.CharField(max_length=50, unique=True)
-    tax_id = models.CharField(max_length=20, null=True, blank=True)
     issued_at = models.DateTimeField(auto_now_add=True)
     def __str__(self):
         return f"Faktura nr: {self.invoice_number} (Dla: {self.rental.user})"
