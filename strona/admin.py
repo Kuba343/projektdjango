@@ -41,19 +41,14 @@ class CarAdmin(admin.ModelAdmin):
             with transaction.atomic():
                 super().save_model(request, obj, form, change)
         except InternalError as e:
-            # Tutaj przechwytujemy Twój komunikat "Nie można cofnąć przebiegu!!!!!"
-            # Wyciągamy samą treść błędu bez zbędnych technicznych dopisków
             error_message = str(e).split('\n')[0]
 
-            # Dodajemy ładny komunikat, który pojawi się nad formularzem
             self.message_user(request, f"Błąd zapisu: {error_message}", messages.ERROR)
 
             # Zwracamy None, aby Django nie próbowało robić nic więcej
             return None
 
     def response_change(self, request, obj):
-        # Jeśli wystąpił błąd w save_model (np. nasz InternalError),
-        # musimy powstrzymać Django przed przekierowaniem na listę aut
         if "_continue" not in request.POST and messages.get_messages(request):
             # Zostajemy na tej samej stronie edycji
             from django.http import HttpResponseRedirect
@@ -130,7 +125,7 @@ class UserProfileAdmin(admin.ModelAdmin):
 
 @admin.register(EmployeeProfile)
 class EmployeeProfileAdmin(admin.ModelAdmin):
-    list_display = ('user', 'role' ,'phone_number')
+    list_display = ('user', 'role' ,'work_phone_number')
 
 # Rejestracja reszty modeli
 admin.site.register([
