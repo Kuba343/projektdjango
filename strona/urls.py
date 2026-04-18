@@ -20,6 +20,7 @@ urlpatterns = [
     path('checkout/<int:car_id>/', views.checkout_view, name='checkout'),
     path('cancel-rental/<int:rental_id>/', views.cancel_rental, name='cancel_rental'),
     path('proces-platnosci/<int:rental_id>/', views.tpay_json_redirect, name='tpay_json_process'),
+    path("faktury/", views.faktury, name="faktury"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 

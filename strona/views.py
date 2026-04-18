@@ -10,7 +10,7 @@ from django.shortcuts import render, redirect
 from django.shortcuts import render, get_object_or_404
 from django.contrib import messages
 from .forms import RegistrationForm, LoginForm, ContactForm
-from .models import Car, Addon, Branch, Rental, City, RentalStatus, PaymentMethod, UserProfile, RentalAddon
+from .models import Car, Addon, Branch, Rental, City, RentalStatus, PaymentMethod, UserProfile, RentalAddon, Invoice
 from django.contrib.auth import authenticate, login as auth_login
 from django.contrib.auth import logout as django_logout
 from django.db.models import Q
@@ -508,3 +508,10 @@ def tpay_json_redirect(request, rental_id):
     except Exception as e:
         messages.error(request, f"Błąd komunikacji z Tpay: {e}")
         return redirect('checkout', car_id=rental.car.id)
+
+# Podstrona Faktury
+@login_required
+def faktury(request):
+    profile = request.user.profile
+    invoices = Invoice.objects.filter(rental__user=profile).order_by("-issued_at")
+    return render(request, "konto/faktury.html", {"invoices": invoices})
