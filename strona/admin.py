@@ -125,7 +125,7 @@ class UserProfileAdmin(admin.ModelAdmin):
 
 @admin.register(EmployeeProfile)
 class EmployeeProfileAdmin(admin.ModelAdmin):
-    list_display = ('user', 'role' ,'work_phone_number')
+    list_display = ('user', 'role' ,'phone_number')
 
 # Rejestracja reszty modeli
 admin.site.register([
