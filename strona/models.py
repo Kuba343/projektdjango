@@ -152,6 +152,12 @@ class UserProfile(models.Model):
     phone_number = models.CharField(max_length=20)
     birth_date = models.DateField(validators=[validate_age], verbose_name="Data urodzenia")
 
+    def clean(self):
+        # To wymusza uruchomienie walidatorów pól w panelu Admina i formularzach
+        super().clean()
+        if self.birth_date:
+            validate_age(self.birth_date)
+
     def __str__(self):
         return f"{self.user.username} - {self.license_number}"
 
@@ -190,8 +196,7 @@ class EmployeeProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='employee_profile')
     role = models.ForeignKey(Role, on_delete=models.PROTECT)
     branch = models.ForeignKey('Branch', on_delete=models.SET_NULL, null=True)
-    employee_id_number = models.CharField(max_length=20, unique=True)
-    phone_number = models.CharField(max_length=20)
+    work_phone_number = models.CharField(max_length=20)
 
     def __str__(self):
         return f"{self.user.get_full_name()} - {self.role.name}"
