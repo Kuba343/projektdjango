@@ -152,6 +152,12 @@ class UserProfile(models.Model):
     phone_number = models.CharField(max_length=20)
     birth_date = models.DateField(validators=[validate_age], verbose_name="Data urodzenia")
 
+    def clean(self):
+        # To wymusza uruchomienie walidatorów pól w panelu Admina i formularzach
+        super().clean()
+        if self.birth_date:
+            validate_age(self.birth_date)
+
     def __str__(self):
         return f"{self.user.username} - {self.license_number}"
 
