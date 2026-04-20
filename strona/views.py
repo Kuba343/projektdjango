@@ -17,7 +17,7 @@ from django.db.models import Q
 from .models import Car, Addon
 from django.shortcuts import render
 from datetime import datetime, date
-from django.db import transaction, InternalError, connection
+from django.db import transaction, InternalError, connection, IntegrityError
 from django.utils import timezone
 from datetime import timedelta, date
 import json
@@ -60,8 +60,14 @@ def register(request):
     if request.method == "POST":
         form = RegistrationForm(request.POST)
         if form.is_valid():
-            user = form.save()
-            return redirect('home')
+            try:
+                user = form.save()
+                return redirect('home')
+            except IntegrityError as e:
+                if 'check_wiek_18' in str(e):
+                    form.add_error('birth_date', "Musisz mieć ukończone 18 lat, aby założyć konto.")
+                else:
+                    form.add_error(None, "Wystąpił błąd bazy danych. Spróbuj ponownie.")
     else:
         form = RegistrationForm()
     return render(request, "rejestracja.html", {"form": form})
