@@ -33,10 +33,9 @@
                 <div class="dropdown">
                     <button class="dropbtn" type="button">👤 {{ user.username }}</button>
                     <div class="dropdown-content">
-                        <a href="#">Dane konta</a>
-                        <a href="#">Wprowadź prawo jazdy</a>
-                        <a href="#">Faktury</a>
-                        <a href="#">Historia wypożyczeń</a>
+                        <a href="{% url 'profile' %}">Dane konta</a>
+                        <a href="{% url 'invoice' %}">Faktury</a>
+                        <a href="{% url 'rental_history' %}">Historia wypożyczeń</a>
 
                         <hr>
                         <form action="{% url 'logout' %}" method="post" style="margin: 0;">
@@ -108,7 +107,7 @@
             <p>&copy; 2026 MV-RENT. Wszelkie prawa zastrzeżone.</p>
         </div>
     </footer>
-
+    {% block extra_messages %}{% endblock %}
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const hamburger = document.getElementById('hamburger');

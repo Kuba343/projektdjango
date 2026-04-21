@@ -106,3 +106,43 @@ class ContactForm(forms.ModelForm):
             'email': forms.EmailInput(attrs={'placeholder': 'Twój adres e-mail', 'class': 'form-control'}),
             'body': forms.Textarea(attrs={'placeholder': 'W czym możemy pomóc?', 'rows': 5, 'class': 'form-control'}),
         }
+
+#formularze do podstrony Dane konta
+class UserUpdateForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'email']
+
+
+class ProfileUpdateForm(forms.ModelForm):
+
+    def clean_license_number(self):
+        data = self.cleaned_data.get("license_number")
+
+        # jeśli puste → OK (NULL)
+        if not data:
+            return None
+
+        import re
+        pattern = r'^[0-9]{5}/[0-9]{2}/[0-9]{2}$|^[0-9]{9}$'
+
+        if not re.match(pattern, data):
+            raise ValidationError(
+                "Numer prawa jazdy musi mieć 9 cyfr lub format 12345/67/89."
+            )
+
+        return data
+
+    class Meta:
+        model = UserProfile
+        fields = ['phone_number', 'license_number']
+        labels = {
+            'license_number': 'Numer prawa jazdy',
+            'phone_number': 'Numer telefonu',
+        }
+
+
+
+
+
+

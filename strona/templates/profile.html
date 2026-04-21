@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="status-container-wrapper" style="margin-top: 30px;">
+    <h2 class="status-title-alt">Status Twojego Konta</h2>
+
+    <div class="branch-grid-custom">
+
+        <!-- KAFEL 1: TELEFON -->
+        <div class="branch-card-custom">
+            <div class="branch-info-custom">
+                <div>
+                    <span class="branch-city-name">Numer Telefonu</span>
+                    <span class="branch-street-name">Status weryfikacji</span>
+                </div>
+                <div class="branch-counter-box">
+                    {% if user.profile.phone_number %}
+                        <span class="count-number-custom count-green-custom">OK</span>
+                    {% else %}
+                        <span class="count-number-custom count-red-custom">!</span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="branch-footer-custom">
+                Numer Telefonu: {{ user.profile.phone_number|default:"Brak numeru" }}
+            </div>
+        </div>
+
+
+        <!-- KAFEL 2: PRAWO JAZDY -->
+        <div class="branch-card-custom">
+            <div class="branch-info-custom">
+                <div>
+                    <span class="branch-city-name">Numer Prawa Jazdy</span>
+                    <span class="branch-street-name">Status weryfikacji</span>
+                </div>
+                <div class="branch-counter-box">
+                    {% if user.profile.license_number %}
+                        <span class="count-number-custom count-green-custom">OK</span>
+                    {% else %}
+                        <span class="count-number-custom count-red-custom">!</span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="branch-footer-custom">
+                Numer Prawa Jazdy: {{ user.profile.license_number|default:"Brak" }}
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+<div class="profile-unique-form" style="margin-top: 40px;">
+    <h2>Edytuj dane</h2>
+    <form method="POST">
+        {% csrf_token %}
+        {{ u_form.as_p }}
+        {% if p_form.license_number.errors %}
+        <div class="toast-error">
+            {{ p_form.license_number.errors.0 }}
+        </div>
+    {% endif %}
+
+    {% if p_form.phone_number.errors %}
+        <div class="toast-error">
+            {{ p_form.phone_number.errors.0 }}
+        </div>
+    {% endif %}
+        {{ p_form.as_p }}
+        <button type="submit" class="btn-save">Zapisz zmiany</button>
+    </form>
+</div>
+
+
+{% endblock %}

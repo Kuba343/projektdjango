@@ -1,5 +1,4 @@
 {% extends 'base.html' %}
-
 {% block content %}
 
 <style>
@@ -12,15 +11,15 @@
 .faq-category {
     background: white;
     padding: 15px 20px;
-    margin: 40px 0 20px 0; /* odstęp NAD i POD kategorią */
+    margin: 40px 0 20px 0;
     border-radius: 8px;
 }
 
 .faq-block {
     border-radius: 10px;
     padding: 20px;
-    margin: 40px 0; /* odstęp między kategoriami */
-    background: white; /* żeby ramka była czytelna */
+    margin: 40px 0;
+    background: white;
     box-shadow: 0 10px 25px rgba(255, 0, 0, 0.15);
 }
 
@@ -32,7 +31,7 @@
 .faq-question {
     display: flex;
     align-items: center;
-    gap: 10px; /* odstęp między strzałką a tekstem */
+    gap: 10px;
     cursor: pointer;
     font-size: 17px;
     font-weight: 600;
@@ -44,23 +43,15 @@
     color: darkred;
 }
 
-/* animacja wysokości */
 .faq-answer {
     overflow: hidden;
     max-height: 0;
     opacity: 0;
-    transition:
-        max-height 0.45s ease,
-        opacity 0.35s ease;
+    transition: max-height 0.45s ease, opacity 0.35s ease;
     color: darkgrey;
-
-    /* ŁADNE ZAWIJANIE TEKSTU */
     overflow-wrap: break-word;
-    word-wrap: break-word;
     white-space: normal;
     line-height: 1.6;
-
-    /* RÓWNE LINIE */
     text-align: justify;
 }
 
@@ -72,9 +63,9 @@
     transform: rotate(90deg);
 }
 
-/*pasek kategorii*/
 html {
-    scroll-padding-top: 120px; /* dostosuj do wysokości Twojego menu */
+    scroll-padding-top: 120px;
+}
 
 .faq-topbar {
     display: flex;
@@ -85,7 +76,7 @@ html {
     border-radius: 10px;
     border: 2px solid #d3d3d3;
     margin-bottom: 30px;
-    margin-top: 40px; /* odstęp od menu głównego */
+    margin-top: 40px;
 }
 
 .faq-tabs {
@@ -102,25 +93,6 @@ html {
 
 .faq-tabs .tab.active {
     border-bottom: 3px solid red;
-    color: red;
-}
-
-.faq-search {
-    position: relative;
-}
-
-.faq-search input {
-    padding: 8px 35px 8px 12px;
-    border: 2px solid #d3d3d3;
-    border-radius: 6px;
-    font-size: 14px;
-}
-
-.search-icon {
-    position: absolute;
-    right: 10px;
-    top: 7px;
-    font-size: 18px;
     color: red;
 }
 </style>
@@ -140,74 +112,176 @@ html {
 
 <div class="faq-container">
 
+    <!-- WYNAJEM -->
     <div id="wynajem" class="faq-block">
         <h2 class="faq-category">Wynajem pojazdu</h2>
-        {% for q, a in faq_wynajem %}
-            <div class="faq-item">
-                <div class="faq-question">
-                    <span class="faq-arrow">➤</span>
-                    <span>{{ q }}</span>
-                </div>
-                <div class="faq-answer">{{ a }}</div>
-            </div>
-        {% endfor %}
+
+        <div class="faq-item">
+            <div class="faq-question"><span class="faq-arrow">➤</span>Czy samochód może prowadzić inna osoba niż ta z umowy?</div>
+            <div class="faq-answer">Tak, ale tylko pod warunkiem, że dodatkowy kierowca zostanie dopisany do umowy przed rozpoczęciem wynajmu. Każda osoba musi okazać ważne prawo jazdy oraz dokument tożsamości. Dopisanie kierowcy wiąże się z opłatą 20 zł za dzień. Niedozwolone jest przekazywanie pojazdu osobom nieuprawnionym, ponieważ w przypadku szkody ubezpieczenie może nie obowiązywać.</div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question"><span class="faq-arrow">➤</span>Czy mogę wynająć samochód bez kaucji?</div>
+            <div class="faq-answer">Tak, oferujemy opcję wynajmu bez kaucji, jednak wymaga to wykupienia rozszerzonego pakietu ubezpieczenia. Opcja ta jest dostępna dla większości klas pojazdów, z wyłączeniem aut premium i sportowych.</div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question"><span class="faq-arrow">➤</span>Czy mogę przedłużyć wynajem?</div>
+            <div class="faq-answer">Tak, przedłużenie wynajmu jest możliwe, o ile pojazd jest dostępny w danym terminie. Wystarczy skontaktować się z nami telefonicznie lub mailowo. Opłata za dodatkowe dni naliczana jest zgodnie z obowiązującym cennikiem.</div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question"><span class="faq-arrow">➤</span>Czy mogę odebrać auto w innym mieście?</div>
+            <div class="faq-answer">Tak, oferujemy usługę podstawienia pojazdu do dowolnego miasta w Polsce. Koszt zależy od odległości od najbliższego oddziału. Usługa musi zostać zgłoszona minimum 24 godziny wcześniej.</div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question"><span class="faq-arrow">➤</span>Czy mogę zwrócić auto poza godzinami pracy?</div>
+            <div class="faq-answer">Tak, w wielu lokalizacjach dostępne są specjalne skrytki lub parkingi umożliwiające zwrot pojazdu 24/7. W takim przypadku kluczyki należy pozostawić w dedykowanej skrzynce, a pojazd zaparkować w wyznaczonym miejscu.</div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question"><span class="faq-arrow">➤</span>Czy mogę wyjechać autem za granicę?</div>
+            <div class="faq-answer">Tak, ale wymaga to wcześniejszego zgłoszenia oraz dopłaty. Nie wszystkie kraje są objęte ubezpieczeniem, dlatego przed wyjazdem konieczne jest potwierdzenie dostępności tej opcji.</div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question"><span class="faq-arrow">➤</span>Czy mogę wynająć auto na miesiąc?</div>
+            <div class="faq-answer">Tak, oferujemy atrakcyjne pakiety wynajmu średnioterminowego i długoterminowego. Im dłuższy okres wynajmu, tym niższa cena za dobę. Pakiety obejmują serwis, ubezpieczenie i wsparcie techniczne.</div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question"><span class="faq-arrow">➤</span>Czy mogę zmienić termin rezerwacji?</div>
+            <div class="faq-answer">Tak, o ile pojazd jest dostępny w nowym terminie. Zmiana terminu może wiązać się z różnicą w cenie, jeśli nowy okres przypada na sezon wysokiego popytu.</div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question"><span class="faq-arrow">➤</span>Czy mogę wybrać konkretny model auta?</div>
+            <div class="faq-answer">Gwarantujemy klasę pojazdu, natomiast konkretny model zależy od dostępności w danym oddziale. Jeśli masz preferencje, postaramy się je uwzględnić.</div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question"><span class="faq-arrow">➤</span>Czy mogę wynająć auto bez limitu kilometrów?</div>
+            <div class="faq-answer">Tak, oferujemy pakiety bez limitu kilometrów, idealne na dłuższe podróże. Opcja ta jest dostępna dla większości klas pojazdów.</div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question"><span class="faq-arrow">➤</span>Czy mogę wynająć auto na firmę?</div>
+            <div class="faq-answer">Tak, wystawiamy faktury VAT oraz oferujemy specjalne warunki współpracy dla firm, w tym wynajem flotowy.</div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question"><span class="faq-arrow">➤</span>Czy mogę otrzymać auto z automatem?</div>
+            <div class="faq-answer">Tak, posiadamy dużą liczbę pojazdów z automatyczną skrzynią biegów. Warto zaznaczyć tę opcję podczas rezerwacji.</div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question"><span class="faq-arrow">➤</span>Czy mogę zwrócić auto w innym oddziale?</div>
+            <div class="faq-answer">Tak, możliwy jest zwrot w innej lokalizacji za dodatkową opłatą. Koszt zależy od odległości między oddziałami.</div>
+        </div>
+
     </div>
 
+
+    <!-- PŁATNOŚCI -->
     <div id="platnosci" class="faq-block">
         <h2 class="faq-category">Płatności i kaucja</h2>
-        {% for q, a in faq_platnosci %}
-            <div class="faq-item">
-                <div class="faq-question">
-                    <span class="faq-arrow">➤</span>
-                    <span>{{ q }}</span>
-                </div>
-                <div class="faq-answer">{{ a }}</div>
-            </div>
-        {% endfor %}
+
+        <div class="faq-item">
+            <div class="faq-question"><span class="faq-arrow">➤</span>Po jakim czasie odblokowywana jest kaucja?</div>
+            <div class="faq-answer">Kaucja jest zwalniana zazwyczaj w ciągu 24–72 godzin od zwrotu pojazdu. Czas ten zależy od banku, rodzaju karty oraz obciążenia systemów płatniczych.</div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question"><span class="faq-arrow">➤</span>Jakie formy płatności akceptujecie?</div>
+            <div class="faq-answer">Akceptujemy płatności kartą debetową, kredytową, BLIK, szybkie przelewy oraz gotówkę w wybranych oddziałach. W przypadku aut premium wymagana jest karta kredytowa.</div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question"><span class="faq-arrow">➤</span>Czy mogę zapłacić gotówką?</div>
+            <div class="faq-answer">Tak, ale nadal wymagane jest zabezpieczenie kaucji kartą. Gotówka nie jest akceptowana przy wynajmie aut premium.</div>
+        </div>
+
     </div>
 
+
+    <!-- UŻYTKOWANIE -->
     <div id="uzytkowanie" class="faq-block">
         <h2 class="faq-category">Zasady użytkowania</h2>
-        {% for q, a in faq_uzytkowanie %}
-            <div class="faq-item">
-                <div class="faq-question">
-                    <span class="faq-arrow">➤</span>
-                    <span>{{ q }}</span>
-                </div>
-                <div class="faq-answer">{{ a }}</div>
-            </div>
-        {% endfor %}
+
+        <div class="faq-item">
+            <div class="faq-question"><span class="faq-arrow">➤</span>Czy samochód musi być zwrócony z pełnym bakiem?</div>
+            <div class="faq-answer">Tak, pojazd należy zwrócić z takim samym poziomem paliwa, z jakim został wydany. W przeciwnym razie naliczona zostanie opłata za brakujące litry.</div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question"><span class="faq-arrow">➤</span>Czy pobieracie opłatę za spóźnienie?</div>
+            <div class="faq-answer">Tak, w przypadku zwrotu pojazdu po czasie naliczana jest opłata za kolejną rozpoczętą godzinę lub dobę.</div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question"><span class="faq-arrow">➤</span>Czy auta mają GPS?</div>
+            <div class="faq-answer">Większość pojazdów posiada wbudowaną nawigację lub obsługę Android Auto i Apple CarPlay.</div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question"><span class="faq-arrow">➤</span>Czy auta mają klimatyzację?</div>
+            <div class="faq-answer">Tak, wszystkie nasze pojazdy są wyposażone w klimatyzację.</div>
+        </div>
+
     </div>
 
+
+    <!-- UBEZPIECZENIA -->
     <div id="ubezpieczenia" class="faq-block">
         <h2 class="faq-category">Ubezpieczenia i bezpieczeństwo</h2>
-        {% for q, a in faq_ubezpieczenia %}
-            <div class="faq-item">
-                <div class="faq-question">
-                    <span class="faq-arrow">➤</span>
-                    <span>{{ q }}</span>
-                </div>
-                <div class="faq-answer">{{ a }}</div>
-            </div>
-        {% endfor %}
+
+        <div class="faq-item">
+            <div class="faq-question"><span class="faq-arrow">➤</span>Czy samochód jest ubezpieczony?</div>
+            <div class="faq-answer">Tak, wszystkie nasze pojazdy posiadają pełne ubezpieczenie OC, AC oraz Assistance.</div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question"><span class="faq-arrow">➤</span>Czy auta mają pełne ubezpieczenie?</div>
+            <div class="faq-answer">Tak, ale udział własny zależy od wybranego pakietu. Można wykupić opcję redukcji udziału własnego do zera.</div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question"><span class="faq-arrow">➤</span>Czy samochody są regularnie serwisowane?</div>
+            <div class="faq-answer">Tak, każdy pojazd przechodzi regularne przeglądy techniczne oraz kontrole bezpieczeństwa.</div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question"><span class="faq-arrow">➤</span>Czy auta są dezynfekowane?</div>
+            <div class="faq-answer">Tak, każdy pojazd jest dokładnie czyszczony i dezynfekowany przed wydaniem.</div>
+        </div>
+
     </div>
 
+
+    <!-- WYPOSAŻENIE -->
     <div id="wyposazenie" class="faq-block">
         <h2 class="faq-category">Wyposażenie dodatkowe</h2>
-        {% for q, a in faq_wyposazenie %}
-            <div class="faq-item">
-                <div class="faq-question">
-                    <span class="faq-arrow">➤</span>
-                    <span>{{ q }}</span>
-                </div>
-                <div class="faq-answer">{{ a }}</div>
-            </div>
-        {% endfor %}
+
+        <div class="faq-item">
+            <div class="faq-question"><span class="faq-arrow">➤</span>Czy samochody są wyposażone w zimowe opony?</div>
+            <div class="faq-answer">Tak, w sezonie zimowym wszystkie pojazdy są wyposażone w opony zimowe.</div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question"><span class="faq-arrow">➤</span>Czy mogę zamówić fotelik dziecięcy?</div>
+            <div class="faq-answer">Tak, oferujemy foteliki dla dzieci w różnych kategoriach wagowych. Montaż leży po stronie klienta.</div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question"><span class="faq-arrow">➤</span>Czy mogę dodać drugiego kierowcę?</div>
+            <div class="faq-answer">Tak, koszt dopisania dodatkowego kierowcy wynosi 20 zł za dzień.</div>
+        </div>
+
     </div>
 
 </div>
-
-
 
 
 <script>
@@ -217,16 +291,13 @@ document.querySelectorAll('.faq-item').forEach(item => {
 
     question.addEventListener('click', () => {
 
-        // zamknij inne
         document.querySelectorAll('.faq-item').forEach(i => {
             if (i !== item) {
                 i.classList.remove('active');
-                const a = i.querySelector('.faq-answer');
-                a.style.maxHeight = null;
+                i.querySelector('.faq-answer').style.maxHeight = null;
             }
         });
 
-        // przełącz aktualne
         item.classList.toggle('active');
 
         if (item.classList.contains('active')) {
@@ -237,6 +308,5 @@ document.querySelectorAll('.faq-item').forEach(item => {
     });
 });
 </script>
-
 
 {% endblock %}

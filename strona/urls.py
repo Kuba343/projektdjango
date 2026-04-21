@@ -20,7 +20,11 @@ urlpatterns = [
     path('checkout/<int:car_id>/', views.checkout_view, name='checkout'),
     path('cancel-rental/<int:rental_id>/', views.cancel_rental, name='cancel_rental'),
     path('proces-platnosci/<int:rental_id>/', views.tpay_json_redirect, name='tpay_json_process'),
-    path("faktury/", views.faktury, name="faktury"),
+    path("profile/", views.profile_view, name="profile"),
+    path("invoice/", views.invoice_view, name="invoice"),
+    path("rental-history/", views.rental_history_view, name="rental_history"),
+    path("invoice/<int:invoice_id>/", views.invoice_detail_view, name="invoice_detail"),
+    path("rental/<int:rental_id>/", views.rental_detail_view, name="rental_detail"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 

@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="status-container-wrapper" style="margin-top: 30px;">
+    <h2 class="status-title-alt">Historia wypożyczeń</h2>
+
+    {% if rentals %}
+        <div class="branch-grid-custom">
+
+            {% for rental in rentals %}
+              <a href="{% url 'rental_detail' rental.id %}" style="text-decoration: none; color: inherit;">
+                <div class="branch-card-custom">
+
+                  {% if rental.car.image %}
+                    <img src="{{ rental.car.image.url }}" alt="Car image"
+                      style="width: 100%; height: 180px; object-fit: contain; border-radius: 8px; margin-bottom: 10px; background-color: #white;">
+                  {% endif %}
+
+                    <div class="branch-info-custom">
+                        <div>
+                            <span class="branch-city-name">{{ rental.car.model.brand.name }} {{ rental.car.model.name }}</span>
+                            <span class="branch-street-name">
+                                {{ rental.pickup_date }} → {{ rental.return_date }}
+                            </span>
+                        </div>
+
+                        <div class="branch-counter-box">
+                            <span class="count-number-custom
+                                {% if rental.status.name == 'Opłacona' %}count-green-custom
+                                {% elif rental.status.name == 'Oczekująca' %}count-yellow-custom
+                                {% elif rental.status.name == 'Anulowana' %}count-red-custom
+                                {% else %}count-blue-custom{% endif %}
+                            ">
+                                {{ rental.status.name }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="branch-footer-custom">
+                        Kwota: {{ rental.total_price }} zł<br>
+                        Rezerwacja ID: {{ rental.id }}
+                    </div>
+                </div>
+              </a>
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+        <p style="margin-top: 20px; font-size: 18px;">Brak historii wypożyczeń.</p>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="status-container-wrapper" style="margin-top: 30px;">
+    <h2 class="status-title-alt">Twoje Faktury</h2>
+
+    {% if invoices %}
+        <div class="branch-grid-custom">
+
+            {% for invoice in invoices %}
+            <a href="{% url 'invoice_detail' invoice.id %}">
+                <div class="branch-card-custom">
+                    <div class="branch-info-custom">
+                        <div>
+                            <span class="branch-city-name">Faktura</span>
+                            <span class="branch-street-name">Nr: {{ invoice.invoice_number }}</span>
+                        </div>
+
+                        <div class="branch-counter-box">
+                            <span class="count-number-custom
+                                {% if invoice.status == 'PAID' %}count-green-custom
+                                {% elif invoice.status == 'PENDING' %}count-yellow-custom
+                                {% elif invoice.status == 'CANCELLED' %}count-red-custom
+                                {% endif %}
+                            ">
+                                {{ invoice.get_status_display }}
+                            </span>
+                        </div>
+
+                    </div>
+
+                    <div class="branch-footer-custom">
+                        Wystawiona: {{ invoice.issued_at|date:"Y-m-d H:i" }}<br>
+                        Rezerwacja: {{ invoice.rental.id }}<br>
+                        Kwota: {{ invoice.rental.total_price }} zł
+                    </div>
+                </div>
+            </a>
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+        <p style="margin-top: 20px; font-size: 18px;">Brak faktur do wyświetlenia.</p>
+    {% endif %}
+</div>
+{% endblock %}

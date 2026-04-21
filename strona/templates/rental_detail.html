@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div style="max-width: 700px; margin: 40px auto; background: white; padding: 30px; border-radius: 12px;">
+
+    <h2 style="margin-bottom: 20px;">Szczegóły zamówienia</h2>
+
+    <h3>{{ rental.car.model.brand.name }} {{ rental.car.model.name }}</h3>
+
+    {% if rental.car.image %}
+        <img src="{{ rental.car.image.url }}" alt="Car image"
+             style="width: 100%; margin: 20px 0; border-radius: 8px;">
+    {% endif %}
+
+    <p><strong>Od:</strong> {{ rental.pickup_date }}</p>
+    <p><strong>Do:</strong> {{ rental.return_date }}</p>
+    <p><strong>Status:</strong> {{ rental.status.name }}</p>
+    <p><strong>Kwota:</strong> {{ rental.total_price }} zł</p>
+
+    <hr style="margin: 20px 0;">
+
+    <h3>Dane klienta</h3>
+    <p><strong>Imie i Nazwisko</strong>: {{ rental.user.user.first_name }} {{ rental.user.user.last_name }}</p>
+    <p><strong>Telefon: </strong> {{ rental.user.phone_number }}</p>
+
+</div>
+{% endblock %}

@@ -20,6 +20,8 @@ from datetime import datetime, date
 from django.db import transaction, InternalError, connection, IntegrityError
 from django.utils import timezone
 from datetime import timedelta, date
+from .forms import RegistrationForm, LoginForm, ContactForm, UserUpdateForm, ProfileUpdateForm
+
 import json
 import requests #pokazuje blad ale dziala nie usuwac
 
@@ -312,135 +314,7 @@ def checkout_view(request, car_id):
     })
 #FAQ
 def faq(request):
-    faq_wynajem = [
-        ("Czy samochód może prowadzić inna osoba niż ta z umowy?",
-         "Tak, ale tylko pod warunkiem, że dodatkowy kierowca zostanie dopisany do umowy przed rozpoczęciem wynajmu. "
-         "Każda osoba musi okazać ważne prawo jazdy oraz dokument tożsamości. Dopisanie kierowcy wiąże się z opłatą "
-         "20 zł za dzień. Niedozwolone jest przekazywanie pojazdu osobom nieuprawnionym, ponieważ w przypadku szkody "
-         "ubezpieczenie może nie obowiązywać."),
-
-        ("Czy mogę wynająć samochód bez kaucji?",
-         "Tak, oferujemy opcję wynajmu bez kaucji, jednak wymaga to wykupienia rozszerzonego pakietu ubezpieczenia. "
-         "Opcja ta jest dostępna dla większości klas pojazdów, z wyłączeniem aut premium i sportowych."),
-
-        ("Czy mogę przedłużyć wynajem?",
-         "Tak, przedłużenie wynajmu jest możliwe, o ile pojazd jest dostępny w danym terminie. Wystarczy skontaktować "
-         "się z nami telefonicznie lub mailowo. Opłata za dodatkowe dni naliczana jest zgodnie z obowiązującym cennikiem."),
-
-        ("Czy mogę odebrać auto w innym mieście?",
-         "Tak, oferujemy usługę podstawienia pojazdu do dowolnego miasta w Polsce. Koszt zależy od odległości od "
-         "najbliższego oddziału. Usługa musi zostać zgłoszona minimum 24 godziny wcześniej."),
-
-        ("Czy mogę zwrócić auto poza godzinami pracy?",
-         "Tak, w wielu lokalizacjach dostępne są specjalne skrytki lub parkingi umożliwiające zwrot pojazdu 24/7. "
-         "W takim przypadku kluczyki należy pozostawić w dedykowanej skrzynce, a pojazd zaparkować w wyznaczonym miejscu."),
-
-        ("Czy mogę wyjechać autem za granicę?",
-         "Tak, ale wymaga to wcześniejszego zgłoszenia oraz dopłaty. Nie wszystkie kraje są objęte ubezpieczeniem, "
-         "dlatego przed wyjazdem konieczne jest potwierdzenie dostępności tej opcji."),
-
-        ("Czy mogę wynająć auto na miesiąc?",
-         "Tak, oferujemy atrakcyjne pakiety wynajmu średnioterminowego i długoterminowego. Im dłuższy okres wynajmu, "
-         "tym niższa cena za dobę. Pakiety obejmują serwis, ubezpieczenie i wsparcie techniczne."),
-
-        ("Czy mogę zmienić termin rezerwacji?",
-         "Tak, o ile pojazd jest dostępny w nowym terminie. Zmiana terminu może wiązać się z różnicą w cenie, jeśli "
-         "nowy okres przypada na sezon wysokiego popytu."),
-
-        ("Czy mogę wybrać konkretny model auta?",
-         "Gwarantujemy klasę pojazdu, natomiast konkretny model zależy od dostępności w danym oddziale. Jeśli masz "
-         "preferencje, postaramy się je uwzględnić."),
-
-        ("Czy mogę wynająć auto bez limitu kilometrów?",
-         "Tak, oferujemy pakiety bez limitu kilometrów, idealne na dłuższe podróże. Opcja ta jest dostępna dla większości "
-         "klas pojazdów."),
-
-        ("Czy mogę wynająć auto na firmę?",
-         "Tak, wystawiamy faktury VAT oraz oferujemy specjalne warunki współpracy dla firm, w tym wynajem flotowy."),
-
-        ("Czy mogę otrzymać auto z automatem?",
-         "Tak, posiadamy dużą liczbę pojazdów z automatyczną skrzynią biegów. Warto zaznaczyć tę opcję podczas rezerwacji."),
-
-        ("Czy mogę zwrócić auto w innym oddziale?",
-         "Tak, możliwy jest zwrot w innej lokalizacji za dodatkową opłatą. Koszt zależy od odległości między oddziałami."),
-    ]
-
-    faq_platnosci = [
-        ("Po jakim czasie odblokowywana jest kaucja?",
-         "Kaucja jest zwalniana zazwyczaj w ciągu 24–72 godzin od zwrotu pojazdu. Czas ten zależy od banku, rodzaju "
-         "karty oraz obciążenia systemów płatniczych. W przypadku kart kredytowych blokada znika szybciej, natomiast "
-         "przy kartach debetowych proces może potrwać nieco dłużej. Jeśli kaucja nie wróci po 5 dniach roboczych, "
-         "zalecamy kontakt z bankiem."),
-
-        ("Jakie formy płatności akceptujecie?",
-         "Akceptujemy płatności kartą debetową, kredytową, BLIK, szybkie przelewy oraz gotówkę w wybranych oddziałach. "
-         "W przypadku wynajmu samochodów klasy premium wymagane jest posiadanie karty kredytowej. Wszystkie płatności "
-         "są realizowane w bezpiecznym systemie płatniczym zgodnym z normami PCI DSS."),
-
-        ("Czy mogę zapłacić gotówką?",
-         "Tak, ale w przypadku płatności gotówką nadal wymagane jest zabezpieczenie kaucji kartą. Gotówka nie jest "
-         "akceptowana przy wynajmie aut premium."),
-    ]
-
-    faq_uzytkowanie = [
-        ("Czy samochód musi być zwrócony z pełnym bakiem?",
-         "Tak, pojazd należy zwrócić z takim samym poziomem paliwa, z jakim został wydany. Jeśli auto zostanie zwrócone "
-         "z mniejszą ilością paliwa, naliczona zostanie opłata za brakujące litry według aktualnego cennika oraz "
-         "koszt obsługi. Można również wykupić opcję zwrotu bez tankowania."),
-
-        ("Czy pobieracie opłatę za spóźnienie?",
-         "Tak, w przypadku zwrotu pojazdu po czasie naliczana jest opłata za kolejną rozpoczętą godzinę lub dobę, "
-         "w zależności od regulaminu. Jeśli przewidujesz opóźnienie, skontaktuj się z nami wcześniej."),
-
-        ("Czy auta mają GPS?",
-         "Większość pojazdów posiada wbudowaną nawigację lub obsługę Android Auto i Apple CarPlay. Jeśli potrzebujesz "
-         "dedykowanego urządzenia GPS, poinformuj nas o tym podczas rezerwacji."),
-
-        ("Czy auta mają klimatyzację?",
-         "Tak, wszystkie nasze pojazdy są wyposażone w klimatyzację. W autach wyższej klasy dostępna jest również "
-         "klimatyzacja dwustrefowa lub trzystrefowa."),
-    ]
-
-    faq_ubezpieczenia = [
-        ("Czy samochód jest ubezpieczony?",
-         "Tak, wszystkie nasze pojazdy posiadają pełne ubezpieczenie OC, AC oraz Assistance. W zależności od wybranego "
-         "pakietu może obowiązywać udział własny w szkodzie. Istnieje możliwość wykupienia pakietu redukującego udział "
-         "własny do zera, co zapewnia pełen komfort podczas podróży."),
-
-        ("Czy auta mają pełne ubezpieczenie?",
-         "Tak, ale udział własny w szkodzie zależy od wybranego pakietu. Można wykupić pakiet redukujący udział własny "
-         "do zera, co zapewnia pełną ochronę."),
-
-        ("Czy samochody są regularnie serwisowane?",
-         "Tak, każdy pojazd przechodzi regularne przeglądy techniczne oraz kontrole bezpieczeństwa. Dbamy o to, aby "
-         "nasza flota była w idealnym stanie technicznym i wizualnym."),
-
-        ("Czy auta są dezynfekowane?",
-         "Tak, każdy pojazd jest dokładnie czyszczony i dezynfekowany przed wydaniem. Dbamy o najwyższe standardy "
-         "higieny i bezpieczeństwa."),
-    ]
-
-    faq_wyposazenie = [
-        ("Czy samochody są wyposażone w zimowe opony?",
-         "Tak, w sezonie zimowym wszystkie pojazdy są wyposażone w opony zimowe zgodnie z obowiązującymi przepisami. "
-         "W niektórych regionach dostępne są również łańcuchy śniegowe na życzenie."),
-
-        ("Czy mogę zamówić fotelik dziecięcy?",
-         "Tak, oferujemy foteliki dla dzieci w różnych kategoriach wagowych. Fotelik należy zarezerwować wcześniej, "
-         "aby zagwarantować jego dostępność. Montaż fotelika leży po stronie klienta."),
-
-        ("Czy mogę dodać drugiego kierowcę?",
-         "Tak, koszt dopisania dodatkowego kierowcy wynosi 20 zł za dzień. Każdy kierowca musi spełniać wymagania "
-         "dotyczące wieku i stażu jazdy."),
-    ]
-
-    return render(request, "faq.html", {
-        "faq_wynajem": faq_wynajem,
-        "faq_platnosci": faq_platnosci,
-        "faq_uzytkowanie": faq_uzytkowanie,
-        "faq_ubezpieczenia": faq_ubezpieczenia,
-        "faq_wyposazenie": faq_wyposazenie,
-    })
+    return render(request, "faq.html")
 
 def cancel_rental(request, rental_id):
     rental = get_object_or_404(Rental, id=rental_id, user__user=request.user)
@@ -515,9 +389,90 @@ def tpay_json_redirect(request, rental_id):
         messages.error(request, f"Błąd komunikacji z Tpay: {e}")
         return redirect('checkout', car_id=rental.car.id)
 
-# Podstrona Faktury
+#Podstrona Dane konta
 @login_required
-def faktury(request):
+def profile_view(request):
+    user = request.user
+    profile = user.profile
+
+    if request.method == "POST":
+        u_form = UserUpdateForm(request.POST, instance=user)
+        p_form = ProfileUpdateForm(request.POST, instance=profile)
+
+        if u_form.is_valid() and p_form.is_valid():
+            u_form.save()
+            p_form.save()
+            messages.success(request, "Dane zostały zaktualizowane.")
+            return redirect("profile")
+    else:
+        u_form = UserUpdateForm(instance=user)
+        p_form = ProfileUpdateForm(instance=profile)
+
+    return render(request, "profile.html", {
+        "u_form": u_form,
+        "p_form": p_form,
+    })
+
+#Podstrona Faktury
+@login_required
+def invoice_view(request):
     profile = request.user.profile
-    invoices = Invoice.objects.filter(rental__user=profile).order_by("-issued_at")
-    return render(request, "konto/faktury.html", {"invoices": invoices})
+
+    invoices = Invoice.objects.filter(
+        rental__user=profile
+    ).select_related("rental").order_by("-issued_at")
+
+    return render(request, "invoice.html", {
+        "invoices": invoices
+    })
+
+#Podstrona Historia Wypożyczeń
+@login_required
+def rental_history_view(request):
+    profile = request.user.profile
+
+    rentals = Rental.objects.filter(
+        user=profile
+    ).select_related("car", "status").order_by("-created_at")
+
+    return render(request, "rental_history.html", {
+        "rentals": rentals
+    })
+
+#Wyświetlenie faktury
+@login_required
+def invoice_detail_view(request, invoice_id):
+    profile = request.user.profile
+
+    invoice = get_object_or_404(
+        Invoice.objects.select_related(
+            "rental__car__model__brand",
+            "rental__user",
+        ),
+        id=invoice_id,
+        rental__user=profile
+    )
+
+    return render(request, "invoice_detail.html", {
+        "invoice": invoice
+    })
+
+#Wyświetlenie zamówienia
+@login_required
+def rental_detail_view(request, rental_id):
+    profile = request.user.profile
+
+    rental = get_object_or_404(
+        Rental.objects.select_related(
+            "car__model__brand",
+            "status",
+            "user"
+        ),
+        id=rental_id,
+        user=profile
+    )
+
+    return render(request, "rental_detail.html", {
+        "rental": rental
+    })
+

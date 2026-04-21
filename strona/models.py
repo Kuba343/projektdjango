@@ -190,6 +190,14 @@ class Invoice(models.Model):
     def __str__(self):
         return f"Faktura nr: {self.invoice_number} (Dla: {self.rental.user})"
 
+    STATUS_CHOICES = [
+        ("PAID", "Opłacona"),
+        ("PENDING", "Oczekująca"),
+        ("CANCELLED", "Anulowana"),
+    ]
+
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="PAID")
+
 #OBSLUGA
 #Dane pracownikow
 class EmployeeProfile(models.Model):

@@ -1187,3 +1187,102 @@ a { color: inherit; text-decoration: none; }
     font-size: 14px;
     color: #444;
 }
+
+/* ===== SEKCJA DANE KONTA ORAZ WPROWADZ PRAWO JAZDY ===== */
+/* --- WYGLĄD FORMULARZY (Styl karty) --- */
+
+.profile-unique-form {
+    max-width: 600px;
+    margin: 40px auto;
+    padding: 30px;
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.05); /
+    border: 1px solid #eee;
+}
+
+.profile-unique-form h2 {
+    margin-bottom: 25px;
+    color: #333;
+    text-align: center;
+    font-size: 24px;
+}
+
+/* Stylizacja dla Django {{ form.as_p }} */
+.profile-unique-form p {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.profile-unique-form label {
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #555;
+    font-size: 14px;
+}
+
+.profile-unique-form input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+    box-sizing: border-box;
+    transition: 0.3s;
+}
+
+.profile-unique-form input:focus {
+    border-color: #007bff;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+.btn-save {
+    width: 100%;
+    padding: 14px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 10px;
+    font-size: 16px;
+    transition: background 0.3s;
+}
+
+.btn-save:hover {
+    background-color: #0056b3;
+}
+
+.toast-error {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #ff4d4d;
+    color: white;
+    padding: 15px 25px;
+    border-radius: 8px;
+    font-size: 18px;
+    font-weight: bold;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    z-index: 9999;
+    opacity: 0;
+    animation: fadeInOut 3s forwards;
+}
+
+@keyframes fadeInOut {
+    0% { opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { opacity: 0; }
+}
+
+/* Sekcja Historia Wypożyczeń*/
+/* KOLORY */
+.count-green-custom { color: #4CAF50; }
+.count-yellow-custom { color: #FFC107; }
+.count-red-custom { color: #F44336; }
+.count-blue-custom { color: #2196F3; }
