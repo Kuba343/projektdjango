@@ -103,7 +103,6 @@ class Branch(models.Model):
 
     def get_car_count(self):
         with connection.cursor() as cursor:
-            # Wywołujemy Twoją funkcję przekazując ID obecnego oddziału
             cursor.execute("SELECT public.oblicz_ilosc_aut_w_oddziale(%s)", [self.id])
             result = cursor.fetchone()
         return result[0] if result else 0
@@ -133,7 +132,7 @@ class Transfer(models.Model):
     to_branch = models.ForeignKey(Branch,verbose_name="Do oddziału", related_name='transfers_to', on_delete=models.CASCADE)
     date = models.DateTimeField(auto_now_add=True)
 
-# 1. Zasada z internetu:dokładnie 9 cyfr lub format z ukośnikami
+# 1. Zasada:dokładnie 9 cyfr lub format z ukośnikami
 license_validator = RegexValidator(
     regex=r'^[0-9]{5}/[0-9]{2}/[0-9]{2}$|^[0-9]{9}$',
     message="Numer prawa jazdy musi mieć 9 cyfr (np. 123456789) lub format 12345/67/89."
