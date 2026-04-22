@@ -148,7 +148,16 @@ class UserProfile(models.Model):
         unique=True,  #jeden numer dokumentu na jedno konto
         validators=[license_validator]
     )
-    phone_number = models.CharField(max_length=20)
+    phone_validator = RegexValidator(
+        regex=r'^\d{9,15}$',
+        message="Numer telefonu musi składać się wyłącznie z cyfr (od 9 do 15)."
+    )
+
+    phone_number = models.CharField(
+        max_length=15,
+        validators=[phone_validator],
+        help_text="Wpisz numer bez spacji i znaku '+' z początkiem kierunkowym"
+    )
     birth_date = models.DateField(validators=[validate_age], verbose_name="Data urodzenia")
 
     def clean(self):
