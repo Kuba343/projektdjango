@@ -1115,7 +1115,7 @@ a { color: inherit; text-decoration: none; }
 /* GRID */
 .branch-grid-custom {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 25px;
 }
 
@@ -1135,10 +1135,7 @@ a { color: inherit; text-decoration: none; }
 .branch-info-custom {
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-bottom: 10px;
+    align-items: center;
 }
 
 /* LEWA STRONA (miasto + ulica) */
@@ -1189,6 +1186,7 @@ a { color: inherit; text-decoration: none; }
     font-size: 14px;
     color: #444;
 }
+
 
 /* ===== SEKCJA DANE KONTA ORAZ WPROWADZ PRAWO JAZDY ===== */
 /* --- WYGLĄD FORMULARZY (Styl karty) --- */
@@ -1288,47 +1286,3 @@ a { color: inherit; text-decoration: none; }
 .count-yellow-custom { color: #FFC107; }
 .count-red-custom { color: #F44336; }
 .count-blue-custom { color: #2196F3; }
-/* --- RESPONSYWNOŚĆ (Media Queries) --- */
-
-/* Duże laptopy / Monitory */
-@media (max-width: 1200px) {
-    .branch-grid-custom {
-        grid-template-columns: repeat(3, 1fr);
-    }
-}
-
-/* Tablety */
-@media (max-width: 992px) {
-    .branch-grid-custom {
-        grid-template-columns: repeat(2, 1fr);
-    }
-    .status-title-alt {
-        font-size: 26px;
-    }
-}
-
-/* Telefony */
-@media (max-width: 600px) {
-    .branch-grid-custom {
-        grid-template-columns: 1fr; /* Jedna karta na całą szerokość ekranu */
-        gap: 15px;
-    }
-
-    .status-container-wrapper {
-        padding: 0 15px; /* Marginesy po bokach na telefonie */
-    }
-
-    .branch-card-custom {
-        padding: 15px;
-    }
-
-    .branch-info-custom {
-        /* Na bardzo małych ekranach wymuszamy status pod nazwą */
-        flex-direction: column;
-        gap: 5px;
-    }
-
-    .branch-counter-box {
-        text-align: left; /* Status do lewej na telefonie */
-    }
-}
