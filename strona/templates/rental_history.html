@@ -17,25 +17,27 @@
                       style="width: 100%; height: 180px; object-fit: contain; border-radius: 8px; margin-bottom: 10px; background-color: #white;">
                   {% endif %}
 
-                    <div class="branch-info-custom">
-                        <div>
-                            <span class="branch-city-name">{{ rental.car.model.brand.name }} {{ rental.car.model.name }}</span>
-                            <span class="branch-street-name">
-                                {{ rental.pickup_date }} → {{ rental.return_date }}
-                            </span>
-                        </div>
+                    <div class="branch-info-custom" style="align-items: flex-start; gap: 10px;">
+    <div style="min-width: 0; flex: 1;">
+        <span class="branch-city-name" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+            {{ rental.car.model.brand.name }} {{ rental.car.model.name }}
+        </span>
+        <span class="branch-street-name" style="display: block; font-size: 12px; line-height: 1.4;">
+            {{ rental.pickup_date }}<br>→ {{ rental.return_date }}
+        </span>
+    </div>
 
-                        <div class="branch-counter-box">
-                            <span class="count-number-custom
-                                {% if rental.status.name == 'Opłacona' %}count-green-custom
-                                {% elif rental.status.name == 'Oczekująca' %}count-yellow-custom
-                                {% elif rental.status.name == 'Anulowana' %}count-red-custom
-                                {% else %}count-blue-custom{% endif %}
-                            ">
-                                {{ rental.status.name }}
-                            </span>
-                        </div>
-                    </div>
+    <div class="branch-counter-box" style="flex-shrink: 0; text-align: right; max-width: 40%;">
+        <span class="count-number-custom
+            {% if rental.status.name == 'Opłacona' %}count-green-custom
+            {% elif rental.status.name == 'Oczekująca' %}count-yellow-custom
+            {% elif rental.status.name == 'Anulowana' %}count-red-custom
+            {% else %}count-blue-custom{% endif %}"
+            style="font-size: 18px; display: block; word-wrap: break-word; line-height: 1.1;">
+            {{ rental.status.name }}
+        </span>
+    </div>
+</div>
 
                     <div class="branch-footer-custom">
                         Kwota: {{ rental.total_price }} zł<br>
