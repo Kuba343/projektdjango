@@ -3,3 +3,5 @@ dj-database-url
 Pillow
 django-q2
 requests
+python-dotenv
+gunicorn
