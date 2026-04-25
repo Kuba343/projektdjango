@@ -10,7 +10,8 @@ from .models import *
 # Rejestracja słowników
 admin.site.register([
     Brand, CarCategory, FuelType, RentalStatus,
-    PaymentMethod, City, Role, InspectionItem, AddonType
+    PaymentMethod, City, Role, InspectionItem, AddonType,
+    CarModel, Street, Addon
 ])
 
 # Rejestracja ważnych tabel
@@ -132,3 +133,35 @@ class RentalInspectionAdmin(admin.ModelAdmin):
     list_display = ('rental', 'inspection_type', 'mileage', 'date')
     list_filter = ('inspection_type', 'date')
     search_fields = ('rental__id', 'description')
+@admin.register(Payment)
+class PaymentAdmin(admin.ModelAdmin):
+    list_display = ('user', 'rental', 'method', 'amount', 'timestamp')
+    list_filter = ('method', 'timestamp')
+
+@admin.register(Invoice)
+class InvoiceAdmin(admin.ModelAdmin):
+    list_display = ('invoice_number', 'rental', 'status', 'issued_at')
+    list_filter = ('status',)
+
+@admin.register(Transfer)
+class TransferAdmin(admin.ModelAdmin):
+    list_display = ('car', 'from_branch', 'to_branch', 'date')
+    list_filter = ('date',)
+
+@admin.register(RentalAddon)
+class RentalAddonAdmin(admin.ModelAdmin):
+    list_display = ('rental', 'addon', 'quantity')
+
+@admin.register(DamageReport)
+class DamageReportAdmin(admin.ModelAdmin):
+    list_display = ('car', 'estimated_cost', 'reported_at')
+    search_fields = ('description',)
+
+@admin.register(Maintenance)
+class MaintenanceAdmin(admin.ModelAdmin):
+    list_display = ('car', 'item', 'last_service_date', 'mileage_at_service')
+
+@admin.register(ContactMessage)
+class ContactMessageAdmin(admin.ModelAdmin):
+    list_display = ('name', 'email', 'created_at')
+    readonly_fields = ('created_at',) # Żeby admin nie mógł zmieniać daty wpłynięcia
