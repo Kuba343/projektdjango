@@ -5,3 +5,5 @@ django-q2
 requests
 python-dotenv
 gunicorn
+weasyprint
+django-weasyprint
