@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block content %}
-<div style="max-width: 700px; margin: 40px auto; background: white; padding: 30px; border-radius: 12px;">
+<div style="max-width: 700px; margin: 40px auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
 
     <h2 style="margin-bottom: 20px;">Szczegóły zamówienia</h2>
 
@@ -10,19 +10,61 @@
 
     {% if rental.car.image %}
         <img src="{{ rental.car.image.url }}" alt="Car image"
-             style="width: 100%; margin: 20px 0; border-radius: 8px;">
+             style="width: 100%; height: auto; margin: 20px 0; border-radius: 8px; object-fit: contain;">
     {% endif %}
 
-    <p><strong>Od:</strong> {{ rental.pickup_date }}</p>
-    <p><strong>Do:</strong> {{ rental.return_date }}</p>
-    <p><strong>Status:</strong> {{ rental.status.name }}</p>
-    <p><strong>Kwota:</strong> {{ rental.total_price }} zł</p>
+    <div style="line-height: 1.6;">
+        <p><strong>Od:</strong> {{ rental.pickup_date }}</p>
+        <p><strong>Do:</strong> {{ rental.return_date }}</p>
+        <p><strong>Status:</strong> <span style="padding: 4px 8px; border-radius: 4px; background: #eee;">{{ rental.status.name }}</span></p>
+        <p><strong>Kwota:</strong> {{ rental.total_price }} zł</p>
+    </div>
 
     <hr style="margin: 20px 0;">
 
     <h3>Dane klienta</h3>
-    <p><strong>Imie i Nazwisko</strong>: {{ rental.user.user.first_name }} {{ rental.user.user.last_name }}</p>
-    <p><strong>Telefon: </strong> {{ rental.user.phone_number }}</p>
+    <p><strong>Imię i Nazwisko:</strong> {{ rental.user.user.first_name }} {{ rental.user.user.last_name }}</p>
+    <p><strong>Telefon:</strong> {{ rental.user.phone_number }}</p>
+
+    <hr style="margin: 20px 0;">
+    <h3 style="margin-bottom: 15px;">Protokoły stanu (Przed / Po)</h3>
+
+    <div style="display: flex; flex-direction: column; gap: 15px;">
+        {# Używamy rental.inspections.all aby na pewno pobrać dane z bazy #}
+        {% for insp in rental.inspections.all %}
+            <div style="padding: 15px; border: 1px solid #ddd; border-radius: 8px; background: #fdfdfd; margin-bottom: 5px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <strong style="color: {% if insp.inspection_type == 'PICKUP' %}#28a745{% else %}#007bff{% endif %};">
+                        {{ insp.get_inspection_type_display }}
+                    </strong>
+                    <small style="color: #666;">{{ insp.date|date:"d.m.Y H:i" }}</small>
+                </div>
+                <div style="font-size: 14px; color: #444;">
+                    <p style="margin: 2px 0;"><strong>Przebieg:</strong> {{ insp.mileage }} km</p>
+                    <p style="margin: 2px 0;"><strong>Paliwo:</strong> {{ insp.fuel_level }}%</p>
+                    <p style="margin: 2px 0;"><strong>Opis/Uszkodzenia:</strong> {{ insp.description|default:"Brak" }}</p>
+                </div>
+            </div>
+        {% empty %}
+            <p style="color: #999; font-style: italic;">Brak zarejestrowanych protokołów dla tego wynajmu.</p>
+        {% endfor %}
+    </div>
+
+    {% if user.is_staff %}
+        <div style="margin-top: 25px;">
+            {% if can_create_pickup %}
+                <a href="{% url 'create_inspection' rental.id 'PICKUP' %}"
+                   style="display: block; text-align: center; background: #28a745; color: white; padding: 12px; border-radius: 8px; text-decoration: none; font-weight: bold; transition: 0.3s;">
+                   + Wystaw Protokół Wydania (Dzisiaj)
+                </a>
+            {% elif can_create_return %}
+                <a href="{% url 'create_inspection' rental.id 'RETURN' %}"
+                   style="display: block; text-align: center; background: #007bff; color: white; padding: 12px; border-radius: 8px; text-decoration: none; font-weight: bold; transition: 0.3s;">
+                   + Wystaw Protokół Zwrotu (Dzisiaj)
+                </a>
+            {% endif %}
+        </div>
+    {% endif %}
 
 </div>
 {% endblock %}

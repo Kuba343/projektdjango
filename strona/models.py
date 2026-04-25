@@ -256,3 +256,45 @@ class ContactMessage(models.Model):
 
     def __str__(self):
         return f"Wiadomość od {self.name} ({self.email})"
+#Odpowiada za stan przed i po
+class RentalInspection(models.Model):
+    INSPECTION_TYPES = [
+        ('PICKUP', 'Wydanie (Stan Przed)'),
+        ('RETURN', 'Zwrot (Stan Po)'),
+    ]
+
+    rental = models.ForeignKey('Rental', on_delete=models.CASCADE, related_name='inspections')
+    inspection_type = models.CharField(max_length=10, choices=INSPECTION_TYPES)
+    date = models.DateTimeField(auto_now_add=True)
+
+    mileage = models.PositiveIntegerField(
+        verbose_name="Przebieg",
+        blank=True,
+        null=True
+    )
+
+    fuel_level = models.PositiveIntegerField(default=100, verbose_name="Poziom paliwa %")
+    description = models.TextField(blank=True, null=True, verbose_name="Uwagi / Uszkodzenia")
+
+    class Meta:
+        unique_together = ('rental', 'inspection_type')
+
+    def __str__(self):
+        return f"{self.get_inspection_type_display()} - Rezerwacja {self.rental.id}"
+
+    def save(self, *args, **kwargs):
+        # 1. Jeśli to wydanie (PICKUP) i pole przebiegu jest puste,
+        # pobieramy aktualny przebieg z auta
+        if self.inspection_type == 'PICKUP' and not self.mileage:
+            if self.rental.car:
+                self.mileage = self.rental.car.mileage
+
+        # 2. Zapisujemy protokół
+        super().save(*args, **kwargs)
+
+        # 3. Jeśli to zwrot (RETURN) i podano przebieg, aktualizujemy auto
+        if self.inspection_type == 'RETURN' and self.mileage:
+            car = self.rental.car
+            if car:
+                car.mileage = self.mileage
+                car.save()

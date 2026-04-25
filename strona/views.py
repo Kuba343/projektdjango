@@ -429,16 +429,34 @@ def invoice_view(request):
 #Podstrona Historia Wypożyczeń
 @login_required
 def rental_history_view(request):
-    profile = request.user.profile
+    # Tu pobieramy tylko LISTĘ wszystkich wypożyczeń usera
+    rentals = Rental.objects.filter(user__user=request.user).order_by('-pickup_date')
+    return render(request, 'rental_history.html', {'rentals': rentals})
 
-    rentals = Rental.objects.filter(
-        user=profile
-    ).select_related("car", "status").order_by("-created_at")
 
-    return render(request, "rental_history.html", {
-        "rentals": rentals
+@login_required
+def rental_detail_view(request, pk):
+    # Pobieramy TĘ JEDNĄ konkretną rezerwację
+    rental = get_object_or_404(Rental, pk=pk)
+
+    # Pobieramy protokoły dla tej rezerwacji
+    inspections = rental.inspections.all()
+    today = timezone.now().date()
+
+    # Logika przycisków
+    can_create_pickup = (today == rental.pickup_date and
+                         not inspections.filter(inspection_type='PICKUP').exists())
+
+    can_create_return = (today == rental.return_date and
+                         inspections.filter(inspection_type='PICKUP').exists() and
+                         not inspections.filter(inspection_type='RETURN').exists())
+
+    return render(request, 'rental_detail.html', {
+        'rental': rental,
+        'inspections': inspections,
+        'can_create_pickup': can_create_pickup,
+        'can_create_return': can_create_return,
     })
-
 #Wyświetlenie faktury
 @login_required
 def invoice_detail_view(request, invoice_id):

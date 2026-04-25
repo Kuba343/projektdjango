@@ -127,7 +127,8 @@ class UserProfileAdmin(admin.ModelAdmin):
 class EmployeeProfileAdmin(admin.ModelAdmin):
     list_display = ('user', 'role' ,'work_phone_number')
 
-# Rejestracja reszty modeli
-admin.site.register([
-    CarModel, Street, Transfer,Payment, Invoice, Addon,RentalAddon, DamageReport, Maintenance
-])
+@admin.register(RentalInspection)
+class RentalInspectionAdmin(admin.ModelAdmin):
+    list_display = ('rental', 'inspection_type', 'mileage', 'date')
+    list_filter = ('inspection_type', 'date')
+    search_fields = ('rental__id', 'description')
