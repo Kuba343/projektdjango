@@ -7,3 +7,4 @@ python-dotenv
 gunicorn
 weasyprint
 django-weasyprint
+whitenoise
