@@ -2,55 +2,89 @@
 {% load static %}
 
 {% block content %}
-<div class="status-container-wrapper" style="margin-top: 30px;">
-    <h2 class="status-title-alt">Historia wypożyczeń</h2>
+<div class="status-container-wrapper" style="margin-top: 30px; max-width: 1200px; margin-left: auto; margin-right: auto; padding: 0 20px;">
+    <h2 class="status-title-alt" style="margin-bottom: 25px;">Historia wypożyczeń</h2>
 
     {% if rentals %}
-        <div class="branch-grid-custom">
+        <div class="rental-list-container" style="display: flex; flex-direction: column; gap: 15px;">
 
-            {% for rental in rentals %}
-              <a href="{% url 'rental_detail' rental.id %}" style="text-decoration: none; color: inherit;">
-                <div class="branch-card-custom">
+            {# Automatyczne sortowanie po dacie odbioru malejąco (najnowsze na górze) #}
+            {% for rental in rentals|dictsortreversed:"pickup_date" %}
+            <a href="{% url 'rental_detail' rental.id %}" style="text-decoration: none; color: inherit;">
+                <div class="rental-row-custom" style="display: flex; align-items: center; background: #fff; border-radius: 12px; padding: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); transition: transform 0.2s;">
 
-                  {% if rental.car.image %}
-                    <img src="{{ rental.car.image.url }}" alt="Car image"
-                      style="width: 100%; height: 180px; object-fit: contain; border-radius: 8px; margin-bottom: 10px; background-color: #white;">
-                  {% endif %}
+                    <div style="font-weight: bold; font-size: 18px; color: #888; min-width: 40px;">
+                        {{ forloop.counter }}.
+                    </div>
 
-                    <div class="branch-info-custom" style="align-items: flex-start; gap: 10px;">
-    <div style="min-width: 0; flex: 1;">
-        <span class="branch-city-name" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-            {{ rental.car.model.brand.name }} {{ rental.car.model.name }}
-        </span>
-        <span class="branch-street-name" style="display: block; font-size: 12px; line-height: 1.4;">
-            {{ rental.pickup_date }}<br>→ {{ rental.return_date }}
-        </span>
-    </div>
+                    <div style="width: 120px; flex-shrink: 0; margin-right: 20px;">
+                        {% if rental.car.image %}
+                            <img src="{{ rental.car.image.url }}" alt="Car" style="width: 100%; height: 70px; object-fit: contain;">
+                        {% else %}
+                            <div style="width: 100%; height: 70px; background: #f0f0f0; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #aaa;">Brak foto</div>
+                        {% endif %}
+                    </div>
 
-    <div class="branch-counter-box" style="flex-shrink: 0; text-align: right; max-width: 40%;">
-        <span class="count-number-custom
-            {% if rental.status.name == 'Opłacona' %}count-green-custom
-            {% elif rental.status.name == 'Oczekująca' %}count-yellow-custom
-            {% elif rental.status.name == 'Anulowana' %}count-red-custom
-            {% else %}count-blue-custom{% endif %}"
-            style="font-size: 16px; display: block; word-wrap: break-word; line-height: 1.1;">
-            {{ rental.status.name }}
-        </span>
-    </div>
-</div>
+                    <div style="flex: 2;">
+                        <div style="font-size: 17px; font-weight: bold; color: #333;">
+                            {{ rental.car.model.brand.name }} {{ rental.car.model.name }}
+                        </div>
+                        <div style="font-size: 12px; color: #999; margin-top: 4px;">
+                            ID: #{{ rental.id }}
+                        </div>
+                    </div>
 
-                    <div class="branch-footer-custom">
-                        Kwota: {{ rental.total_price }} zł<br>
-                        Rezerwacja ID: {{ rental.id }}
+                    <div style="flex: 2; font-size: 14px; color: #444;">
+                        <div style="font-size: 11px; color: #888; text-transform: uppercase; margin-bottom: 3px;">Okres wynajmu</div>
+                        <strong>{{ rental.pickup_date|date:"d.m.Y" }}</strong>
+                        <span style="color: #ccc; margin: 0 5px;">→</span>
+                        <strong>{{ rental.return_date|date:"d.m.Y" }}</strong>
+                    </div>
+
+                    <div style="flex: 1; text-align: center; border-left: 1px solid #eee; border-right: 1px solid #eee;">
+                        <div style="font-size: 11px; color: #888; text-transform: uppercase;">Suma</div>
+                        <div style="font-weight: bold; font-size: 16px; color: #222;">{{ rental.total_price }} zł</div>
+                    </div>
+
+                    <div style="flex: 1; text-align: right; min-width: 130px;">
+                        <span style="
+                            padding: 6px 14px;
+                            border-radius: 50px;
+                            font-size: 12px;
+                            font-weight: 700;
+                            display: inline-block;
+                            text-align: center;
+                            min-width: 90px;
+                            {% if rental.status.name == 'Opłacona' %} background-color: #e6f4ea; color: #1e7e34;
+                            {% elif rental.status.name == 'Oczekująca' %} background-color: #fff4e5; color: #b7791f;
+                            {% elif rental.status.name == 'Anulowana' %} background-color: #fceaea; color: #c53030;
+                            {% else %} background-color: #f0f7ff; color: #0056b3; {% endif %}
+                        ">
+                            {{ rental.status.name|upper }}
+                        </span>
                     </div>
                 </div>
-              </a>
+            </a>
             {% endfor %}
 
         </div>
-
     {% else %}
-        <p style="margin-top: 20px; font-size: 18px;">Brak historii wypożyczeń.</p>
+        <div style="text-align: center; padding: 50px; background: #f9f9f9; border-radius: 12px;">
+            <p style="font-size: 18px; color: #666;">Twoja historia wypożyczeń jest pusta.</p>
+        </div>
     {% endif %}
 </div>
+
+<style>
+    .rental-row-custom {
+        border: 1px solid transparent;
+        transition: all 0.3s ease;
+    }
+    .rental-row-custom:hover {
+        transform: scale(1.01);
+        border-color: #e0e0e0;
+        box-shadow: 0 6px 15px rgba(0,0,0,0.08) !important;
+        background-color: #fafafa !important;
+    }
+</style>
 {% endblock %}

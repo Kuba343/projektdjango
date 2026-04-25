@@ -125,6 +125,9 @@ class Car(models.Model):
     def __str__(self):
         return f"{self.model} {self.category}"
 
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+
 #Historia przemieszczania auta
 class Transfer(models.Model):
     car = models.ForeignKey(Car, on_delete=models.CASCADE)
@@ -283,16 +286,14 @@ class RentalInspection(models.Model):
         return f"{self.get_inspection_type_display()} - Rezerwacja {self.rental.id}"
 
     def save(self, *args, **kwargs):
-        # 1. Jeśli to wydanie (PICKUP) i pole przebiegu jest puste,
-        # pobieramy aktualny przebieg z auta
+        # Jeśli pracownik nie wpisze przebiegu przy wydaniu, weź go z auta
         if self.inspection_type == 'PICKUP' and not self.mileage:
             if self.rental.car:
                 self.mileage = self.rental.car.mileage
 
-        # 2. Zapisujemy protokół
         super().save(*args, **kwargs)
 
-        # 3. Jeśli to zwrot (RETURN) i podano przebieg, aktualizujemy auto
+        # Przy zwrocie zaktualizuj licznik w aucie
         if self.inspection_type == 'RETURN' and self.mileage:
             car = self.rental.car
             if car:
