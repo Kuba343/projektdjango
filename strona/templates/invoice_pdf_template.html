@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            font-family: DejaVu Sans, sans-serif;
+            font-size: 13px;
+            color: #000;
+        }
+
+        h2 {
+            margin-bottom: 5px;
+        }
+
+        .section-title {
+            font-weight: bold;
+            margin-top: 25px;
+            margin-bottom: 8px;
+            font-size: 15px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 12px;
+        }
+
+        table th, table td {
+            border: 1px solid #444;
+            padding: 6px;
+            text-align: left;
+        }
+
+        table th {
+            background: #eee;
+        }
+
+        .summary-table td {
+            font-weight: bold;
+        }
+
+        .flex {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .signature {
+            margin-top: 60px;
+            text-align: center;
+            font-size: 12px;
+        }
+
+        .signature-line {
+            margin-top: 5px;
+            border-top: 1px solid #000;
+            width: 60%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    </style>
+</head>
+<body>
+    <div style="width: 100%; margin-bottom: 20px;">
+        <img src="{{ logo_url }}" alt="Logo firmy" style="height: 120px;">
+    </div>
+    <h2>Faktura VAT nr {{ invoice.invoice_number }}</h2>
+
+    <div class="flex">
+        <div>
+            <div class="section-title">Sprzedawca</div>
+            <strong>MV-RENT</strong><br>
+            ul. Lipowa 22<br>
+            15-427 Białystok<br>
+            Email: biuro@mv-rent.pl
+        </div>
+
+        <div>
+            <div class="section-title">Nabywca</div>
+            <strong>{{ invoice.rental.user.first_name }} {{ invoice.rental.user.last_name }}</strong><br>
+            {{ invoice.rental.user.profile.address }}<br>
+            NIP: 999-999-99-99<br>
+        </div>
+    </div>
+
+    <div class="section-title">Dane dokumentu</div>
+    Data wystawienia: {{ invoice.issued_at|date:"Y-m-d" }}<br>
+    Data usługi: {{ invoice.rental.start_date }} – {{ invoice.rental.end_date }}<br>
+    Rezerwacja: {{ invoice.rental.id }}<br>
+
+    <div class="section-title">Pozycje faktury</div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Lp</th>
+                <th>Nazwa usługi</th>
+                <th>Ilość</th>
+                <th>Cena netto</th>
+                <th>Stawka VAT</th>
+                <th>Kwota netto</th>
+                <th>Kwota brutto</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>1</td>
+                <td>Wynajem pojazdu: {{ invoice.rental.car.brand }} {{ invoice.rental.car.model }}</td>
+                <td>1</td>
+                <td>{{ price_netto }} zł</td>
+                <td>23%</td>
+                <td>{{ price_netto }} zł</td>
+                <td>{{ price_brutto }} zł</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="section-title">Podsumowanie VAT</div>
+
+    <table class="summary-table">
+        <tr>
+            <td>Wartość netto</td>
+            <td>{{ price_netto }} zł</td>
+        </tr>
+        <tr>
+            <td>Kwota VAT (23%)</td>
+            <td>{{ vat_amount }} zł</td>
+        </tr>
+        <tr>
+            <td>Wartość brutto</td>
+            <td>{{ price_brutto }} zł</td>
+        </tr>
+    </table>
+
+    <div class="section-title">Płatność</div>
+    Sposób płatności: BLIK<br>
+    Status: {{ invoice.get_status_display }}<br>
+
+    <div class="signature">
+        <strong>Jakub Szklarz</strong><br>
+        <div class="signature-line"></div>
+        Osoba uprawniona do wystawienia faktury
+    </div>
+
+</body>
+</html>

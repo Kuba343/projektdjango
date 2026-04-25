@@ -9,6 +9,19 @@ COPY requirements.txt .
 # Instalujemy biblioteki
 RUN pip install --no-cache-dir -r requirements.txt
 
+# 🔥 WeasyPrint dependencies
+RUN apt-get update && apt-get install -y \
+    libpango-1.0-0 \
+    libcairo2 \
+    libgdk-pixbuf-2.0-0 \
+    libffi8 \
+    libxml2 \
+    libxslt1.1 \
+    libpangocairo-1.0-0 \
+    shared-mime-info
+
+# 🔥 Install WeasyPrint
+RUN pip install weasyprint
 # Kopiujemy resztę plików projektu
 COPY . .
 

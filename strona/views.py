@@ -21,6 +21,11 @@ from django.db import transaction, InternalError, connection, IntegrityError
 from django.utils import timezone
 from datetime import timedelta, date
 from .forms import RegistrationForm, LoginForm, ContactForm, UserUpdateForm, ProfileUpdateForm
+from weasyprint import HTML
+from django.http import HttpResponse
+from django.template.loader import render_to_string
+from decimal import Decimal
+from django.templatetags.static import static
 
 import json
 import requests #pokazuje blad ale dziala nie usuwac
@@ -493,4 +498,30 @@ def rental_detail_view(request, rental_id):
     return render(request, "rental_detail.html", {
         "rental": rental
     })
+
+#Drukowanie faktury do .pdf
+def invoice_pdf(request, invoice_id):
+    invoice = Invoice.objects.get(id=invoice_id)
+    rental = invoice.rental
+    logo_url = request.build_absolute_uri(static('images/MV-R.png'))
+
+    price_brutto = rental.total_price
+    price_netto = (price_brutto / Decimal("1.23")).quantize(Decimal("0.01"))
+    vat_amount = (price_brutto - price_netto).quantize(Decimal("0.01"))
+
+    context = {
+        "invoice": invoice,
+        "price_brutto": price_brutto,
+        "price_netto": price_netto,
+        "vat_amount": vat_amount,
+        "logo_url": logo_url,
+    }
+
+    html = render_to_string("invoice_pdf_template.html", context)
+    pdf = HTML(string=html).write_pdf()
+
+    response = HttpResponse(pdf, content_type="application/pdf")
+    response["Content-Disposition"] = f"attachment; filename=faktura_{invoice.invoice_number}.pdf"
+    return response
+
 

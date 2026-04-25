@@ -23,8 +23,8 @@ urlpatterns = [
     path("profile/", views.profile_view, name="profile"),
     path("invoice/", views.invoice_view, name="invoice"),
     path("rental-history/", views.rental_history_view, name="rental_history"),
-    path("invoice/<int:invoice_id>/", views.invoice_detail_view, name="invoice_detail"),
     path("rental/<int:rental_id>/", views.rental_detail_view, name="rental_detail"),
+    path("invoice/<int:invoice_id>/pdf/", views.invoice_pdf, name="invoice_pdf"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 
