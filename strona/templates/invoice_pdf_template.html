@@ -78,15 +78,14 @@
 
         <div>
             <div class="section-title">Nabywca</div>
-            <strong>{{ invoice.rental.user.first_name }} {{ invoice.rental.user.last_name }}</strong><br>
-            {{ invoice.rental.user.profile.address }}<br>
-            NIP: 999-999-99-99<br>
+            {# Pobieramy dane klienta bezpośrednio z relacji Rental -> User #}
+            <strong>{{ invoice.rental.user.user.first_name }} {{ invoice.rental.user.user.last_name }}</strong><br>
         </div>
     </div>
 
     <div class="section-title">Dane dokumentu</div>
     Data wystawienia: {{ invoice.issued_at|date:"Y-m-d" }}<br>
-    Data usługi: {{ invoice.rental.start_date }} – {{ invoice.rental.end_date }}<br>
+    Data usługi: {{ invoice.rental.pickup_date|date:"Y-m-d" }} – {{ invoice.rental.return_date|date:"Y-m-d" }}<br>
     Rezerwacja: {{ invoice.rental.id }}<br>
 
     <div class="section-title">Pozycje faktury</div>
@@ -106,7 +105,7 @@
         <tbody>
             <tr>
                 <td>1</td>
-                <td>Wynajem pojazdu: {{ invoice.rental.car.brand }} {{ invoice.rental.car.model }}</td>
+                <td>Wynajem pojazdu: {{ invoice.rental.car.model.brand.name }} {{ invoice.rental.car.model.name }}</td>
                 <td>1</td>
                 <td>{{ price_netto }} zł</td>
                 <td>23%</td>
@@ -145,3 +144,7 @@
 
 </body>
 </html>
+
+
+
+
