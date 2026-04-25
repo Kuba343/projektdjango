@@ -163,3 +163,9 @@ EMAIL_HOST_PASSWORD = 'lppw chje tucc zcps'
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://projektdjango-production.up.railway.app",
+    "https://*.127.0.0.1"
+]
