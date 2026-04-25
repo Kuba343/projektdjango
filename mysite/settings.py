@@ -27,8 +27,7 @@ SECRET_KEY = 'django-insecure-g3=-e76u2=!745pzk2ppb_8t4c@23t3$6m@(e(8dg8=oqxp2tn
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['xkuba343.pythonanywhere.com', 'localhost', '127.0.0.1']
-
+ALLOWED_HOSTS = ['wypozyczalnia-aut.onrender.com', 'localhost', '127.0.0.1', '.onrender.com']
 # Application definition
 
 INSTALLED_APPS = [
