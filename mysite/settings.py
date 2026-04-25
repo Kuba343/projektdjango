@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 import dj_database_url
 import os
 from pathlib import Path
-
+from dotenv import load_dotenv
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -88,13 +88,15 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
+
+load_dotenv() # Wczytuje dane z pliku .env
+
 DATABASES = {
     'default': dj_database_url.config(
-        default='postgresql://neondb_owner:npg_i9lWB3ATgHKw@ep-polished-glitter-agbmdnof-pooler.c-2.eu-central-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require',
-        conn_max_age=None, #utrzymywanie połączenia z bazą + błąd InvalidCursorName znika całkowicie
+        default=os.environ.get('DATABASE_URL'),
+        conn_max_age=0,
     )
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
