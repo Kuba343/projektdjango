@@ -1,4 +1,6 @@
 import hashlib
+import os
+from django.contrib.staticfiles import finders
 from django.conf import settings
 from django.contrib.auth import authenticate
 from django.contrib.auth.decorators import login_required
@@ -499,11 +501,19 @@ def rental_detail_view(request, rental_id):
         "rental": rental
     })
 
-#Drukowanie faktury do .pdf
+
 def invoice_pdf(request, invoice_id):
     invoice = Invoice.objects.get(id=invoice_id)
     rental = invoice.rental
-    logo_url = request.build_absolute_uri(static('images/MV-R.png'))
+
+    # Zamiast build_absolute_uri, szukamy pliku na dysku serwera:
+    logo_path = os.path.join(settings.BASE_DIR, 'static', 'images', 'MV-R.png')
+
+    result = finders.find('images/MV-R.png')
+    if result:
+        logo_url = f"file://{result}"
+    else:
+        logo_url = f"file://{logo_path}"
 
     price_brutto = rental.total_price
     price_netto = (price_brutto / Decimal("1.23")).quantize(Decimal("0.01"))
@@ -518,10 +528,11 @@ def invoice_pdf(request, invoice_id):
     }
 
     html = render_to_string("invoice_pdf_template.html", context)
-    pdf = HTML(string=html).write_pdf()
+
+
+    pdf = HTML(string=html, base_url=request.build_absolute_uri()).write_pdf()
 
     response = HttpResponse(pdf, content_type="application/pdf")
     response["Content-Disposition"] = f"attachment; filename=faktura_{invoice.invoice_number}.pdf"
     return response
-
 

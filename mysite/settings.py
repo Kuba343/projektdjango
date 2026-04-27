@@ -151,18 +151,16 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 #potrzebe do wysylania maila do nas
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
 
-EMAIL_HOST_USER = 'wypozyczalniastrona@gmail.com'
-EMAIL_HOST_PASSWORD = 'lppw chje tucc zcps'
+# Pobieranie z Railway Variables:
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', 'wypozyczalniastrona@gmail.com')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
 
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
-
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 CSRF_TRUSTED_ORIGINS = [
