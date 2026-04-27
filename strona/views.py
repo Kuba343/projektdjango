@@ -146,39 +146,19 @@ Treść wiadomości:
 Wiadomość zapisana w bazie o ID: {contact.id}
 """
 
-            try:
-                send_mail(
-                    temat,
-                    tresc,
-                    settings.EMAIL_HOST_USER,
-                    ['wypozyczalniastrona@gmail.com'],
-                    fail_silently=False,
-                )
+            if form.is_valid():
+                contact = form.save()
+                # ZAKOMENTUJ TO:
+                # try:
+                #     send_mail(...)
+                #     send_mail(...)
+                #     messages.success(request, 'Wysłano!')
+                # except Exception as e:
+                #     pass
 
-
-                send_mail(
-                    "Dziękujemy za kontakt",
-                    "Otrzymaliśmy Twoją wiadomość. Odpowiemy wkrótce.",
-                    settings.EMAIL_HOST_USER,
-                    [contact.email],
-                    fail_silently=False,
-                )
-
-                messages.success(request, 'Dziękujemy! Wiadomość została wysłana.')
-
-            except Exception as e:
-                print(f"Błąd wysyłki: {e}")
-                messages.warning(
-                    request,
-                    'Wiadomość zapisana, ale wystąpił problem z e-mailem.'
-                )
-
-            return redirect('contact')
-
-    else:
-        form = ContactForm()
-
-    return render(request, 'contact.html', {'form': form, 'oddzialy': oddzialy})
+                # ZOSTAW TYLKO TO:
+                messages.success(request, 'Zapisano wiadomość w bazie (test bez maila)!')
+                return redirect('contact')
 
 
 @login_required(login_url='login')

@@ -143,14 +143,14 @@ STATICFILES_DIRS = [
 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',  # Zostawiamy domyślny, żeby admin nadal mógł się logować po username
-    'strona.backends.EmailBackend', # Twoja nowa logika logowania przez email
+    'strona.backends.EmailBackend',
 ]
 #zdjęcia przechowywane w bazie
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 #potrzebe do wysylania maila do nas
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
