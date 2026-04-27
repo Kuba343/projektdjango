@@ -157,8 +157,8 @@ Wiadomość zapisana w bazie o ID: {contact.id}
                 #     pass
 
                 # ZOSTAW TYLKO TO:
-            messages.success(request, 'Zapisano wiadomość w bazie (test bez maila)!')
-            return redirect('contact')
+        messages.success(request, 'Zapisano wiadomość w bazie (test bez maila)!')
+        return redirect('contact')
 
 
 @login_required(login_url='login')
