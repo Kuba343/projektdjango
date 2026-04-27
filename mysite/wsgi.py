@@ -8,9 +8,13 @@ https://docs.djangoproject.com/en/6.0/howto/deployment/wsgi/
 """
 
 import os
+import subprocess
 
 from django.core.wsgi import get_wsgi_application
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'mysite.settings')
 
 application = get_wsgi_application()
+
+if os.environ.get('RUN_MAIN') != 'true': # zapobiega podwójnemu odpaleniu
+    subprocess.Popen(['python', 'manage.py', 'qcluster'])
